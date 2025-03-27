@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../environments/environment';
 import { ApiService } from './services/api.service';
 
 @Component({
@@ -8,6 +9,7 @@ import { ApiService } from './services/api.service';
   styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit {
+  apiUrl = environment.API_URL;
   message = 'Cargando...';
   dbMessage = 'Verificando conexión...';
 

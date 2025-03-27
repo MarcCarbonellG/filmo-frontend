@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node -r dotenv/config env-loader.js && ng serve",
-    "build": "ng build",
+    "start": "ng serve",
+    "build": "node -r dotenv/config env-loader.js && ng build  --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:filmo-frontend": "node dist/filmo-frontend/server/server.mjs"
