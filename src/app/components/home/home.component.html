@@ -1,0 +1,8 @@
+<p>home works!</p>
+<h1>{{ message }}</h1>
+<p>{{ dbMessage }}</p>
+<p>{{ apiUrl }}</p>
+<div *ngIf="user$ | async as user">
+  <p>Welcome, {{ user?.username }}!</p>
+  <button (click)="logout()">Logout</button>
+</div>

@@ -5,14 +5,32 @@ import {
   withEventReplay,
 } from '@angular/platform-browser';
 
-import { provideHttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
+import { StoreModule } from '@ngrx/store';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { AuthModule } from './auth/auth.module';
+import { authInterceptor } from './auth/interceptors/auth.interceptor';
+import { HomeComponent } from './components/home/home.component';
+import { userReducer } from './store/user/user.reducer';
 
 @NgModule({
-  declarations: [AppComponent],
-  imports: [BrowserModule, AppRoutingModule],
-  providers: [provideClientHydration(withEventReplay()), provideHttpClient()],
+  declarations: [AppComponent, HomeComponent],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    AuthModule,
+    StoreModule.forRoot({ user: userReducer }),
+  ],
+  providers: [
+    provideClientHydration(withEventReplay()),
+    provideHttpClient(),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useFactory: authInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,0 +1,75 @@
+<div class="login-container">
+  <h2>Crear cuenta</h2>
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <label>
+      Email
+      <input type="email" formControlName="email" />
+    </label>
+    <div
+      *ngIf="
+        registerForm.get('email')?.touched && registerForm.get('email')?.invalid
+      "
+    >
+      <small *ngIf="registerForm.get('email')?.errors?.['required']"
+        >Correo requerido</small
+      >
+      <small *ngIf="registerForm.get('email')?.errors?.['email']"
+        >Formato inválido</small
+      >
+    </div>
+    <label>
+      Nombre de usuario
+      <input formControlName="username" />
+    </label>
+    <div
+      *ngIf="
+        registerForm.get('username')?.touched &&
+        registerForm.get('username')?.invalid
+      "
+    >
+      <small *ngIf="registerForm.get('username')?.errors?.['required']"
+        >Nombre de usuario requerido</small
+      >
+      <small *ngIf="registerForm.get('username')?.errors?.['maxlength']"
+        >Máximo 20 caracteres</small
+      >
+    </div>
+
+    <label>
+      Contraseña
+      <input type="password" formControlName="password" />
+    </label>
+    <div
+      *ngIf="
+        registerForm.get('password')?.touched &&
+        registerForm.get('password')?.invalid
+      "
+    >
+      <small *ngIf="registerForm.get('password')?.errors?.['required']"
+        >Contraseña requerida</small
+      >
+      <small *ngIf="registerForm.get('password')?.errors?.['minlength']"
+        >Mínimo 8 caracteres</small
+      >
+      <small *ngIf="registerForm.get('password')?.errors?.['pattern']">
+        Debe contener al menos una mayúscula, una minúscula y un número
+      </small>
+    </div>
+
+    <label>
+      Confirmar contraseña
+      <input type="password" formControlName="confirm" />
+    </label>
+    <div
+      *ngIf="
+        registerForm.hasError('passwordMismatch') &&
+        registerForm.get('confirm')?.touched
+      "
+    >
+      <small>Las contraseñas no coinciden</small>
+    </div>
+
+    <button type="submit" [disabled]="registerForm.invalid">REGISTRARSE</button>
+    <div *ngIf="errorMessage">{{ errorMessage }}</div>
+  </form>
+</div>
