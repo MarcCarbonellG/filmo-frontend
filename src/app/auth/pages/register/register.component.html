@@ -71,5 +71,10 @@
 
     <button type="submit" [disabled]="registerForm.invalid">REGISTRARSE</button>
     <div *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <div>
+      <p>Ya tienes una cuenta?</p>
+      <a routerLink="/login">Iniciar sesión</a>
+    </div>
   </form>
 </div>

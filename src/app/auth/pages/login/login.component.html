@@ -27,5 +27,9 @@
 
     <button type="submit" [disabled]="loginForm.invalid">INICIAR SESIÓN</button>
     <div *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div>
+      <p>Nuevo en Filmo?</p>
+      <a routerLink="/register">Crear cuenta</a>
+    </div>
   </form>
 </div>
