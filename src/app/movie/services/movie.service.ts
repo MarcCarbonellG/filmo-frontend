@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { MovieList } from '../models/movie-list.interface';
+import { Movie } from '../models/movie.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,10 @@ export class MovieService {
 
   getImageBaseUrl(): string {
     return this.IMAGE_BASE_URL;
+  }
+
+  getMovie(movieId: string): Observable<Movie> {
+    return this.http.get<Movie>(`${this.API_URL}/movie/${movieId}`);
   }
 
   getMovieList(listName: string): Observable<MovieList> {

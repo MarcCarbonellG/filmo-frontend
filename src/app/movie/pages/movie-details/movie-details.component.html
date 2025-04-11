@@ -1,0 +1,32 @@
+<div *ngIf="errorMessage" class="text-red-800">
+  {{ errorMessage }}
+</div>
+
+<div *ngIf="movie">
+  <img
+    src="{{ baseImageUrl + '/original' + movie.backdrop_path }}"
+    alt="{{ movie.title }} poster"
+  />
+  <h2 class="text-3xl">{{ movie.title }}</h2>
+  <img
+    src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
+    alt="{{ movie.title }} poster"
+    width="100px"
+  />
+  <p>FECHA DE ESTRENO: {{ movie.release_date }}</p>
+  <p>DURACIÓN: {{ movie.runtime }}</p>
+  <p>PAÍS: {{ movie.origin_country }}</p>
+  <p>IDIOMA ORIGINAL: {{ movie.original_language }}</p>
+  <p>PRODUCTORAS:</p>
+  <div *ngFor="let producer of movie.production_companies">
+    <p>{{ producer.name }}</p>
+  </div>
+  <p>PRESUPUESTO: {{ movie.budget }}</p>
+  <p>RECAUDACIÓN: {{ movie.revenue }}</p>
+  <p>GÉNEROS:</p>
+  <div *ngFor="let genre of movie.genres">
+    <p>{{ genre.name }}</p>
+  </div>
+  <p class="italic">{{ movie.tagline }}</p>
+  <p>{{ movie.overview }}</p>
+</div>

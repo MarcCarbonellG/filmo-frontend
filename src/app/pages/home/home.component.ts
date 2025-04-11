@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../auth/services/auth.service';
 import { SimplifiedMovie } from '../../movie/models/simplified-movie.interface';
 import { MovieService } from '../../movie/services/movie.service';
@@ -9,7 +9,7 @@ import { MovieService } from '../../movie/services/movie.service';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   nowPlaying: SimplifiedMovie[] = [];
   upcoming: SimplifiedMovie[] = [];
   popular: SimplifiedMovie[] = [];
@@ -33,7 +33,6 @@ export class HomeComponent {
   }
 
   loadMovies(): void {
-    // Llamada a la API para la primera categoría de películas
     this.movieService.getMovieList('now_playing').subscribe({
       next: (data) => {
         this.nowPlaying = data.results;
