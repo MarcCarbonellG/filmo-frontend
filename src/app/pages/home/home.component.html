@@ -1,8 +1,55 @@
-<p>home works!</p>
-<h1>{{ message }}</h1>
-<p>{{ dbMessage }}</p>
-<p>{{ apiUrl }}</p>
-<div *ngIf="user$ | async as user">
-  <p>Welcome, {{ user?.username }}!</p>
-  <button (click)="logout()">Logout</button>
+<div *ngIf="errorMessage" class="text-red-800">
+  {{ errorMessage }}
+</div>
+
+<div *ngIf="nowPlaying.length > 0">
+  <h2 class="text-3xl">En cartelera</h2>
+  <div class="flex flex-wrap">
+    <div *ngFor="let movie of nowPlaying">
+      <img
+        src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
+        alt="{{ movie.title }} poster"
+        width="100px"
+      />
+    </div>
+  </div>
+</div>
+
+<div *ngIf="upcoming.length > 0">
+  <h2 class="text-3xl">Próximamente</h2>
+  <div class="flex flex-wrap">
+    <div *ngFor="let movie of upcoming">
+      <img
+        src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
+        alt="{{ movie.title }} poster"
+        width="100px"
+      />
+    </div>
+  </div>
+</div>
+
+<div *ngIf="popular.length > 0">
+  <h2 class="text-3xl">Populares</h2>
+  <div class="flex flex-wrap">
+    <div *ngFor="let movie of popular">
+      <img
+        src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
+        alt="{{ movie.title }} poster"
+        width="100px"
+      />
+    </div>
+  </div>
+</div>
+
+<div *ngIf="topRated.length > 0">
+  <h2 class="text-3xl">Mejor valoradas</h2>
+  <div class="flex flex-wrap">
+    <div *ngFor="let movie of topRated">
+      <img
+        src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
+        alt="{{ movie.title }} poster"
+        width="100px"
+      />
+    </div>
+  </div>
 </div>

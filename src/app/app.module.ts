@@ -11,6 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
 import { authInterceptor } from './auth/interceptors/auth.interceptor';
+import { MovieModule } from './movie/movie.module';
 import { HomeComponent } from './pages/home/home.component';
 import { SharedModule } from './shared/shared.module';
 import { userReducer } from './store/user/user.reducer';
@@ -22,6 +23,7 @@ import { userReducer } from './store/user/user.reducer';
     AppRoutingModule,
     AuthModule,
     SharedModule,
+    MovieModule,
     StoreModule.forRoot({ user: userReducer }),
   ],
   providers: [

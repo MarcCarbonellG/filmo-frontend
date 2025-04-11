@@ -1,11 +1,7 @@
 import { Component } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import { AuthService } from '../../auth/services/auth.service';
-import { ApiService } from '../../services/api.service';
-import { User } from '../../store/user/user.reducer';
-import { selectUser } from '../../store/user/user.selectors';
+import { SimplifiedMovie } from '../../movie/models/simplified-movie.interface';
+import { MovieService } from '../../movie/services/movie.service';
 
 @Component({
   selector: 'app-home',
@@ -14,31 +10,65 @@ import { selectUser } from '../../store/user/user.selectors';
   styleUrl: './home.component.css',
 })
 export class HomeComponent {
-  user$: Observable<User | null>;
-  apiUrl = environment.API_URL;
-  message = 'Cargando...';
-  dbMessage = 'Verificando conexión...';
+  nowPlaying: SimplifiedMovie[] = [];
+  upcoming: SimplifiedMovie[] = [];
+  popular: SimplifiedMovie[] = [];
+  topRated: SimplifiedMovie[] = [];
+  errorMessage: string | null = null;
+  baseImageUrl: string;
 
   constructor(
-    private apiService: ApiService,
-    private authService: AuthService,
-    private store: Store
+    private movieService: MovieService,
+    private authService: AuthService
   ) {
-    this.user$ = this.store.select(selectUser);
+    this.baseImageUrl = this.movieService.getImageBaseUrl();
+  }
+
+  ngOnInit(): void {
+    this.loadMovies();
   }
 
   logout() {
     this.authService.logout();
   }
 
-  ngOnInit() {
-    // Prueba del backend
-    this.apiService.getHello().subscribe((res) => (this.message = res));
+  loadMovies(): void {
+    // Llamada a la API para la primera categoría de películas
+    this.movieService.getMovieList('now_playing').subscribe({
+      next: (data) => {
+        this.nowPlaying = data.results;
+      },
+      error: (err) => {
+        this.errorMessage = 'Error al cargar películas en cartelera';
+      },
+    });
 
-    // Prueba de la base de datos
-    this.apiService.testDb().subscribe(
-      (res) => (this.dbMessage = `DB Connected: ${res.time}`),
-      (err) => (this.dbMessage = 'Error al conectar con DB')
-    );
+    this.movieService.getMovieList('upcoming').subscribe({
+      next: (data) => {
+        this.upcoming = data.results;
+      },
+      error: (err) => {
+        this.errorMessage =
+          'Error al cargar películas que se estrenan próximamente';
+      },
+    });
+
+    this.movieService.getMovieList('popular').subscribe({
+      next: (data) => {
+        this.popular = data.results;
+      },
+      error: (err) => {
+        this.errorMessage = 'Error al cargar películas populares';
+      },
+    });
+
+    this.movieService.getMovieList('top_rated').subscribe({
+      next: (data) => {
+        this.topRated = data.results;
+      },
+      error: (err) => {
+        this.errorMessage = 'Error al cargar películas mejor valoradas';
+      },
+    });
   }
 }
