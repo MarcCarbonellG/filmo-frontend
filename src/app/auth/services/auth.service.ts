@@ -59,4 +59,8 @@ export class AuthService {
     this.store.dispatch(clearUser());
     this.clearToken();
   }
+
+  isAuthenticated(): boolean {
+    return !!this.localStorageService.getFromLocalStorage('auth_token');
+  }
 }

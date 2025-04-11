@@ -12,6 +12,7 @@ import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
 import { authInterceptor } from './auth/interceptors/auth.interceptor';
 import { HomeComponent } from './pages/home/home.component';
+import { SharedModule } from './shared/shared.module';
 import { userReducer } from './store/user/user.reducer';
 
 @NgModule({
@@ -20,6 +21,7 @@ import { userReducer } from './store/user/user.reducer';
     BrowserModule,
     AppRoutingModule,
     AuthModule,
+    SharedModule,
     StoreModule.forRoot({ user: userReducer }),
   ],
   providers: [

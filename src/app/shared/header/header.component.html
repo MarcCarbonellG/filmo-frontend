@@ -1,0 +1,15 @@
+<header class="flex justify-center items-center bg-primary text-white min-h-14">
+  <div class="flex justify-between w-full max-w-5xl p-2">
+    <h1 class="w-1/3 font-bold text-3xl"><a routerLink="/">FILMO</a></h1>
+    <nav class="flex justify-center items-center max-w-2/3 gap-4">
+      <a
+        class="hover:text-secondary"
+        *ngIf="!isLoggedIn"
+        routerLink="/login"
+        routerLinkActive="active"
+        >Login</a
+      >
+      <button *ngIf="isLoggedIn" (click)="logout()">Iniciar sesión</button>
+    </nav>
+  </div>
+</header>
