@@ -31,7 +31,7 @@ export class MovieDetailsComponent implements OnInit {
     if (!this.movieId) {
       this.errorMessage = 'Error al cargar películas en cartelera';
     } else {
-      this.movieService.getMovie(this.movieId).subscribe({
+      this.movieService.getMovieById(this.movieId).subscribe({
         next: (data) => {
           this.movie = data;
         },

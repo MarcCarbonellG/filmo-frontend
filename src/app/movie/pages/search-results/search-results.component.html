@@ -1,0 +1,17 @@
+<h2 class="text-3xl">Buscar: "{{ searchTerm }}"</h2>
+
+<div *ngIf="searchResults.length === 0">
+  <h2 class="text-2xl">No hay resultados de búsqueda</h2>
+</div>
+<div *ngIf="searchResults.length > 0">
+  <div class="flex flex-wrap">
+    <div *ngFor="let movie of searchResults">
+      <a routerLink="/{{ movie.id }}">
+        <img
+          src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
+          alt="{{ movie.title }} poster"
+          width="100px"
+      /></a>
+    </div>
+  </div>
+</div>

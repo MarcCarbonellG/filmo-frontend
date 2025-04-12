@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { MovieList } from '../models/movie-list.interface';
 import { Movie } from '../models/movie.interface';
+import { SimplifiedMovie } from '../models/simplified-movie.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -18,8 +19,14 @@ export class MovieService {
     return this.IMAGE_BASE_URL;
   }
 
-  getMovie(movieId: string): Observable<Movie> {
+  getMovieById(movieId: string): Observable<Movie> {
     return this.http.get<Movie>(`${this.API_URL}/movie/${movieId}`);
+  }
+
+  searchMoviesByTitle(searchTerm: string) {
+    return this.http.get<SimplifiedMovie[]>(
+      `${this.API_URL}/movie/search?query=${searchTerm}`
+    );
   }
 
   getMovieList(listName: string): Observable<MovieList> {

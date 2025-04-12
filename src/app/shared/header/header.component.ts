@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
@@ -8,7 +9,9 @@ import { AuthService } from '../../auth/services/auth.service';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
-  constructor(private authService: AuthService) {}
+  searchTerm: string = '';
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   get isLoggedIn(): boolean {
     return this.authService.isAuthenticated();
@@ -16,5 +19,11 @@ export class HeaderComponent {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  onSearch() {
+    this.router.navigate(['/search'], {
+      queryParams: { query: this.searchTerm },
+    });
   }
 }
