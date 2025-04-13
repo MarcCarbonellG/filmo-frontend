@@ -1,5 +1,99 @@
 <h2 class="text-3xl">Buscar: "{{ searchTerm }}"</h2>
 
+<form
+  [formGroup]="filterForm"
+  (ngSubmit)="applyFilters()"
+  class="p-4 space-y-4 bg-white border rounded shadow-md"
+>
+  <label>
+    Público:
+    <div class="flex gap-4">
+      <label>
+        <input type="radio" [value]="null" formControlName="audience" />
+        Todos
+      </label>
+      <label>
+        <input type="radio" [value]="false" formControlName="audience" />
+        Todos los públicos
+      </label>
+      <label>
+        <input type="radio" [value]="true" formControlName="audience" />
+        +18
+      </label>
+    </div>
+  </label>
+
+  <div class="w-64">
+    <div class="relative">
+      <button
+        class="w-full p-2 text-left border rounded-md bg-gray-100 hover:bg-gray-200 focus:outline-none"
+        type="button"
+        (click)="toggleGenreDropdown()"
+      >
+        Géneros
+      </button>
+      <div
+        *ngIf="isGenreDropdownOpen"
+        class="absolute left-0 right-0 mt-1 bg-white shadow-lg rounded-md border z-10"
+      >
+        <div *ngFor="let genre of genreList" formGroupName="genres" class="p-2">
+          <label class="inline-flex items-center space-x-2">
+            <input type="checkbox" [formControlName]="genre.id" />
+            {{ genre.name }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-64">
+    <div class="relative">
+      <button
+        class="w-full p-2 text-left border rounded-md bg-gray-100 hover:bg-gray-200 focus:outline-none"
+        type="button"
+        (click)="toggleLangDropdown()"
+      >
+        Idioma original
+      </button>
+      <div
+        *ngIf="isLangDropdownOpen"
+        class="absolute left-0 right-0 mt-1 bg-white shadow-lg rounded-md border z-10"
+      >
+        <div
+          class="p-2"
+          *ngFor="let lang of languageList"
+          formGroupName="languages"
+        >
+          <label class="inline-flex items-center space-x-2">
+            <input type="checkbox" [formControlName]="lang.iso_639_1" />
+            {{ lang.name ? lang.name : lang.english_name }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <label>
+    Ordenar por:
+    <select formControlName="sortBy">
+      <option value="popularity">Popularidad</option>
+      <option value="release">Fecha de lanzamiento</option>
+    </select>
+  </label>
+
+  <label>
+    Orden:
+    <select formControlName="sortOrder">
+      <option value="desc">Descendente</option>
+      <option value="asc">Ascendente</option>
+    </select>
+  </label>
+
+  <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">
+    Aplicar filtros
+  </button>
+</form>
+
 <div *ngIf="searchResults.length === 0">
   <h2 class="text-2xl">No hay resultados de búsqueda</h2>
 </div>

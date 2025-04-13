@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Genre } from '../models/genre.interface';
+import { Language } from '../models/language.interface';
 import { MovieList } from '../models/movie-list.interface';
 import { Movie } from '../models/movie.interface';
 import { SimplifiedMovie } from '../models/simplified-movie.interface';
@@ -31,5 +33,13 @@ export class MovieService {
 
   getMovieList(listName: string): Observable<MovieList> {
     return this.http.get<MovieList>(`${this.API_URL}/movie/list/${listName}`);
+  }
+
+  getGenres(): Observable<Genre[]> {
+    return this.http.get<Genre[]>(`${this.API_URL}/movie/genres`);
+  }
+
+  getLanguages(): Observable<Language[]> {
+    return this.http.get<Language[]>(`${this.API_URL}/movie/languages`);
   }
 }
