@@ -6,7 +6,7 @@ export interface Movie {
     id: number;
     name: string;
   }[];
-  id: number;
+  id: string;
   origin_country: string[];
   original_language: string;
   original_title: string;

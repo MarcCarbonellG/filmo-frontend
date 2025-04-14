@@ -6,7 +6,13 @@ import { Genre } from '../models/genre.interface';
 import { Language } from '../models/language.interface';
 import { MovieList } from '../models/movie-list.interface';
 import { Movie } from '../models/movie.interface';
+import { Review } from '../models/review.interface';
 import { SimplifiedMovie } from '../models/simplified-movie.interface';
+
+interface DefaultResponse {
+  message: string;
+  data: any;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -41,5 +47,39 @@ export class MovieService {
 
   getLanguages(): Observable<Language[]> {
     return this.http.get<Language[]>(`${this.API_URL}/movie/languages`);
+  }
+
+  addReview(
+    user_id: number,
+    username: string,
+    avatar: string,
+    movie_id: string,
+    title: string,
+    poster: string,
+    release_date: string,
+    rating: number,
+    content: string
+  ): Observable<DefaultResponse> {
+    return this.http.post<DefaultResponse>(`${this.API_URL}/movie/review`, {
+      user_id,
+      username,
+      avatar,
+      movie_id,
+      title,
+      poster,
+      release_date,
+      rating,
+      content,
+    });
+  }
+
+  deleteReview(user_id: number, movie_id: string): Observable<DefaultResponse> {
+    return this.http.delete<DefaultResponse>(`${this.API_URL}/movie/review`, {
+      body: { user_id, movie_id },
+    });
+  }
+
+  getReviews(movie_id: string): Observable<Review[]> {
+    return this.http.get<Review[]>(`${this.API_URL}/movie/review/${movie_id}`);
   }
 }

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, PLATFORM_ID } from '@angular/core';
 import {
   BrowserModule,
   provideClientHydration,
@@ -6,7 +6,10 @@ import {
 } from '@angular/platform-browser';
 
 import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
-import { StoreModule } from '@ngrx/store';
+import { ActionReducer, MetaReducer, StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { localStorageSync } from 'ngrx-store-localstorage';
+import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
@@ -14,7 +17,24 @@ import { authInterceptor } from './auth/interceptors/auth.interceptor';
 import { MovieModule } from './movie/movie.module';
 import { HomeComponent } from './pages/home/home.component';
 import { SharedModule } from './shared/shared.module';
-import { userReducer } from './store/user/user.reducer';
+import { reducers } from './store';
+
+export function localStorageSyncReducer(
+  reducer: ActionReducer<any>
+): ActionReducer<any> {
+  const isBrowser = typeof window !== 'undefined' && !!window.localStorage;
+
+  if (isBrowser) {
+    return localStorageSync({
+      keys: ['user'],
+      rehydrate: true,
+    })(reducer);
+  }
+
+  return reducer;
+}
+
+const metaReducers: Array<MetaReducer<any, any>> = [localStorageSyncReducer];
 
 @NgModule({
   declarations: [AppComponent, HomeComponent],
@@ -24,7 +44,11 @@ import { userReducer } from './store/user/user.reducer';
     AuthModule,
     SharedModule,
     MovieModule,
-    StoreModule.forRoot({ user: userReducer }),
+    StoreModule.forRoot(reducers, { metaReducers }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+    }),
   ],
   providers: [
     provideClientHydration(withEventReplay()),
@@ -34,6 +58,7 @@ import { userReducer } from './store/user/user.reducer';
       useFactory: authInterceptor,
       multi: true,
     },
+    { provide: PLATFORM_ID, useValue: PLATFORM_ID },
   ],
   bootstrap: [AppComponent],
 })

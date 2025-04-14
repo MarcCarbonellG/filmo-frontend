@@ -1,11 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
+import { User } from '../../auth/models/user.interface';
 import { clearUser, setUser } from './user.actions';
-
-export interface User {
-  username: string;
-  email: string;
-  // Puedes añadir más campos según sea necesario
-}
 
 export interface UserState {
   user: User | null;

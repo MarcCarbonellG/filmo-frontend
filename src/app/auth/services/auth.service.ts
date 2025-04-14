@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { clearUser } from '../../store/user/user.actions';
+import { selectUser } from '../../store/user/user.selectors';
+import { User } from '../models/user.interface';
 
 interface LoginResponse {
   token: string;
@@ -16,13 +18,17 @@ interface LoginResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = environment.API_URL;
+  private API_URL = environment.API_URL;
 
   constructor(
     private http: HttpClient,
     private localStorageService: LocalStorageService,
     private store: Store
   ) {}
+
+  getCurrentUser(): Observable<User | null> {
+    return this.store.select(selectUser);
+  }
 
   getToken(): string | null {
     return this.localStorageService.getFromLocalStorage('auth_token');
@@ -41,7 +47,7 @@ export class AuthService {
     username: string,
     password: string
   ): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/register`, {
+    return this.http.post<LoginResponse>(`${this.API_URL}/auth/register`, {
       email,
       username,
       password,
@@ -49,7 +55,7 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, {
+    return this.http.post<LoginResponse>(`${this.API_URL}/auth/login`, {
       username,
       password,
     });

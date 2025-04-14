@@ -29,4 +29,102 @@
   </div>
   <p class="italic">{{ movie.tagline }}</p>
   <p>{{ movie.overview }}</p>
+
+  <div *ngIf="isLoggedIn && !isReviewed">
+    <button
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+      (click)="toggleReviewForm()"
+    >
+      Añadir reseña
+    </button>
+
+    <div *ngIf="showReviewForm" class="mt-4">
+      <form
+        [formGroup]="reviewForm"
+        (ngSubmit)="submitReview()"
+        class="space-y-4 p-4 border rounded-lg shadow"
+      >
+        <!-- Estrellas -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Puntuación:</label>
+          <div class="flex flex-row-reverse justify-end gap-1">
+            <ng-container *ngFor="let star of stars">
+              <input
+                type="radio"
+                class="hidden"
+                [id]="'star' + star"
+                [value]="star"
+                formControlName="rating"
+              />
+              <label
+                [for]="'star' + star"
+                class="cursor-pointer text-2xl"
+                [class.text-yellow-400]="reviewForm.value.rating >= star"
+                [class.text-gray-400]="reviewForm.value.rating < star"
+              >
+                ★
+              </label>
+            </ng-container>
+          </div>
+          <p class="text-sm text-gray-700 mt-1">
+            Seleccionado: {{ reviewForm.value.rating }}
+          </p>
+        </div>
+
+        <!-- Reseña -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Reseña:</label>
+          <textarea
+            formControlName="review"
+            rows="4"
+            placeholder="Escribe tu reseña..."
+            class="w-full p-2 border border-gray-300 rounded"
+          ></textarea>
+        </div>
+
+        <!-- Botón enviar -->
+        <button
+          type="submit"
+          [disabled]="reviewForm.invalid"
+          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+        >
+          Enviar reseña
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="mt-6">
+    <h3 class="text-lg font-semibold mb-2">Reseñas:</h3>
+    <div *ngFor="let review of existingReviews">
+      <div *ngIf="user$ | async as user">
+        <div *ngIf="review.user_id === user.id; else default">
+          <div class="flex items-center gap-2 p-2">
+            <span class="font-medium">{{ review.username }}</span>
+            <span class="text-yellow-500"> {{ review.rating }} ★ </span>
+            <span class="text-gray-500 text-sm"
+              >({{ review.date | date : "short" }})</span
+            >
+            <p class="mt-1 text-gray-700">{{ review.content }}</p>
+            <button
+              class="bg-red-800 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:bg-red-700"
+              type="button"
+              (click)="deleteReview()"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+      <ng-template #default>
+        <div class="flex items-center gap-2 p-2 bg-gray-950">
+          <span class="font-medium text-white">{{ review.username }}</span>
+          <span class="text-yellow-500"> {{ review.rating }} ★ </span>
+          <span class="text-gray-500 text-sm"
+            >({{ review.date | date : "short" }})</span
+          >
+          <p class="mt-1 text-white">{{ review.content }}</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
 </div>
