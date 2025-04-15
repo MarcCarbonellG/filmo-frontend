@@ -24,6 +24,10 @@ export class MovieDetailsComponent implements OnInit {
   reviewForm!: FormGroup;
   stars: number[] = [5, 4, 3, 2, 1];
   isReviewed: boolean = true;
+  isInFavourites: boolean = false;
+  isInWatched: boolean = false;
+  favourites: number = 0;
+  watched: number = 0;
 
   existingReviews: Review[] = [];
 
@@ -43,6 +47,8 @@ export class MovieDetailsComponent implements OnInit {
     this.user$ = this.authService.getCurrentUser();
     this.movieId = this.route.snapshot.paramMap.get('id');
     this.loadMovie();
+    this.loadFavourites();
+    this.loadWatched();
     this.loadReviews();
     this.reviewForm = this.fb.group({
       rating: [1, [Validators.required]],
@@ -71,6 +77,7 @@ export class MovieDetailsComponent implements OnInit {
     } else {
       this.movieService.getReviews(this.movieId).subscribe({
         next: (data) => {
+          this.existingReviews = data;
           this.user$.pipe(take(1)).subscribe((user) => {
             if (user) {
               const userReviewIndex = data.findIndex(
@@ -82,10 +89,7 @@ export class MovieDetailsComponent implements OnInit {
                 this.existingReviews = [userReview, ...data];
               } else {
                 this.isReviewed = false;
-                this.existingReviews = data;
               }
-            } else {
-              this.existingReviews = data;
             }
           });
         },
@@ -108,17 +112,7 @@ export class MovieDetailsComponent implements OnInit {
       this.user$.pipe(take(1)).subscribe((user) => {
         if (user && this.movie) {
           this.movieService
-            .addReview(
-              user.id,
-              user.username,
-              user.avatar,
-              this.movie.id,
-              this.movie.title,
-              this.movie.poster_path,
-              this.movie.release_date,
-              rating,
-              review
-            )
+            .addReview(user.id, this.movie.id, rating, review)
             .subscribe({
               next: (response) => {
                 this.isReviewed = true;
@@ -131,8 +125,6 @@ export class MovieDetailsComponent implements OnInit {
                 console.error('Error al añadir la review:', err);
               },
             });
-        } else {
-          console.warn('Faltan datos necesarios para añadir la review');
         }
       });
 
@@ -157,8 +149,110 @@ export class MovieDetailsComponent implements OnInit {
             console.error('Error al eliminar la reseña:', err);
           },
         });
-      } else {
-        console.warn('Faltan datos necesarios para eliminar la reseña');
+      }
+    });
+  }
+
+  loadFavourites() {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.movie) {
+        this.movieService.getFavorites(this.movie.id).subscribe({
+          next: (response) => {
+            const favIndex = response.findIndex(
+              (fav) => fav.user_id === user.id
+            );
+            this.isInFavourites = favIndex !== -1 ? true : false;
+            this.favourites = response.length;
+          },
+          error: (err) => {
+            console.error('Error al cargar favoritos', err);
+          },
+        });
+      }
+    });
+  }
+
+  loadWatched() {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.movie) {
+        this.movieService.getWatched(this.movie.id).subscribe({
+          next: (response) => {
+            const watchedIndex = response.findIndex(
+              (watched) => watched.user_id === user.id
+            );
+            this.isInWatched = watchedIndex !== -1 ? true : false;
+            this.watched = response.length;
+          },
+          error: (err) => {
+            console.error('Error al cargar vistas', err);
+          },
+        });
+      }
+    });
+  }
+
+  addToFavourites() {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.movie) {
+        this.movieService.addToFavorites(user.id, this.movie.id).subscribe({
+          next: () => {
+            this.favourites++;
+            this.isInFavourites = true;
+          },
+          error: (err) => {
+            console.error('Error al añadir película a favoritos', err);
+          },
+        });
+      }
+    });
+  }
+
+  addToWatched() {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.movie) {
+        this.movieService.addToWatched(user.id, this.movie.id).subscribe({
+          next: () => {
+            this.watched++;
+            this.isInWatched = true;
+          },
+          error: (err) => {
+            console.error('Error al añadir película a vistas', err);
+          },
+        });
+      }
+    });
+  }
+
+  removeFromFavourites() {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.movie) {
+        this.movieService
+          .removeFromFavorites(user.id, this.movie.id)
+          .subscribe({
+            next: () => {
+              this.favourites--;
+              this.isInFavourites = false;
+            },
+            error: (err) => {
+              console.error('Error al quitar película de favoritos', err);
+            },
+          });
+      }
+    });
+  }
+
+  removeFromWatched() {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.movie) {
+        this.movieService.removeFromWatched(user.id, this.movie.id).subscribe({
+          next: () => {
+            this.watched--;
+            this.isInWatched = false;
+          },
+          error: (err) => {
+            console.error('Error al quitar película de vistas', err);
+          },
+        });
       }
     });
   }

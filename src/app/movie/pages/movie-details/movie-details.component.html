@@ -3,16 +3,50 @@
 </div>
 
 <div *ngIf="movie">
-  <img
-    src="{{ baseImageUrl + '/original' + movie.backdrop_path }}"
-    alt="{{ movie.title }} poster"
-  />
-  <h2 class="text-3xl">{{ movie.title }}</h2>
+  <picture>
+    <source
+      media="(min-width: 1280px)"
+      srcset="{{ baseImageUrl + '/original' + movie.backdrop_path }}"
+      type="image/jpeg"
+    />
+
+    <source
+      media="(min-width: 780px)"
+      srcset="{{ baseImageUrl + '/w1280' + movie.backdrop_path }}"
+      type="image/jpeg"
+    />
+
+    <img
+      src="{{ baseImageUrl + '/w780' + movie.backdrop_path }}"
+      alt="Imagen responsive y optimizada"
+    />
+  </picture>
   <img
     src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
     alt="{{ movie.title }} poster"
     width="100px"
   />
+  <h2 class="text-3xl">{{ movie.title }}</h2>
+  <div *ngIf="isLoggedIn">
+    <p>{{ favourites }}</p>
+    <button *ngIf="!isInFavourites" type="button" (click)="addToFavourites()">
+      +Añadir a favoritos
+    </button>
+    <button
+      *ngIf="isInFavourites"
+      type="button"
+      (click)="removeFromFavourites()"
+    >
+      -Quitar de favoritos
+    </button>
+    <p>{{ watched }}</p>
+    <button *ngIf="!isInWatched" type="button" (click)="addToWatched()">
+      +Añadir a vistas
+    </button>
+    <button *ngIf="isInWatched" type="button" (click)="removeFromWatched()">
+      -Quitar de vistas
+    </button>
+  </div>
   <p>FECHA DE ESTRENO: {{ movie.release_date }}</p>
   <p>DURACIÓN: {{ movie.runtime }}</p>
   <p>PAÍS: {{ movie.origin_country }}</p>
@@ -96,7 +130,7 @@
   <div class="mt-6">
     <h3 class="text-lg font-semibold mb-2">Reseñas:</h3>
     <div *ngFor="let review of existingReviews">
-      <div *ngIf="user$ | async as user">
+      <div *ngIf="user$ | async as user; else default">
         <div *ngIf="review.user_id === user.id; else default">
           <div class="flex items-center gap-2 p-2">
             <span class="font-medium">{{ review.username }}</span>
@@ -110,7 +144,7 @@
               type="button"
               (click)="deleteReview()"
             >
-              Delete
+              Eliminar
             </button>
           </div>
         </div>

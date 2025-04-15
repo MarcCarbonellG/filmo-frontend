@@ -9,9 +9,16 @@ import { Movie } from '../models/movie.interface';
 import { Review } from '../models/review.interface';
 import { SimplifiedMovie } from '../models/simplified-movie.interface';
 
-interface DefaultResponse {
+// Interfaz para peticiones de modificación de la base de datos (creación o eliminación)
+interface MutationResponse {
   message: string;
   data: any;
+}
+
+// Interfaz para relaciones entre un usuario y una película (favoritos y vista)
+interface UserMovieRelation {
+  user_id: number;
+  movie_id: number;
 }
 
 @Injectable({
@@ -51,35 +58,84 @@ export class MovieService {
 
   addReview(
     user_id: number,
-    username: string,
-    avatar: string,
     movie_id: string,
-    title: string,
-    poster: string,
-    release_date: string,
     rating: number,
     content: string
-  ): Observable<DefaultResponse> {
-    return this.http.post<DefaultResponse>(`${this.API_URL}/movie/review`, {
+  ): Observable<MutationResponse> {
+    return this.http.post<MutationResponse>(`${this.API_URL}/movie/review`, {
       user_id,
-      username,
-      avatar,
       movie_id,
-      title,
-      poster,
-      release_date,
       rating,
       content,
     });
   }
 
-  deleteReview(user_id: number, movie_id: string): Observable<DefaultResponse> {
-    return this.http.delete<DefaultResponse>(`${this.API_URL}/movie/review`, {
+  deleteReview(
+    user_id: number,
+    movie_id: string
+  ): Observable<MutationResponse> {
+    return this.http.delete<MutationResponse>(`${this.API_URL}/movie/review`, {
       body: { user_id, movie_id },
     });
   }
 
   getReviews(movie_id: string): Observable<Review[]> {
     return this.http.get<Review[]>(`${this.API_URL}/movie/review/${movie_id}`);
+  }
+
+  addToFavorites(
+    user_id: number,
+    movie_id: string
+  ): Observable<MutationResponse> {
+    return this.http.post<MutationResponse>(`${this.API_URL}/movie/fav`, {
+      user_id,
+      movie_id,
+    });
+  }
+
+  removeFromFavorites(
+    user_id: number,
+    movie_id: string
+  ): Observable<MutationResponse> {
+    return this.http.delete<MutationResponse>(`${this.API_URL}/movie/fav`, {
+      body: {
+        user_id,
+        movie_id,
+      },
+    });
+  }
+
+  getFavorites(movie_id: string): Observable<UserMovieRelation[]> {
+    return this.http.get<UserMovieRelation[]>(
+      `${this.API_URL}/movie/fav/${movie_id}`
+    );
+  }
+
+  addToWatched(
+    user_id: number,
+    movie_id: string
+  ): Observable<MutationResponse> {
+    return this.http.post<MutationResponse>(`${this.API_URL}/movie/watched`, {
+      user_id,
+      movie_id,
+    });
+  }
+
+  removeFromWatched(
+    user_id: number,
+    movie_id: string
+  ): Observable<MutationResponse> {
+    return this.http.delete<MutationResponse>(`${this.API_URL}/movie/watched`, {
+      body: {
+        user_id,
+        movie_id,
+      },
+    });
+  }
+
+  getWatched(movie_id: string): Observable<UserMovieRelation[]> {
+    return this.http.get<UserMovieRelation[]>(
+      `${this.API_URL}/movie/watched/${movie_id}`
+    );
   }
 }
