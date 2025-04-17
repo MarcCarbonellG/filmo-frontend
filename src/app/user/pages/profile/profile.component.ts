@@ -56,7 +56,11 @@ export class ProfileComponent implements OnInit {
     this.loadWatched();
     this.loadFollowers();
     this.loadFollowed();
-    this.loadFollowingRelationship();
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (String(user?.username) !== profileUsername) {
+        this.loadFollowingRelationship();
+      }
+    });
   }
 
   loadUserData(username: string): void {
@@ -102,19 +106,6 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  loadFollowingRelationship() {
-    this.user$.pipe(take(1)).subscribe((user) => {
-      this.userService.getFollowing(user!.id, this.user!.id).subscribe({
-        next: (response) => {
-          this.isFollowedByUser = response ? true : false;
-        },
-        error: () => {
-          this.errorMessage = 'Error al comporbar estado de seguimiento';
-        },
-      });
-    });
-  }
-
   loadFollowers() {
     if (this.user) {
       this.userService.getFollowersById(this.user.id).subscribe({
@@ -143,29 +134,48 @@ export class ProfileComponent implements OnInit {
 
   follow() {
     this.user$.pipe(take(1)).subscribe((user) => {
-      this.userService.follow(user!.id, this.user!.id).subscribe({
-        next: () => {
-          this.followers++;
-          this.isFollowedByUser = true;
-        },
-        error: () => {
-          this.errorMessage = 'Error al comporbar estado de seguimiento';
-        },
-      });
+      if (user && this.user) {
+        this.userService.follow(user.id, this.user.id).subscribe({
+          next: () => {
+            this.followers++;
+            this.isFollowedByUser = true;
+          },
+          error: () => {
+            this.errorMessage = 'Error al comporbar estado de seguimiento';
+          },
+        });
+      }
     });
   }
 
   unfollow() {
     this.user$.pipe(take(1)).subscribe((user) => {
-      this.userService.unfollow(user!.id, this.user!.id).subscribe({
-        next: () => {
-          this.followers--;
-          this.isFollowedByUser = false;
-        },
-        error: () => {
-          this.errorMessage = 'Error al comporbar estado de seguimiento';
-        },
-      });
+      if (user && this.user) {
+        this.userService.unfollow(user.id, this.user.id).subscribe({
+          next: () => {
+            this.followers--;
+            this.isFollowedByUser = false;
+          },
+          error: () => {
+            this.errorMessage = 'Error al comporbar estado de seguimiento';
+          },
+        });
+      }
+    });
+  }
+
+  loadFollowingRelationship() {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.user) {
+        this.userService.getFollowing(user.id, this.user.id).subscribe({
+          next: (response) => {
+            this.isFollowedByUser = response ? true : false;
+          },
+          error: () => {
+            this.errorMessage = 'Error al comporbar estado de seguimiento';
+          },
+        });
+      }
     });
   }
 }
