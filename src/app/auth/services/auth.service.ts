@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { clearUser } from '../../store/user/user.actions';
 import { selectUser } from '../../store/user/user.selectors';
-import { User } from '../models/user.interface';
+import { User } from '../../user/models/user.interface';
 
 interface LoginResponse {
   token: string;

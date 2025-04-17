@@ -18,7 +18,21 @@
         routerLinkActive="active"
         >Iniciar sesión</a
       >
-      <button *ngIf="isLoggedIn" (click)="logout()">Cerrar sesión</button>
+      <div *ngIf="user$ | async as user">
+        <a
+          *ngIf="isLoggedIn"
+          class="hover:cursor-pointer hover:text-secondary"
+          routerLink="/user/profile/{{ user.username }}"
+          >Perfil</a
+        >
+      </div>
+      <button
+        *ngIf="isLoggedIn"
+        class="hover:cursor-pointer hover:text-secondary"
+        (click)="logout()"
+      >
+        Cerrar sesión
+      </button>
     </nav>
   </div>
 </header>

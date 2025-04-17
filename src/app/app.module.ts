@@ -18,6 +18,7 @@ import { MovieModule } from './movie/movie.module';
 import { HomeComponent } from './pages/home/home.component';
 import { SharedModule } from './shared/shared.module';
 import { reducers } from './store';
+import { UserModule } from './user/user.module';
 
 export function localStorageSyncReducer(
   reducer: ActionReducer<any>
@@ -44,6 +45,7 @@ const metaReducers: Array<MetaReducer<any, any>> = [localStorageSyncReducer];
     AuthModule,
     SharedModule,
     MovieModule,
+    UserModule,
     StoreModule.forRoot(reducers, { metaReducers }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
