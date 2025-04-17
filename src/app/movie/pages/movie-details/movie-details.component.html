@@ -27,6 +27,7 @@
     width="100px"
   />
   <h2 class="text-3xl">{{ movie.title }}</h2>
+  <p>PUNTUACIÓN FILMO: {{ rating | number : "1.0-1" }}</p>
   <div *ngIf="isLoggedIn">
     <p>{{ favourites }}</p>
     <button *ngIf="!isInFavourites" type="button" (click)="addToFavourites()">

@@ -28,6 +28,7 @@ export class MovieDetailsComponent implements OnInit {
   isInWatched: boolean = false;
   favourites: number = 0;
   watched: number = 0;
+  rating: number = 0;
 
   existingReviews: Review[] = [];
 
@@ -56,6 +57,12 @@ export class MovieDetailsComponent implements OnInit {
     });
   }
 
+  calculateAverageRating() {
+    this.rating =
+      this.existingReviews.reduce((acc, review) => acc + review.rating, 0) /
+      this.existingReviews.length;
+  }
+
   loadMovie() {
     if (!this.movieId) {
       this.errorMessage = 'Error al cargar película';
@@ -78,6 +85,7 @@ export class MovieDetailsComponent implements OnInit {
       this.movieService.getReviews(this.movieId).subscribe({
         next: (data) => {
           this.existingReviews = data;
+          this.calculateAverageRating();
           this.user$.pipe(take(1)).subscribe((user) => {
             if (user) {
               const userReviewIndex = data.findIndex(
@@ -119,7 +127,7 @@ export class MovieDetailsComponent implements OnInit {
                 const newReview = response.data.movie_review;
                 newReview.username = user.username;
                 this.existingReviews.unshift(newReview);
-                console.log('Reseña añadida con éxito');
+                this.calculateAverageRating();
               },
               error: (err) => {
                 console.error('Error al añadir la review:', err);
@@ -143,7 +151,7 @@ export class MovieDetailsComponent implements OnInit {
               (review) => review.user_id == user.id
             );
             this.existingReviews.splice(userReviewIndex, 1);
-            console.log('Reseña eliminada con éxito');
+            this.calculateAverageRating();
           },
           error: (err) => {
             console.error('Error al eliminar la reseña:', err);
