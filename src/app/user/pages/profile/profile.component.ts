@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, take } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
 import { DbMovie } from '../../../movie/models/db-movie';
@@ -29,7 +29,8 @@ export class ProfileComponent implements OnInit {
     private authService: AuthService,
     public route: ActivatedRoute,
     private userService: UserService,
-    private movieService: MovieService
+    private movieService: MovieService,
+    private router: Router
   ) {
     this.user$ = this.authService.getCurrentUser();
     this.baseImageUrl = this.movieService.getImageBaseUrl();
@@ -132,6 +133,21 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  loadFollowingRelationship() {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.user) {
+        this.userService.getFollowing(user.id, this.user.id).subscribe({
+          next: (response) => {
+            this.isFollowedByUser = response ? true : false;
+          },
+          error: () => {
+            this.errorMessage = 'Error al comporbar estado de seguimiento';
+          },
+        });
+      }
+    });
+  }
+
   follow() {
     this.user$.pipe(take(1)).subscribe((user) => {
       if (user && this.user) {
@@ -164,18 +180,22 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  loadFollowingRelationship() {
-    this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.user) {
-        this.userService.getFollowing(user.id, this.user.id).subscribe({
-          next: (response) => {
-            this.isFollowedByUser = response ? true : false;
-          },
-          error: () => {
-            this.errorMessage = 'Error al comporbar estado de seguimiento';
-          },
-        });
-      }
-    });
+  deleteAccount() {
+    const confirmed = confirm(
+      '¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.'
+    );
+
+    if (confirmed && this.user) {
+      this.userService.deleteAccount(this.user.id).subscribe({
+        next: () => {
+          alert('Cuenta eliminada correctamente.');
+          this.authService.logout();
+          this.router.navigate(['/']);
+        },
+        error: () => {
+          alert('Hubo un problema al eliminar la cuenta. Inténtalo de nuevo.');
+        },
+      });
+    }
   }
 }

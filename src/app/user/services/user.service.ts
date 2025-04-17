@@ -84,4 +84,10 @@ export class UserService {
       }
     );
   }
+
+  deleteAccount(user_id: number): Observable<MutationResponse> {
+    return this.http.delete<MutationResponse>(
+      `${this.API_URL}/user/${user_id}`
+    );
+  }
 }

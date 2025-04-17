@@ -54,6 +54,7 @@
   <div *ngIf="user$ | async as loggedUser">
     <button
       *ngIf="user.id === loggedUser.id"
+      (click)="deleteAccount()"
       class="bg-red-800 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:bg-red-700"
     >
       Eliminar cuenta
