@@ -1,80 +1,133 @@
-<div class="login-container">
-  <h2>Crear cuenta</h2>
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <label>
-      Email
-      <input type="email" formControlName="email" />
-    </label>
-    <div
-      *ngIf="
-        registerForm.get('email')?.touched && registerForm.get('email')?.invalid
-      "
+<div class="w-full flex flex-col justify-center items-center">
+  <h1 class="text-center text-4xl font-bold text-white mt-8">FILMO</h1>
+  <div class="form-card">
+    <h2 class="text-primary text-2xl font-medium text-center">Crear cuenta</h2>
+    <form
+      class="flex flex-col gap-5"
+      [formGroup]="registerForm"
+      (ngSubmit)="onSubmit()"
     >
-      <small *ngIf="registerForm.get('email')?.errors?.['required']"
-        >Correo requerido</small
-      >
-      <small *ngIf="registerForm.get('email')?.errors?.['email']"
-        >Formato inválido</small
-      >
-    </div>
-    <label>
-      Nombre de usuario
-      <input formControlName="username" />
-    </label>
-    <div
-      *ngIf="
-        registerForm.get('username')?.touched &&
-        registerForm.get('username')?.invalid
-      "
-    >
-      <small *ngIf="registerForm.get('username')?.errors?.['required']"
-        >Nombre de usuario requerido</small
-      >
-      <small *ngIf="registerForm.get('username')?.errors?.['maxlength']"
-        >Máximo 20 caracteres</small
-      >
-    </div>
+      <div class="w-full flex flex-col gap-1">
+        <input
+          class="form-control"
+          type="email"
+          formControlName="email"
+          placeholder="Email"
+        />
+        <div
+          *ngIf="
+            registerForm.get('email')?.touched &&
+            registerForm.get('email')?.invalid
+          "
+        >
+          <small *ngIf="registerForm.get('email')?.errors?.['required']"
+            ><span class="text-red-600 text-sm">Correo requerido</span></small
+          >
+          <small *ngIf="registerForm.get('email')?.errors?.['email']"
+            ><span class="text-red-600 text-sm">Formato inválido</span></small
+          >
+        </div>
+      </div>
 
-    <label>
-      Contraseña
-      <input type="password" formControlName="password" />
-    </label>
-    <div
-      *ngIf="
-        registerForm.get('password')?.touched &&
-        registerForm.get('password')?.invalid
-      "
-    >
-      <small *ngIf="registerForm.get('password')?.errors?.['required']"
-        >Contraseña requerida</small
-      >
-      <small *ngIf="registerForm.get('password')?.errors?.['minlength']"
-        >Mínimo 8 caracteres</small
-      >
-      <small *ngIf="registerForm.get('password')?.errors?.['pattern']">
-        Debe contener al menos una mayúscula, una minúscula y un número
-      </small>
-    </div>
+      <div class="w-full flex flex-col gap-1">
+        <input
+          class="form-control"
+          formControlName="username"
+          placeholder="Nombre de usuario"
+        />
+        <div
+          *ngIf="
+            registerForm.get('username')?.touched &&
+            registerForm.get('username')?.invalid
+          "
+        >
+          <small *ngIf="registerForm.get('username')?.errors?.['required']"
+            ><span class="text-red-600 text-sm"
+              >Nombre de usuario requerido</span
+            ></small
+          >
+          <small *ngIf="registerForm.get('username')?.errors?.['maxlength']"
+            ><span class="text-red-600 text-sm"
+              >Máximo 20 caracteres</span
+            ></small
+          >
+        </div>
+      </div>
 
-    <label>
-      Confirmar contraseña
-      <input type="password" formControlName="confirm" />
-    </label>
-    <div
-      *ngIf="
-        registerForm.hasError('passwordMismatch') &&
-        registerForm.get('confirm')?.touched
-      "
-    >
-      <small>Las contraseñas no coinciden</small>
-    </div>
+      <div class="w-full flex flex-col gap-1">
+        <input
+          class="form-control"
+          type="password"
+          formControlName="password"
+          placeholder="Contraseña"
+        />
+        <div
+          *ngIf="
+            registerForm.get('password')?.touched &&
+            registerForm.get('password')?.invalid
+          "
+        >
+          <small *ngIf="registerForm.get('password')?.errors?.['required']"
+            ><span class="text-red-600 text-sm"
+              >Contraseña requerida</span
+            ></small
+          >
+          <small *ngIf="registerForm.get('password')?.errors?.['minlength']"
+            ><span class="text-red-600 text-sm"
+              >Mínimo 8 caracteres</span
+            ></small
+          >
+          <small *ngIf="registerForm.get('password')?.errors?.['pattern']">
+            <span class="text-red-600 text-sm"
+              >Debe contener al menos una mayúscula, una minúscula y un
+              número</span
+            >
+          </small>
+        </div>
+      </div>
 
-    <button type="submit" [disabled]="registerForm.invalid">REGISTRARSE</button>
-    <div *ngIf="errorMessage">{{ errorMessage }}</div>
+      <div class="w-full flex flex-col gap-1">
+        <input
+          class="form-control"
+          type="password"
+          formControlName="confirm"
+          placeholder="Confirmar contraseña"
+        />
+        <div
+          *ngIf="
+            registerForm.hasError('passwordMismatch') &&
+            registerForm.get('confirm')?.touched
+          "
+        >
+          <small
+            ><span class="text-red-600 text-sm"
+              >Las contraseñas no coinciden</span
+            ></small
+          >
+        </div>
+      </div>
 
-    <div>
-      <p>Ya tienes una cuenta?</p>
-      <a routerLink="/login">Iniciar sesión</a>
-    </div>
-  </form>
+      <div class="w-full flex flex-col gap-1">
+        <div *ngIf="errorMessage">
+          <span class="text-red-600 text-sm">{{ errorMessage }}</span>
+        </div>
+        <button
+          class="primary-btn"
+          type="submit"
+          [disabled]="registerForm.invalid"
+        >
+          REGISTRARSE
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-2 text-primary-light">
+          <hr class="w-full" />
+          <p>¿Ya&nbsp;tienes&nbsp;una&nbsp;cuenta?</p>
+          <hr class="w-full" />
+        </div>
+        <a class="secondary-a" routerLink="/login">Iniciar sesión</a>
+      </div>
+    </form>
+  </div>
 </div>
