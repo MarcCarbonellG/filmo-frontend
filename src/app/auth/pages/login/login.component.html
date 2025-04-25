@@ -1,35 +1,69 @@
-<div class="login-container">
-  <h2>Iniciar sesión</h2>
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <label>
-      Nombre de usuario
-      <input formControlName="username" />
-    </label>
-    <div
-      *ngIf="
-        loginForm.get('username')?.touched && loginForm.get('username')?.invalid
-      "
+<div class="w-full flex flex-col justify-center items-center">
+  <h1 class="text-center text-4xl font-bold text-white mt-8">FILMO</h1>
+  <div class="form-card">
+    <h2 class="text-primary text-2xl font-medium text-center">
+      Iniciar sesión
+    </h2>
+    <form
+      class="flex flex-col gap-5"
+      [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()"
     >
-      Nombre de usuario requerido
-    </div>
+      <div class="w-full flex flex-col gap-1">
+        <input
+          class="form-control"
+          formControlName="username"
+          placeholder="Nombre de usuario"
+        />
+        <div
+          *ngIf="
+            loginForm.get('username')?.touched &&
+            loginForm.get('username')?.invalid
+          "
+        >
+          <span class="text-red-600 text-sm">
+            Nombre de usuario requerido
+          </span>
+        </div>
+      </div>
+      <div class="w-full flex flex-col gap-1">
+        <input
+          class="form-control"
+          type="password"
+          formControlName="password"
+          placeholder="Contraseña"
+        />
+        <div
+          *ngIf="
+            loginForm.get('password')?.touched &&
+            loginForm.get('password')?.invalid
+          "
+        >
+          <span class="text-red-600 text-sm"> Contraseña requerida </span>
+        </div>
+      </div>
 
-    <label>
-      Contraseña
-      <input type="password" formControlName="password" />
-    </label>
-    <div
-      *ngIf="
-        loginForm.get('password')?.touched && loginForm.get('password')?.invalid
-      "
-    >
-      Contraseña requerida
-    </div>
+      <div class="w-full flex flex-col gap-1">
+        <div *ngIf="errorMessage">
+          <span class="text-red-600 text-sm">{{ errorMessage }}</span>
+        </div>
+        <button
+          class="primary-btn"
+          type="submit"
+          [disabled]="loginForm.invalid"
+        >
+          INICIAR SESIÓN
+        </button>
+      </div>
 
-    <button type="submit" [disabled]="loginForm.invalid">INICIAR SESIÓN</button>
-    <div *ngIf="errorMessage">{{ errorMessage }}</div>
-    <div>
-      <p>Nuevo en Filmo?</p>
-      <a routerLink="/register">Crear cuenta</a>
-    </div>
-  </form>
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-2 text-primary-light">
+          <hr class="w-full" />
+          <p>¿Nuevo&nbsp;en&nbsp;Filmo?</p>
+          <hr class="w-full" />
+        </div>
+        <a class="secondary-a" routerLink="/register">Crear cuenta</a>
+      </div>
+    </form>
+  </div>
 </div>
