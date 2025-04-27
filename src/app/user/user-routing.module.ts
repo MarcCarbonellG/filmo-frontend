@@ -6,6 +6,9 @@ const routes: Routes = [
   {
     path: 'profile/:username',
     component: ProfileComponent,
+    data: {
+      renderMode: 'dynamic',
+    },
     // canActivate: [authGuard],
   },
 ];
