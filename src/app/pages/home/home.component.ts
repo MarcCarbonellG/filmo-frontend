@@ -17,6 +17,17 @@ export class HomeComponent implements OnInit {
   errorMessage: string | null = null;
   baseImageUrl: string;
 
+  customOptions = {
+    loop: true,
+    dots: true,
+    nav: false,
+    responsive: {
+      0: {
+        items: 1,
+      },
+    },
+  };
+
   constructor(
     private movieService: MovieService,
     private authService: AuthService

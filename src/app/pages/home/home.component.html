@@ -1,57 +1,119 @@
-<div *ngIf="errorMessage" class="text-red-800">{{ errorMessage }}</div>
+<div class="w-full flex flex-col justify-center items-center">
+  <div class="w-[calc(100vw*2/3)]">
+    <owl-carousel-o [options]="customOptions">
+      <ng-template carouselSlide *ngFor="let movie of nowPlaying.slice(0, 4)">
+        <a routerLink="/{{ movie.id }}">
+          <figure class="relative w-fit">
+            <picture
+              style="
+                mask-image: linear-gradient(
+                    to top,
+                    transparent,
+                    black,
+                    black,
+                    transparent
+                  ),
+                  linear-gradient(
+                    to left,
+                    transparent,
+                    black,
+                    black,
+                    transparent
+                  );
+                mask-composite: intersect;
+                -webkit-mask-composite: destination-in;
+              "
+            >
+              <source
+                media="(min-width: 1280px)"
+                srcset="{{ baseImageUrl + '/original' + movie.backdrop_path }}"
+                type="image/jpeg"
+              />
 
-<div *ngIf="nowPlaying.length > 0">
-  <h2 class="text-3xl">En cartelera</h2>
-  <div class="flex flex-wrap">
-    <div *ngFor="let movie of nowPlaying">
-      <a routerLink="/{{ movie.id }}">
-        <img
-          src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
-          alt="{{ movie.title }} poster"
-          width="100px"
-      /></a>
+              <source
+                media="(min-width: 780px)"
+                srcset="{{ baseImageUrl + '/w1280' + movie.backdrop_path }}"
+                type="image/jpeg"
+              />
+
+              <img
+                src="{{ baseImageUrl + '/w780' + movie.backdrop_path }}"
+                alt="Imagen responsive y optimizada"
+              />
+            </picture>
+            <figcaption
+              class="absolute bottom-4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-4xl font-bold"
+            >
+              {{ movie.title }}
+            </figcaption>
+          </figure></a
+        >
+      </ng-template>
+    </owl-carousel-o>
+  </div>
+
+  <div *ngIf="errorMessage" class="text-red-800">{{ errorMessage }}</div>
+  <div class="mb-8" *ngIf="nowPlaying.length > 0">
+    <h2 class="text-2xl text-white mb-4">En cartelera</h2>
+    <hr class="w-full border-secondary mb-5" />
+    <div class="h-80 flex flex-wrap justify-between gap-3 overflow-hidden">
+      <div *ngFor="let movie of nowPlaying">
+        <a routerLink="/{{ movie.id }}">
+          <img
+            class="h-[150px] rounded-xs border-1 border-gray-400 hover:opacity-70"
+            src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
+            alt="{{ movie.title }} poster"
+            width="100px"
+        /></a>
+      </div>
     </div>
   </div>
-</div>
 
-<div *ngIf="upcoming.length > 0">
-  <h2 class="text-3xl">Próximamente</h2>
-  <div class="flex flex-wrap">
-    <div *ngFor="let movie of upcoming">
-      <a routerLink="/{{ movie.id }}">
-        <img
-          src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
-          alt="{{ movie.title }} poster"
-          width="100px"
-      /></a>
+  <div class="mb-8" *ngIf="upcoming.length > 0">
+    <h2 class="text-2xl text-white mb-4">Próximamente</h2>
+    <hr class="w-full border-secondary mb-5" />
+    <div class="h-80 flex flex-wrap justify-between gap-3 overflow-hidden">
+      <div *ngFor="let movie of upcoming">
+        <a routerLink="/{{ movie.id }}">
+          <img
+            class="h-[150px] rounded-xs border-1 border-gray-400 hover:opacity-70"
+            src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
+            alt="{{ movie.title }} poster"
+            width="100px"
+        /></a>
+      </div>
     </div>
   </div>
-</div>
 
-<div *ngIf="popular.length > 0">
-  <h2 class="text-3xl">Populares</h2>
-  <div class="flex flex-wrap">
-    <div *ngFor="let movie of popular">
-      <a routerLink="/{{ movie.id }}">
-        <img
-          src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
-          alt="{{ movie.title }} poster"
-          width="100px"
-      /></a>
+  <div class="mb-8" *ngIf="popular.length > 0">
+    <h2 class="text-2xl text-white mb-4">Populares</h2>
+    <hr class="w-full border-secondary mb-5" />
+    <div class="h-80 flex flex-wrap justify-between gap-3 overflow-hidden">
+      <div *ngFor="let movie of popular">
+        <a routerLink="/{{ movie.id }}">
+          <img
+            class="h-[150px] rounded-xs border-1 border-gray-400 hover:opacity-70"
+            src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
+            alt="{{ movie.title }} poster"
+            width="100px"
+        /></a>
+      </div>
     </div>
   </div>
-</div>
 
-<div *ngIf="topRated.length > 0">
-  <h2 class="text-3xl">Mejor valoradas</h2>
-  <div class="flex flex-wrap">
-    <div *ngFor="let movie of topRated">
-      <a routerLink="/{{ movie.id }}">
-        <img
-          src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
-          alt="{{ movie.title }} poster"
-          width="100px"
-      /></a>
+  <div class="mb-8" *ngIf="topRated.length > 0">
+    <h2 class="text-2xl text-white mb-4">Mejor valoradas (TMDb)</h2>
+    <hr class="w-full border-secondary mb-5" />
+    <div class="h-80 flex flex-wrap justify-between gap-3 overflow-hidden">
+      <div *ngFor="let movie of topRated">
+        <a routerLink="/{{ movie.id }}">
+          <img
+            class="h-[150px] rounded-xs border-1 border-gray-400 hover:opacity-70"
+            src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
+            alt="{{ movie.title }} poster"
+            width="100px"
+        /></a>
+      </div>
     </div>
   </div>
 </div>
