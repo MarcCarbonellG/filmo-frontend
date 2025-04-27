@@ -24,6 +24,7 @@ export class ProfileComponent implements OnInit {
   followed: number = 0;
   isFollowedByUser: boolean = false;
   baseImageUrl: string;
+  tab: 'w' | 'f' | 'l' = 'w';
 
   constructor(
     private authService: AuthService,
@@ -49,6 +50,10 @@ export class ProfileComponent implements OnInit {
 
   get isLoggedIn(): boolean {
     return this.authService.isAuthenticated();
+  }
+
+  changeTab(newTab: 'w' | 'f' | 'l') {
+    this.tab = newTab;
   }
 
   loadProfile(profileUsername: string) {

@@ -1,56 +1,108 @@
-<div *ngIf="user; else loadError">
-  <p *ngIf="user.is_admin">[ADMIN]</p>
-  <p>NOMBRE DE USUARIO: {{ user.username }}</p>
-  <p>SIGUIENDO: {{ followed }}</p>
-  <p>SEGUIDORES: {{ followers }}</p>
-  <div *ngIf="user$ | async as loggedUser">
-    <div *ngIf="user.id !== loggedUser.id">
-      <button
-        *ngIf="!isFollowedByUser"
-        (click)="follow()"
-        class="bg-blue-500 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:bg-blue-500"
-      >
-        Seguir
-      </button>
-      <button
-        *ngIf="isFollowedByUser"
-        (click)="unfollow()"
-        class="bg-blue-500 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:bg-blue-500"
-      >
-        Dejar de seguir
-      </button>
-    </div>
-  </div>
-  <div>
-    <p>VISTAS</p>
-    <div class="flex flex-wrap">
-      <div *ngFor="let movie of watched">
-        <a routerLink="/{{ movie.id }}">
-          <img
-            src="{{ baseImageUrl + '/w200' + movie.poster }}"
-            alt="{{ movie.title }} poster"
-            width="100px"
-        /></a>
+<div
+  class="w-full flex flex-col justify-center gap-8 my-8"
+  *ngIf="user; else loadError"
+>
+  <div class="flex flex-col gap-4">
+    <div class="flex justify-center gap-4">
+      <h1 class="text-4xl font-medium">
+        {{ user.username }}
+      </h1>
+      <div *ngIf="user$ | async as loggedUser">
+        <div
+          class="h-full flex items-end"
+          *ngIf="user.id !== loggedUser.id; else admin"
+        >
+          <button
+            *ngIf="!isFollowedByUser"
+            (click)="follow()"
+            class="bg-blue-500 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:opacity-80"
+          >
+            Seguir
+          </button>
+          <button
+            *ngIf="isFollowedByUser"
+            (click)="unfollow()"
+            class="bg-blue-500 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:opacity-80"
+          >
+            Dejar de seguir
+          </button>
+        </div>
+        <ng-template #admin>
+          <div class="h-full flex items-center">
+            <span *ngIf="user.is_admin">[ADMIN]</span>
+          </div>
+        </ng-template>
       </div>
     </div>
-  </div>
-  <div>
-    <p>FAVORITAS</p>
-    <div class="flex flex-wrap">
-      <div *ngFor="let movie of favorites">
-        <a routerLink="/{{ movie.id }}">
-          <img
-            src="{{ baseImageUrl + '/w200' + movie.poster }}"
-            alt="{{ movie.title }} poster"
-            width="100px"
-        /></a>
-      </div>
+    <div class="flex justify-center gap-2 font-medium">
+      <p>{{ followed }}</p>
+      <p class="opacity-80">siguiendo</p>
+      <p>{{ followers }}</p>
+      <p class="opacity-80">seguidores</p>
     </div>
   </div>
-  <div>
-    <p>LISTAS</p>
-  </div>
+  <div class="flex flex-col gap-8">
+    <div class="flex justify-center gap-16 text-lg font-medium">
+      <p *ngIf="tab === 'w'" class="border-b-3 border-white px-3 pb-1">
+        VISTAS
+      </p>
+      <p
+        *ngIf="tab !== 'w'"
+        class="px-3 pb-1 hover:opacity-80 hover:cursor-pointer"
+        (click)="changeTab('w')"
+      >
+        VISTAS
+      </p>
+      <p *ngIf="tab === 'f'" class="border-b-3 border-white px-3 pb-1">
+        FAVORITAS
+      </p>
+      <p
+        *ngIf="tab !== 'f'"
+        class="px-3 pb-1 hover:opacity-80 hover:cursor-pointer"
+        (click)="changeTab('f')"
+      >
+        FAVORITAS
+      </p>
+      <p *ngIf="tab === 'l'" class="border-b-3 border-white px-3 pb-1">
+        LISTAS
+      </p>
+      <p
+        *ngIf="tab !== 'l'"
+        class="px-3 pb-1 hover:opacity-80 hover:cursor-pointer"
+        (click)="changeTab('l')"
+      >
+        LISTAS
+      </p>
+    </div>
 
+    <div *ngIf="tab === 'w'">
+      <div class="flex flex-wrap gap-3">
+        <div *ngFor="let movie of watched">
+          <a routerLink="/{{ movie.id }}">
+            <img
+              class="h-[150px] rounded-xs border-1 border-gray-400 hover:opacity-70"
+              src="{{ baseImageUrl + '/w200' + movie.poster }}"
+              alt="{{ movie.title }} poster"
+              width="100px"
+          /></a>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="tab === 'f'">
+      <div class="flex flex-wrap gap-3">
+        <div *ngFor="let movie of favorites">
+          <a routerLink="/{{ movie.id }}">
+            <img
+              class="h-[150px] rounded-xs border-1 border-gray-400 hover:opacity-70"
+              src="{{ baseImageUrl + '/w200' + movie.poster }}"
+              alt="{{ movie.title }} poster"
+              width="100px"
+          /></a>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="tab === 'l'"></div>
+  </div>
   <div *ngIf="user$ | async as loggedUser">
     <button
       *ngIf="user.id === loggedUser.id"
