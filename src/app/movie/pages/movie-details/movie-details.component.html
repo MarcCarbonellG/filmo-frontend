@@ -2,164 +2,216 @@
   {{ errorMessage }}
 </div>
 
-<div *ngIf="movie">
-  <picture>
-    <source
-      media="(min-width: 1280px)"
-      srcset="{{ baseImageUrl + '/original' + movie.backdrop_path }}"
-      type="image/jpeg"
-    />
-
-    <source
-      media="(min-width: 780px)"
-      srcset="{{ baseImageUrl + '/w1280' + movie.backdrop_path }}"
-      type="image/jpeg"
-    />
-
-    <img
-      src="{{ baseImageUrl + '/w780' + movie.backdrop_path }}"
-      alt="Imagen responsive y optimizada"
-    />
-  </picture>
-  <img
-    src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
-    alt="{{ movie.title }} poster"
-    width="100px"
-  />
-  <h2 class="text-3xl">{{ movie.title }}</h2>
-  <p>PUNTUACIÓN FILMO: {{ rating | number : "1.0-1" }}</p>
-  <div *ngIf="isLoggedIn">
-    <p>{{ favourites }}</p>
-    <button *ngIf="!isInFavourites" type="button" (click)="addToFavourites()">
-      +Añadir a favoritos
-    </button>
-    <button
-      *ngIf="isInFavourites"
-      type="button"
-      (click)="removeFromFavourites()"
+<div class="mb-8" *ngIf="movie">
+  <div class="relative w-full">
+    <picture
+      style="
+        mask-image: linear-gradient(
+            to top,
+            transparent,
+            black,
+            black,
+            transparent
+          ),
+          linear-gradient(to left, transparent, black, black, transparent);
+        mask-composite: intersect;
+        -webkit-mask-composite: destination-in;
+      "
     >
-      -Quitar de favoritos
-    </button>
-    <p>{{ watched }}</p>
-    <button *ngIf="!isInWatched" type="button" (click)="addToWatched()">
-      +Añadir a vistas
-    </button>
-    <button *ngIf="isInWatched" type="button" (click)="removeFromWatched()">
-      -Quitar de vistas
-    </button>
-  </div>
-  <p>FECHA DE ESTRENO: {{ movie.release_date }}</p>
-  <p>DURACIÓN: {{ movie.runtime }}</p>
-  <p>PAÍS: {{ movie.origin_country }}</p>
-  <p>IDIOMA ORIGINAL: {{ movie.original_language }}</p>
-  <p>PRODUCTORAS:</p>
-  <div *ngFor="let producer of movie.production_companies">
-    <p>{{ producer.name }}</p>
-  </div>
-  <p>PRESUPUESTO: {{ movie.budget }}</p>
-  <p>RECAUDACIÓN: {{ movie.revenue }}</p>
-  <p>GÉNEROS:</p>
-  <div *ngFor="let genre of movie.genres">
-    <p>{{ genre.name }}</p>
-  </div>
-  <p class="italic">{{ movie.tagline }}</p>
-  <p>{{ movie.overview }}</p>
+      <source
+        media="(min-width: 1280px)"
+        srcset="{{ baseImageUrl + '/original' + movie.backdrop_path }}"
+        type="image/jpeg"
+      />
 
-  <div *ngIf="isLoggedIn && !isReviewed">
-    <button
-      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-      (click)="toggleReviewForm()"
-    >
-      Añadir reseña
-    </button>
+      <source
+        media="(min-width: 780px)"
+        srcset="{{ baseImageUrl + '/w1280' + movie.backdrop_path }}"
+        type="image/jpeg"
+      />
 
-    <div *ngIf="showReviewForm" class="mt-4">
-      <form
-        [formGroup]="reviewForm"
-        (ngSubmit)="submitReview()"
-        class="space-y-4 p-4 border rounded-lg shadow"
-      >
-        <!-- Estrellas -->
-        <div>
-          <label class="block text-sm font-medium mb-1">Puntuación:</label>
-          <div class="flex flex-row-reverse justify-end gap-1">
-            <ng-container *ngFor="let star of stars">
-              <input
-                type="radio"
-                class="hidden"
-                [id]="'star' + star"
-                [value]="star"
-                formControlName="rating"
-              />
-              <label
-                [for]="'star' + star"
-                class="cursor-pointer text-2xl"
-                [class.text-yellow-400]="reviewForm.value.rating >= star"
-                [class.text-gray-400]="reviewForm.value.rating < star"
-              >
-                ★
-              </label>
-            </ng-container>
+      <img
+        src="{{ baseImageUrl + '/w780' + movie.backdrop_path }}"
+        alt="Imagen responsive y optimizada"
+      />
+    </picture>
+
+    <div class="absolute bottom-0 left-0 w-full">
+      <div class="relative w-full">
+        <img
+          class="w-1/5 rounded-xs border-1 border-gray-400"
+          src="{{ baseImageUrl + '/w500' + movie.poster_path }}"
+          alt="{{ movie.title }} poster"
+        />
+        <div class="w-1/5 flex justify-center gap-4">
+          <div class="flex gap-2" *ngIf="isLoggedIn; else notLogged">
+            <button
+              class="hover:cursor-pointer hover:opacity-70"
+              *ngIf="!isInFavourites"
+              type="button"
+              (click)="addToFavourites()"
+            >
+              <i class="fa-regular fa-heart"></i>
+            </button>
+            <button
+              class="hover:cursor-pointer hover:opacity-70"
+              *ngIf="isInFavourites"
+              type="button"
+              (click)="removeFromFavourites()"
+            >
+              <i class="fa-solid fa-heart"></i>
+            </button>
+            <p>{{ favourites }}</p>
+            <button
+              class="hover:cursor-pointer hover:opacity-70"
+              *ngIf="!isInWatched"
+              type="button"
+              (click)="addToWatched()"
+            >
+              <i class="fa-regular fa-eye"></i>
+            </button>
+            <button
+              class="hover:cursor-pointer hover:opacity-70"
+              *ngIf="isInWatched"
+              type="button"
+              (click)="removeFromWatched()"
+            >
+              <i class="fa-solid fa-eye"></i>
+            </button>
+            <p>{{ watched }}</p>
           </div>
-          <p class="text-sm text-gray-700 mt-1">
-            Seleccionado: {{ reviewForm.value.rating }}
-          </p>
+          <ng-template #notLogged>
+            <div class="flex gap-2">
+              <button type="button" disabled>
+                <i class="fa-regular fa-heart"></i>
+              </button>
+              <p>{{ favourites }}</p>
+              <button type="button" disabled>
+                <i class="fa-regular fa-eye"></i>
+              </button>
+              <p>{{ watched }}</p>
+            </div>
+          </ng-template>
         </div>
 
-        <!-- Reseña -->
-        <div>
-          <label class="block text-sm font-medium mb-1">Reseña:</label>
-          <textarea
-            formControlName="review"
-            rows="4"
-            placeholder="Escribe tu reseña..."
-            class="w-full p-2 border border-gray-300 rounded"
-          ></textarea>
+        <div class="absolute bottom-0 left-1/5 ml-4">
+          <div class="flex gap-4 mb-4">
+            <h2 class="text-4xl">
+              {{ movie.title }}
+            </h2>
+            <div class="flex items-end">
+              <p>FILMO: {{ rating | number : "1.0-1" }}</p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="flex flex-wrap gap-x-2">
+              <p>FECHA DE ESTRENO: {{ movie.release_date }}</p>
+              <p>DURACIÓN: {{ movie.runtime }}</p>
+              <p>PAÍS: {{ movie.origin_country }}</p>
+              <p>IDIOMA ORIGINAL: {{ movie.original_language }}</p>
+              <!-- <p>PRODUCTORAS:</p>
+              <div *ngFor="let producer of movie.production_companies">
+                <p>{{ producer.name }}</p>
+              </div> -->
+              <p>PRESUPUESTO: {{ movie.budget | moneyShort }}</p>
+              <p>RECAUDACIÓN: {{ movie.revenue | moneyShort }}</p>
+              <p>GÉNEROS:</p>
+              <div *ngFor="let genre of movie.genres">
+                <p>{{ genre.name }}</p>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <!-- Botón enviar -->
-        <button
-          type="submit"
-          [disabled]="reviewForm.invalid"
-          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-        >
-          Enviar reseña
-        </button>
-      </form>
+      </div>
     </div>
   </div>
-  <div class="mt-6">
-    <h3 class="text-lg font-semibold mb-2">Reseñas:</h3>
-    <div *ngFor="let review of existingReviews">
-      <div *ngIf="user$ | async as user; else default">
-        <div *ngIf="review.user_id === user.id; else default">
+
+  <div class="flex flex-col gap-4 mt-8">
+    <p class="italic">{{ movie.tagline }}</p>
+    <p>{{ movie.overview }}</p>
+
+    <div class="mt-6">
+      <div class="w-full flex justify-between">
+        <h3 class="text-lg font-semibold mb-2">Reseñas:</h3>
+        <div *ngIf="isLoggedIn && !isReviewed">
+          <button
+            class="bg-blue-600 text-white px-4 py-2 rounded hover:cursor-pointer hover:bg-blue-700 transition"
+            (click)="toggleReviewForm()"
+          >
+            Añadir reseña
+          </button>
+        </div>
+      </div>
+      <div *ngIf="showReviewForm" class="mt-4">
+        <form
+          [formGroup]="reviewForm"
+          (ngSubmit)="submitReview()"
+          class="space-y-4 p-4 border rounded-lg shadow"
+        >
+          <div>
+            <label class="block text-sm font-medium mb-1">Puntuación:</label>
+            <div class="flex flex-row-reverse justify-end gap-1">
+              <ng-container *ngFor="let star of stars">
+                <input
+                  type="radio"
+                  class="hidden"
+                  [id]="'star' + star"
+                  [value]="star"
+                  formControlName="rating"
+                />
+                <label
+                  [for]="'star' + star"
+                  class="cursor-pointer text-2xl"
+                  [class.text-yellow-400]="reviewForm.value.rating >= star"
+                  [class.text-gray-400]="reviewForm.value.rating < star"
+                >
+                  ★
+                </label>
+              </ng-container>
+            </div>
+            <p class="text-sm mt-1">
+              Seleccionado: {{ reviewForm.value.rating }}
+            </p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Reseña:</label>
+            <textarea
+              formControlName="review"
+              rows="4"
+              placeholder="Escribe tu reseña..."
+              class="w-full p-2 border border-gray-300 rounded"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            [disabled]="reviewForm.invalid"
+            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+          >
+            Enviar reseña
+          </button>
+        </form>
+      </div>
+      <div *ngFor="let review of existingReviews">
+        <div *ngIf="user$ | async as user">
           <div class="flex items-center gap-2 p-2">
             <span class="font-medium">{{ review.username }}</span>
             <span class="text-yellow-500"> {{ review.rating }} ★ </span>
             <span class="text-gray-500 text-sm"
-              >({{ review.date | date : "short" }})</span
+              >({{ review.date | date : "d/M/yy" }})</span
             >
-            <p class="mt-1 text-gray-700">{{ review.content }}</p>
+            <p class="mt-1">{{ review.content }}</p>
             <button
-              class="bg-red-800 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:bg-red-700"
+              *ngIf="review.user_id === user.id"
+              class="bg-red-800 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:opacity-80"
               type="button"
               (click)="deleteReview()"
             >
-              Eliminar
+              <i class="fa-regular fa-trash-can"></i>
             </button>
           </div>
         </div>
       </div>
-      <ng-template #default>
-        <div class="flex items-center gap-2 p-2 bg-gray-950">
-          <span class="font-medium text-white">{{ review.username }}</span>
-          <span class="text-yellow-500"> {{ review.rating }} ★ </span>
-          <span class="text-gray-500 text-sm"
-            >({{ review.date | date : "short" }})</span
-          >
-          <p class="mt-1 text-white">{{ review.content }}</p>
-        </div>
-      </ng-template>
     </div>
   </div>
 </div>

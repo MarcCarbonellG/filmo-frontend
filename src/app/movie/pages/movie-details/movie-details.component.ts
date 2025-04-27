@@ -55,12 +55,27 @@ export class MovieDetailsComponent implements OnInit {
       rating: [1, [Validators.required]],
       review: ['', []],
     });
+    // this.route.params.subscribe((params) => {
+    //   this.movieId = params['id'];
+    //   this.loadMovie();
+    //   this.loadFavourites();
+    //   this.loadWatched();
+    //   this.loadReviews();
+    //   this.reviewForm = this.fb.group({
+    //     rating: [1, [Validators.required]],
+    //     review: ['', []],
+    //   });
+    // });
   }
 
   calculateAverageRating() {
-    this.rating =
-      this.existingReviews.reduce((acc, review) => acc + review.rating, 0) /
-      this.existingReviews.length;
+    if (this.existingReviews.length > 0) {
+      this.rating =
+        this.existingReviews.reduce((acc, review) => acc + review.rating, 0) /
+        this.existingReviews.length;
+    } else {
+      this.rating = 0;
+    }
   }
 
   loadMovie() {
@@ -118,9 +133,9 @@ export class MovieDetailsComponent implements OnInit {
       const review = this.reviewForm.value.review;
 
       this.user$.pipe(take(1)).subscribe((user) => {
-        if (user && this.movie) {
+        if (user && this.movieId) {
           this.movieService
-            .addReview(user.id, this.movie.id, rating, review)
+            .addReview(user.id, this.movieId, rating, review)
             .subscribe({
               next: (response) => {
                 this.isReviewed = true;
@@ -143,8 +158,8 @@ export class MovieDetailsComponent implements OnInit {
 
   deleteReview() {
     this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movie) {
-        this.movieService.deleteReview(user.id, this.movie.id).subscribe({
+      if (user && this.movieId) {
+        this.movieService.deleteReview(user.id, this.movieId).subscribe({
           next: () => {
             this.isReviewed = false;
             const userReviewIndex = this.existingReviews.findIndex(
@@ -163,8 +178,8 @@ export class MovieDetailsComponent implements OnInit {
 
   loadFavourites() {
     this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movie) {
-        this.movieService.getFavorites(this.movie.id).subscribe({
+      if (user && this.movieId) {
+        this.movieService.getFavorites(this.movieId).subscribe({
           next: (response) => {
             const favIndex = response.findIndex(
               (fav) => fav.user_id === user.id
@@ -182,14 +197,15 @@ export class MovieDetailsComponent implements OnInit {
 
   loadWatched() {
     this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movie) {
-        this.movieService.getWatched(this.movie.id).subscribe({
+      if (user && this.movieId) {
+        this.movieService.getWatched(this.movieId).subscribe({
           next: (response) => {
             const watchedIndex = response.findIndex(
               (watched) => watched.user_id === user.id
             );
             this.isInWatched = watchedIndex !== -1 ? true : false;
             this.watched = response.length;
+            console.log(this.isInWatched, this.watched);
           },
           error: (err) => {
             console.error('Error al cargar vistas', err);
@@ -201,8 +217,8 @@ export class MovieDetailsComponent implements OnInit {
 
   addToFavourites() {
     this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movie) {
-        this.movieService.addToFavorites(user.id, this.movie.id).subscribe({
+      if (user && this.movieId) {
+        this.movieService.addToFavorites(user.id, this.movieId).subscribe({
           next: () => {
             this.favourites++;
             this.isInFavourites = true;
@@ -217,8 +233,8 @@ export class MovieDetailsComponent implements OnInit {
 
   addToWatched() {
     this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movie) {
-        this.movieService.addToWatched(user.id, this.movie.id).subscribe({
+      if (user && this.movieId) {
+        this.movieService.addToWatched(user.id, this.movieId).subscribe({
           next: () => {
             this.watched++;
             this.isInWatched = true;
@@ -233,26 +249,24 @@ export class MovieDetailsComponent implements OnInit {
 
   removeFromFavourites() {
     this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movie) {
-        this.movieService
-          .removeFromFavorites(user.id, this.movie.id)
-          .subscribe({
-            next: () => {
-              this.favourites--;
-              this.isInFavourites = false;
-            },
-            error: (err) => {
-              console.error('Error al quitar película de favoritos', err);
-            },
-          });
+      if (user && this.movieId) {
+        this.movieService.removeFromFavorites(user.id, this.movieId).subscribe({
+          next: () => {
+            this.favourites--;
+            this.isInFavourites = false;
+          },
+          error: (err) => {
+            console.error('Error al quitar película de favoritos', err);
+          },
+        });
       }
     });
   }
 
   removeFromWatched() {
     this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movie) {
-        this.movieService.removeFromWatched(user.id, this.movie.id).subscribe({
+      if (user && this.movieId) {
+        this.movieService.removeFromWatched(user.id, this.movieId).subscribe({
           next: () => {
             this.watched--;
             this.isInWatched = false;
