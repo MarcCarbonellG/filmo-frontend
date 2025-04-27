@@ -12,7 +12,7 @@
 }
 
 .form-control {
-  @apply w-full bg-white rounded-md h-9 px-3 py-1 placeholder:text-primary-light;
+  @apply w-full text-primary bg-white rounded-md h-9 px-3 py-1 placeholder:text-primary-light hover:cursor-pointer;
 }
 
 .primary-btn {

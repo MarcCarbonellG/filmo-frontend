@@ -6,9 +6,11 @@ import {
 } from '@angular/platform-browser';
 
 import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActionReducer, MetaReducer, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { localStorageSync } from 'ngrx-store-localstorage';
+import { CarouselModule } from 'ngx-owl-carousel-o';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -46,6 +48,8 @@ const metaReducers: Array<MetaReducer<any, any>> = [localStorageSyncReducer];
     SharedModule,
     MovieModule,
     UserModule,
+    BrowserAnimationsModule,
+    CarouselModule,
     StoreModule.forRoot(reducers, { metaReducers }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,

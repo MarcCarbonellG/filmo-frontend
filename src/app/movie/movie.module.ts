@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { MovieRoutingModule } from './movie-routing.module';
 import { MovieDetailsComponent } from './pages/movie-details/movie-details.component';
 import { SearchResultsComponent } from './pages/search-results/search-results.component';
+import { MoneyShortPipe } from './pipes/money-short.pipe';
 
 @NgModule({
   declarations: [MovieDetailsComponent, SearchResultsComponent],
@@ -14,6 +15,7 @@ import { SearchResultsComponent } from './pages/search-results/search-results.co
     MovieRoutingModule,
     RouterModule,
     ReactiveFormsModule,
+    MoneyShortPipe,
   ],
 })
 export class MovieModule {}
