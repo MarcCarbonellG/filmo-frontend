@@ -1,111 +1,145 @@
-<h2 class="text-3xl">Buscar: "{{ searchTerm }}"</h2>
+<div class="flex flex-col gap-8 my-8">
+  <h1 class="text-3xl font-medium">
+    Resultados de búsqueda: "{{ searchTerm }}"
+  </h1>
+  <div class="flex gap-8">
+    <form
+      [formGroup]="filterForm"
+      (ngSubmit)="applyFilters()"
+      class="h-min text-primary p-5 bg-secondary border rounded-lg shadow-md"
+    >
+      <h2 class="text-2xl font-medium mb-2">FILTROS</h2>
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          Público:
+          <div class="flex flex-col gap-1">
+            <label>
+              <input
+                class="hover:cursor-pointer"
+                type="radio"
+                [value]="null"
+                formControlName="audience"
+              />
+              Todos
+            </label>
+            <label>
+              <input
+                class="hover:cursor-pointer"
+                type="radio"
+                [value]="false"
+                formControlName="audience"
+              />
+              Todos&nbsp;los&nbsp;públicos
+            </label>
+            <label>
+              <input
+                class="hover:cursor-pointer"
+                type="radio"
+                [value]="true"
+                formControlName="audience"
+              />
+              +18
+            </label>
+          </div>
+        </div>
 
-<form
-  [formGroup]="filterForm"
-  (ngSubmit)="applyFilters()"
-  class="p-4 space-y-4 bg-white border rounded shadow-md"
->
-  <label>
-    Público:
-    <div class="flex gap-4">
-      <label>
-        <input type="radio" [value]="null" formControlName="audience" />
-        Todos
-      </label>
-      <label>
-        <input type="radio" [value]="false" formControlName="audience" />
-        Todos los públicos
-      </label>
-      <label>
-        <input type="radio" [value]="true" formControlName="audience" />
-        +18
-      </label>
+        <div class="w-64">
+          <div class="relative">
+            <button
+              class="w-full p-2 text-left rounded-md bg-white hover:opacity-80 hover:cursor-pointer focus:outline-none"
+              type="button"
+              (click)="toggleGenreDropdown()"
+            >
+              Géneros
+            </button>
+            <div
+              *ngIf="isGenreDropdownOpen"
+              class="absolute left-0 right-0 mt-1 bg-white shadow-lg rounded-md z-20"
+            >
+              <div
+                *ngFor="let genre of genreList"
+                formGroupName="genres"
+                class="p-2"
+              >
+                <label class="inline-flex items-center space-x-2">
+                  <input
+                    class="mr-2 hover:cursor-pointer"
+                    type="checkbox"
+                    [formControlName]="genre.id"
+                  />
+                  {{ genre.name }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-64">
+          <div class="relative">
+            <button
+              class="w-full p-2 text-left rounded-md bg-white hover:opacity-80 hover:cursor-pointer focus:outline-none"
+              type="button"
+              (click)="toggleLangDropdown()"
+            >
+              Idioma original
+            </button>
+            <div
+              *ngIf="isLangDropdownOpen"
+              class="absolute left-0 right-0 mt-1 bg-white shadow-lg rounded-md z-10"
+            >
+              <div
+                class="p-2"
+                *ngFor="let lang of languageList"
+                formGroupName="languages"
+              >
+                <label class="inline-flex items-center space-x-2">
+                  <input
+                    class="mr-2 hover:cursor-pointer"
+                    type="checkbox"
+                    [formControlName]="lang.iso_639_1"
+                  />
+                  {{ lang.name ? lang.name : lang.english_name }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <label class="flex gap-2 justify-between items-center">
+          Ordenar&nbsp;por:
+          <select class="form-control" formControlName="sortBy">
+            <option value="popularity">Popularidad</option>
+            <option value="release">Lanzamiento</option>
+          </select>
+        </label>
+
+        <label class="flex gap-2 justify-between items-center">
+          Orden:
+          <select class="form-control" formControlName="sortOrder">
+            <option value="desc">Descendente</option>
+            <option value="asc">Ascendente</option>
+          </select>
+        </label>
+
+        <button type="submit" class="primary-btn">APLICAR</button>
+      </div>
+    </form>
+
+    <div *ngIf="searchResults.length === 0">
+      <h2 class="text-2xl">No hay resultados de búsqueda</h2>
     </div>
-  </label>
-
-  <div class="w-64">
-    <div class="relative">
-      <button
-        class="w-full p-2 text-left border rounded-md bg-gray-100 hover:bg-gray-200 focus:outline-none"
-        type="button"
-        (click)="toggleGenreDropdown()"
-      >
-        Géneros
-      </button>
-      <div
-        *ngIf="isGenreDropdownOpen"
-        class="absolute left-0 right-0 mt-1 bg-white shadow-lg rounded-md border z-10"
-      >
-        <div *ngFor="let genre of genreList" formGroupName="genres" class="p-2">
-          <label class="inline-flex items-center space-x-2">
-            <input type="checkbox" [formControlName]="genre.id" />
-            {{ genre.name }}
-          </label>
+    <div *ngIf="searchResults.length > 0">
+      <div class="flex flex-wrap gap-3">
+        <div *ngFor="let movie of searchResults">
+          <a routerLink="/{{ movie.id }}">
+            <img
+              class="h-[150px] rounded-xs border-1 border-gray-400 hover:opacity-70"
+              src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
+              alt="{{ movie.title }} poster"
+              width="100px"
+          /></a>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="w-64">
-    <div class="relative">
-      <button
-        class="w-full p-2 text-left border rounded-md bg-gray-100 hover:bg-gray-200 focus:outline-none"
-        type="button"
-        (click)="toggleLangDropdown()"
-      >
-        Idioma original
-      </button>
-      <div
-        *ngIf="isLangDropdownOpen"
-        class="absolute left-0 right-0 mt-1 bg-white shadow-lg rounded-md border z-10"
-      >
-        <div
-          class="p-2"
-          *ngFor="let lang of languageList"
-          formGroupName="languages"
-        >
-          <label class="inline-flex items-center space-x-2">
-            <input type="checkbox" [formControlName]="lang.iso_639_1" />
-            {{ lang.name ? lang.name : lang.english_name }}
-          </label>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <label>
-    Ordenar por:
-    <select formControlName="sortBy">
-      <option value="popularity">Popularidad</option>
-      <option value="release">Fecha de lanzamiento</option>
-    </select>
-  </label>
-
-  <label>
-    Orden:
-    <select formControlName="sortOrder">
-      <option value="desc">Descendente</option>
-      <option value="asc">Ascendente</option>
-    </select>
-  </label>
-
-  <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">
-    Aplicar filtros
-  </button>
-</form>
-
-<div *ngIf="searchResults.length === 0">
-  <h2 class="text-2xl">No hay resultados de búsqueda</h2>
-</div>
-<div *ngIf="searchResults.length > 0">
-  <div class="flex flex-wrap">
-    <div *ngFor="let movie of searchResults">
-      <a routerLink="/{{ movie.id }}">
-        <img
-          src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
-          alt="{{ movie.title }} poster"
-          width="100px"
-      /></a>
     </div>
   </div>
 </div>
