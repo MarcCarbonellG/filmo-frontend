@@ -12,16 +12,10 @@ const routes: Routes = [
     path: 'movie',
     loadChildren: () =>
       import('./movie/movie.module').then((m) => m.MovieModule),
-    data: {
-      renderMode: 'dynamic',
-    },
   },
   {
     path: 'user',
     loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
-    data: {
-      renderMode: 'dynamic',
-    },
   },
 ];
 

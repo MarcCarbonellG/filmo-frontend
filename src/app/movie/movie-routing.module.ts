@@ -5,13 +5,7 @@ import { SearchResultsComponent } from './pages/search-results/search-results.co
 
 const routes: Routes = [
   { path: 'search', component: SearchResultsComponent },
-  {
-    path: ':id',
-    component: MovieDetailsComponent,
-    data: {
-      renderMode: 'dynamic',
-    },
-  },
+  { path: ':id', component: MovieDetailsComponent },
 ];
 
 @NgModule({
