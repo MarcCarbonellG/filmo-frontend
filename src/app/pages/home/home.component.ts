@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit {
   }
 
   loadMovies(): void {
-    this.movieService.getMovieList('now_playing').subscribe({
+    this.movieService.getMovieCollection('now_playing').subscribe({
       next: (data) => {
         this.nowPlaying = data.results;
       },
@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
       },
     });
 
-    this.movieService.getMovieList('upcoming').subscribe({
+    this.movieService.getMovieCollection('upcoming').subscribe({
       next: (data) => {
         this.upcoming = data.results;
       },
@@ -63,7 +63,7 @@ export class HomeComponent implements OnInit {
       },
     });
 
-    this.movieService.getMovieList('popular').subscribe({
+    this.movieService.getMovieCollection('popular').subscribe({
       next: (data) => {
         this.popular = data.results;
       },
@@ -72,7 +72,7 @@ export class HomeComponent implements OnInit {
       },
     });
 
-    this.movieService.getMovieList('top_rated').subscribe({
+    this.movieService.getMovieCollection('top_rated').subscribe({
       next: (data) => {
         this.topRated = data.results;
       },

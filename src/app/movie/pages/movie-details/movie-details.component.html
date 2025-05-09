@@ -99,8 +99,80 @@
             <h2 class="text-4xl">
               {{ movie.title }}
             </h2>
-            <div class="flex items-end">
-              <p>FILMO: {{ rating | number : "1.0-1" }}</p>
+            <div class="flex items-end gap-4">
+              <p>FILMO:&nbsp;{{ rating | number : "1.0-1" }}</p>
+
+              <button class="primary-btn" (click)="openAddListDialog()">
+                + Añadir a lista
+              </button>
+
+              <dialog
+                #dialogRef
+                class="w-[90%] max-w-xl rounded-xl shadow-lg p-6"
+              >
+                <button
+                  (click)="closeAddListDialog()"
+                  class="text-sm text-gray-500 float-right"
+                >
+                  ✖
+                </button>
+
+                <button
+                  (click)="showNewListForm = !showNewListForm"
+                  class="my-4 bg-green-600 text-white px-3 py-1 rounded"
+                >
+                  {{ showNewListForm ? "Cancelar" : "Crear nueva lista" }}
+                </button>
+
+                <form
+                  *ngIf="showNewListForm"
+                  (ngSubmit)="createList()"
+                  class="flex flex-col gap-3 mt-4"
+                >
+                  <input
+                    [(ngModel)]="newList.title"
+                    name="title"
+                    required
+                    placeholder="Título"
+                    class="p-2 border rounded"
+                  />
+                  <textarea
+                    [(ngModel)]="newList.description"
+                    name="description"
+                    placeholder="Descripción (opcional)"
+                    class="p-2 border rounded"
+                  ></textarea>
+                  <button
+                    type="submit"
+                    class="bg-blue-500 text-white px-4 py-2 rounded"
+                  >
+                    Guardar
+                  </button>
+                </form>
+
+                <div *ngIf="userLists.length" class="mt-6">
+                  <h3 class="text-lg font-semibold mb-2">Tus listas:</h3>
+                  <ul>
+                    <li *ngFor="let list of userLists">
+                      <button
+                        type="button"
+                        class="text-green-400"
+                        *ngIf="list.has_movie"
+                        (click)="removeFromList(list.id)"
+                      >
+                        {{ list.title }}
+                      </button>
+                      <button
+                        type="button"
+                        *ngIf="!list.has_movie"
+                        (click)="addToList(list.id)"
+                      >
+                        {{ list.title }}
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </dialog>
             </div>
           </div>
           <div class="flex gap-4">

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, take } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
+import { List } from '../../../list/models/list.interface';
 import { DbMovie } from '../../../movie/models/db-movie';
 import { MovieService } from '../../../movie/services/movie.service';
 import { PublicUser } from '../../models/public-user.interface';
@@ -20,6 +21,7 @@ export class ProfileComponent implements OnInit {
   errorMessage: string = '';
   favorites: DbMovie[] = [];
   watched: DbMovie[] = [];
+  lists: List[] = [];
   followers: number = 0;
   followed: number = 0;
   isFollowedByUser: boolean = false;
@@ -60,6 +62,7 @@ export class ProfileComponent implements OnInit {
     this.loadUserData(profileUsername);
     this.loadFavorites();
     this.loadWatched();
+    this.loadLists(profileUsername);
     this.loadFollowers();
     this.loadFollowed();
     this.user$.pipe(take(1)).subscribe((user) => {
@@ -110,6 +113,38 @@ export class ProfileComponent implements OnInit {
         },
       });
     }
+  }
+
+  loadLists(username: string): void {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (String(user?.username) === username) {
+        this.loadOwnAndSavedLists(username);
+      } else {
+        this.loadOwnLists(username);
+      }
+    });
+  }
+
+  loadOwnLists(username: string) {
+    this.userService.getListsByUsername(username).subscribe({
+      next: (response) => {
+        this.lists = response;
+      },
+      error: () => {
+        this.errorMessage = 'Error al obtener listas';
+      },
+    });
+  }
+
+  loadOwnAndSavedLists(username: string) {
+    this.userService.getProfileLists(username).subscribe({
+      next: (response) => {
+        this.lists = response;
+      },
+      error: () => {
+        this.errorMessage = 'Error al obtener listas';
+      },
+    });
   }
 
   loadFollowers() {

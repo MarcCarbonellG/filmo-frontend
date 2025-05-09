@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, take } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
+import { ListWithMovieStatus } from '../../../list/models/list-with-movie-status.interface';
+import { ListService } from '../../../list/services/list.service';
 import { User } from '../../../user/models/user.interface';
 import { Movie } from '../../models/movie.interface';
 import { Review } from '../../models/review.interface';
@@ -15,6 +17,7 @@ import { MovieService } from '../../services/movie.service';
   styleUrl: './movie-details.component.css',
 })
 export class MovieDetailsComponent implements OnInit {
+  @ViewChild('dialogRef') dialogRef!: ElementRef<HTMLDialogElement>;
   movie: Movie | null = null;
   movieId: string | null = null;
   user$!: Observable<User | null>;
@@ -29,16 +32,21 @@ export class MovieDetailsComponent implements OnInit {
   favourites: number = 0;
   watched: number = 0;
   rating: number = 0;
-
   existingReviews: Review[] = [];
-
   isLoggedIn: boolean = false;
+  showNewListForm = false;
+  userLists: ListWithMovieStatus[] = [];
+  newList = {
+    title: '',
+    description: '',
+  };
 
   constructor(
     private movieService: MovieService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private listService: ListService
   ) {
     this.baseImageUrl = this.movieService.getImageBaseUrl();
     this.isLoggedIn = this.authService.isAuthenticated();
@@ -55,17 +63,6 @@ export class MovieDetailsComponent implements OnInit {
       rating: [1, [Validators.required]],
       review: ['', []],
     });
-    // this.route.params.subscribe((params) => {
-    //   this.movieId = params['id'];
-    //   this.loadMovie();
-    //   this.loadFavourites();
-    //   this.loadWatched();
-    //   this.loadReviews();
-    //   this.reviewForm = this.fb.group({
-    //     rating: [1, [Validators.required]],
-    //     review: ['', []],
-    //   });
-    // });
   }
 
   calculateAverageRating() {
@@ -205,7 +202,6 @@ export class MovieDetailsComponent implements OnInit {
             );
             this.isInWatched = watchedIndex !== -1 ? true : false;
             this.watched = response.length;
-            console.log(this.isInWatched, this.watched);
           },
           error: (err) => {
             console.error('Error al cargar vistas', err);
@@ -277,5 +273,90 @@ export class MovieDetailsComponent implements OnInit {
         });
       }
     });
+  }
+
+  loadUserLists() {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.movieId) {
+        this.listService
+          .getUserListsWithMovieStatus(user.id, this.movieId)
+          .subscribe({
+            next: (response) => {
+              this.userLists = response;
+            },
+            error: (err) => {
+              console.error('Error al cargar listas', err);
+            },
+          });
+      }
+    });
+  }
+
+  openAddListDialog() {
+    this.loadUserLists();
+    this.dialogRef.nativeElement.showModal();
+  }
+
+  closeAddListDialog() {
+    this.dialogRef.nativeElement.close();
+  }
+
+  createList() {
+    if (!this.newList.title) return;
+
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.movieId) {
+        this.listService
+          .createList(
+            user.id,
+            this.newList.title,
+            this.movieId,
+            this.newList.description
+          )
+          .subscribe({
+            next: (response) => {
+              alert('Lista creada con éxito');
+              this.newList = { title: '', description: '' };
+              this.showNewListForm = false;
+              this.closeAddListDialog();
+            },
+            error: (err) => {
+              console.error('Error al crear lista', err);
+            },
+          });
+      }
+    });
+  }
+
+  addToList(listId: number) {
+    if (this.movieId) {
+      this.listService.addToList(listId, this.movieId).subscribe({
+        next: () => {
+          const list = this.userLists.find((list) => list.id === listId);
+          if (list) {
+            list.has_movie = true;
+          }
+        },
+        error: (err) => {
+          console.error('Error al añadir película a lista', err);
+        },
+      });
+    }
+  }
+
+  removeFromList(listId: number) {
+    if (this.movieId) {
+      this.listService.removeFromList(listId, +this.movieId).subscribe({
+        next: () => {
+          const list = this.userLists.find((list) => list.id === listId);
+          if (list) {
+            list.has_movie = false;
+          }
+        },
+        error: (err) => {
+          console.error('Error al quitar película de lista', err);
+        },
+      });
+    }
   }
 }

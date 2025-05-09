@@ -2,18 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { MutationResponse } from '../../models/mutation-response.interface';
 import { Genre } from '../models/genre.interface';
 import { Language } from '../models/language.interface';
-import { MovieList } from '../models/movie-list.interface';
+import { MovieCollection } from '../models/movie-collection.interface';
 import { Movie } from '../models/movie.interface';
 import { Review } from '../models/review.interface';
 import { SimplifiedMovie } from '../models/simplified-movie.interface';
-
-// Interfaz para peticiones de modificación de la base de datos (creación o eliminación)
-interface MutationResponse {
-  message: string;
-  data: any;
-}
 
 // Interfaz para relaciones entre un usuario y una película (favoritos y vista)
 interface UserMovieRelation {
@@ -44,8 +39,10 @@ export class MovieService {
     );
   }
 
-  getMovieList(listName: string): Observable<MovieList> {
-    return this.http.get<MovieList>(`${this.API_URL}/movie/list/${listName}`);
+  getMovieCollection(collection: string): Observable<MovieCollection> {
+    return this.http.get<MovieCollection>(
+      `${this.API_URL}/movie/collection/${collection}`
+    );
   }
 
   getGenres(): Observable<Genre[]> {

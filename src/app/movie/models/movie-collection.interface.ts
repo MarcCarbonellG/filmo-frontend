@@ -1,6 +1,6 @@
 import { SimplifiedMovie } from './simplified-movie.interface';
 
-export interface MovieList {
+export interface MovieCollection {
   dates: {
     maximun: string;
     minimun: string;

@@ -16,7 +16,7 @@
 }
 
 .primary-btn {
-  @apply w-full text-white font-medium bg-primary rounded-md h-9 hover:cursor-pointer hover:bg-primary-light;
+  @apply w-full text-white font-medium bg-primary rounded-md h-9 hover:cursor-pointer hover:bg-primary-light px-2 py-1;
 }
 
 .secondary-a {

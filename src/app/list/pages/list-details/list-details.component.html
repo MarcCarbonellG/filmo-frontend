@@ -1,0 +1,105 @@
+<div class="w-full flex flex-col gap-4 my-8" *ngIf="list">
+  <div class="flex justify-between">
+    <h1
+      class="text-3xl font-medium border-b-1 border-primary pb-1"
+      *ngIf="!isEditing"
+    >
+      {{ title }}
+    </h1>
+    <input
+      class="text-3xl font-medium border-b-1 border-b-secondary pb-1"
+      *ngIf="isEditing"
+      type="text"
+      [(ngModel)]="newTitle"
+    />
+    <div *ngIf="user$ | async as loggedUser">
+      <div *ngIf="list.user_id !== loggedUser.id" class="h-full flex items-end">
+        <button
+          class="hover:cursor-pointer hover:opacity-80"
+          *ngIf="!isSaved"
+          (click)="saveList()"
+        >
+          <i class="fa-regular fa-square-plus text-2xl"></i>
+        </button>
+        <button
+          class="w-4 hover:cursor-pointer hover:opacity-80"
+          *ngIf="isSaved"
+          (click)="removeFromSave()"
+        >
+          <i class="fa-solid fa-square-check text-2xl"></i>
+        </button>
+      </div>
+      <div *ngIf="list.user_id === loggedUser.id" class="h-full flex items-end">
+        <div class="flex gap-2">
+          <button
+            class="hover:cursor-pointer hover:opacity-80"
+            *ngIf="!isEditing"
+            (click)="openEditForm()"
+          >
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button
+            class="hover:cursor-pointer hover:opacity-80"
+            *ngIf="!isEditing"
+          >
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+        <div class="flex gap-2" *ngIf="isEditing">
+          <button
+            class="hover:cursor-pointer hover:opacity-80"
+            (click)="saveChanges()"
+          >
+            Guardar
+          </button>
+          <button
+            class="hover:cursor-pointer hover:opacity-80"
+            (click)="closeEditForm()"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="description">
+    <h2 *ngIf="!isEditing" class="text-xl border-b-1 border-primary pb-1">
+      {{ description }}
+    </h2>
+  </div>
+  <textarea
+    class="text-xl border-b-1 border-b-secondary pb-1"
+    *ngIf="isEditing"
+    [(ngModel)]="newDescription"
+    rows="1"
+  ></textarea>
+  <div class="flex gap-4 opacity-80">
+    <a routerLink="/profile/{{ list.author }}">{{ list.author }}</a>
+    <p>
+      Guardada {{ localSaved }} veces ·
+      {{ list.movies ? list.movies.length : 0 }} películas
+    </p>
+  </div>
+
+  <div *ngIf="list.movies !== null" class="flex flex-wrap gap-3">
+    <div class="relative" *ngFor="let movie of list.movies">
+      <a routerLink="/{{ movie.id }}">
+        <img
+          class="h-[150px] rounded-xs border-1 border-gray-400 hover:opacity-70"
+          src="{{ baseImageUrl + '/w200' + movie.poster }}"
+          alt="{{ movie.title }} poster"
+          width="100px"
+      /></a>
+      <div *ngIf="user$ | async as loggedUser">
+        <div *ngIf="list.user_id === loggedUser.id && list.movies.length > 1">
+          <button
+            class="w-5 h-5 flex justify-center items-center absolute bottom-1 right-1 bg-red-800 rounded hover:bg-red-700 hover:cursor-pointer"
+            (click)="removeMovie(movie.id)"
+          >
+            <i class="fa-solid fa-minus"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

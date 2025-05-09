@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { List } from '../../list/models/list.interface';
 import { DbMovie } from '../../movie/models/db-movie';
 import { Following } from '../models/following.interface';
 import { PublicUser } from '../models/public-user.interface';
@@ -33,6 +34,18 @@ export class UserService {
   getWatchedByUsername(username: string): Observable<DbMovie[]> {
     return this.http.get<DbMovie[]>(
       `${this.API_URL}/user/profile/watched/${username}`
+    );
+  }
+
+  getListsByUsername(username: string): Observable<List[]> {
+    return this.http.get<List[]>(
+      `${this.API_URL}/user/profile/lists/${username}`
+    );
+  }
+
+  getProfileLists(username: string): Observable<List[]> {
+    return this.http.get<List[]>(
+      `${this.API_URL}/user/profile/lists/all/${username}`
     );
   }
 

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MovieRoutingModule } from './movie-routing.module';
 import { MovieDetailsComponent } from './pages/movie-details/movie-details.component';
@@ -16,6 +16,7 @@ import { MoneyShortPipe } from './pipes/money-short.pipe';
     RouterModule,
     ReactiveFormsModule,
     MoneyShortPipe,
+    FormsModule,
   ],
 })
 export class MovieModule {}
