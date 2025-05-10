@@ -102,12 +102,50 @@
             <div class="flex items-end gap-4">
               <p>FILMO:&nbsp;{{ rating | number : "1.0-1" }}</p>
 
+              <p
+                class="hover:cursor-pointer"
+                *ngIf="isLoggedIn"
+                (click)="openFriendsDialog()"
+              >
+                Amigos:&nbsp;{{ friendsRating | number : "1.0-1" }}
+              </p>
+
+              <dialog
+                #friendsDialogRef
+                class="w-[90%] max-w-xl rounded-xl shadow-lg p-6"
+              >
+                <button
+                  (click)="closeFriendsDialog()"
+                  class="text-sm text-gray-500 float-right"
+                >
+                  ✖
+                </button>
+
+                <div *ngIf="friendsReviews.length" class="mt-6">
+                  <h3 class="text-lg font-semibold mb-2">
+                    Puntuaciones de tus amigos:
+                  </h3>
+                  <div class="max-h-50 overflow-y-auto">
+                    <ul *ngFor="let review of friendsReviews">
+                      <li>
+                        <p>
+                          <a routerLink="/user/profile/{{ review.username }}">{{
+                            review.username
+                          }}</a
+                          >-{{ review.rating }}
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </dialog>
+
               <button class="primary-btn" (click)="openAddListDialog()">
-                + Añadir a lista
+                +&nbsp;Añadir&nbsp;a&nbsp;lista
               </button>
 
               <dialog
-                #dialogRef
+                #listDialogRef
                 class="w-[90%] max-w-xl rounded-xl shadow-lg p-6"
               >
                 <button
@@ -152,25 +190,27 @@
 
                 <div *ngIf="userLists.length" class="mt-6">
                   <h3 class="text-lg font-semibold mb-2">Tus listas:</h3>
-                  <ul>
-                    <li *ngFor="let list of userLists">
-                      <button
-                        type="button"
-                        class="text-green-400"
-                        *ngIf="list.has_movie"
-                        (click)="removeFromList(list.id)"
-                      >
-                        {{ list.title }}
-                      </button>
-                      <button
-                        type="button"
-                        *ngIf="!list.has_movie"
-                        (click)="addToList(list.id)"
-                      >
-                        {{ list.title }}
-                      </button>
-                    </li>
-                  </ul>
+                  <div class="max-h-50 overflow-y-auto">
+                    <ul>
+                      <li *ngFor="let list of userLists">
+                        <button
+                          type="button"
+                          class="text-green-400"
+                          *ngIf="list.has_movie"
+                          (click)="removeFromList(list.id)"
+                        >
+                          {{ list.title }}
+                        </button>
+                        <button
+                          type="button"
+                          *ngIf="!list.has_movie"
+                          (click)="addToList(list.id)"
+                        >
+                          {{ list.title }}
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </dialog>
             </div>
@@ -256,6 +296,12 @@
           </div>
 
           <button
+            class="bg-red-700 text-white px-4 py-2 rounded hover:cursor-pointer hover:bg-red-800 transition"
+            (click)="toggleReviewForm()"
+          >
+            Cancelar
+          </button>
+          <button
             type="submit"
             [disabled]="reviewForm.invalid"
             class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
@@ -264,15 +310,20 @@
           </button>
         </form>
       </div>
-      <div *ngFor="let review of existingReviews">
-        <div *ngIf="user$ | async as user">
-          <div class="flex items-center gap-2 p-2">
-            <span class="font-medium">{{ review.username }}</span>
-            <span class="text-yellow-500"> {{ review.rating }} ★ </span>
-            <span class="text-gray-500 text-sm"
-              >({{ review.date | date : "d/M/yy" }})</span
-            >
-            <p class="mt-1">{{ review.content }}</p>
+      <div *ngFor="let review of reviews">
+        <div class="flex items-center gap-2 p-2">
+          <a
+            class="font-medium"
+            routerLink="/user/profile/{{ review.username }}"
+            >{{ review.username }}</a
+          >
+          <span class="text-yellow-500"> {{ review.rating }} ★ </span>
+          <span class="text-gray-500 text-sm"
+            >({{ review.date | date : "d/M/yy" }})</span
+          >
+          <p class="mt-1">{{ review.content }}</p>
+
+          <div *ngIf="user$ | async as user">
             <button
               *ngIf="review.user_id === user.id"
               class="bg-red-800 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:opacity-80"

@@ -5,7 +5,9 @@ import { Observable, take } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
 import { ListWithMovieStatus } from '../../../list/models/list-with-movie-status.interface';
 import { ListService } from '../../../list/services/list.service';
+import { PublicUser } from '../../../user/models/public-user.interface';
 import { User } from '../../../user/models/user.interface';
+import { UserService } from '../../../user/services/user.service';
 import { Movie } from '../../models/movie.interface';
 import { Review } from '../../models/review.interface';
 import { MovieService } from '../../services/movie.service';
@@ -17,7 +19,9 @@ import { MovieService } from '../../services/movie.service';
   styleUrl: './movie-details.component.css',
 })
 export class MovieDetailsComponent implements OnInit {
-  @ViewChild('dialogRef') dialogRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('listDialogRef') listDialogRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('friendsDialogRef')
+  friendsDialogRef!: ElementRef<HTMLDialogElement>;
   movie: Movie | null = null;
   movieId: string | null = null;
   user$!: Observable<User | null>;
@@ -32,7 +36,9 @@ export class MovieDetailsComponent implements OnInit {
   favourites: number = 0;
   watched: number = 0;
   rating: number = 0;
-  existingReviews: Review[] = [];
+  friendsRating: number = 0;
+  reviews: Review[] = [];
+  friendsReviews: Review[] = [];
   isLoggedIn: boolean = false;
   showNewListForm = false;
   userLists: ListWithMovieStatus[] = [];
@@ -40,13 +46,15 @@ export class MovieDetailsComponent implements OnInit {
     title: '',
     description: '',
   };
+  friends: PublicUser[] = [];
 
   constructor(
     private movieService: MovieService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private authService: AuthService,
-    private listService: ListService
+    private listService: ListService,
+    private userService: UserService
   ) {
     this.baseImageUrl = this.movieService.getImageBaseUrl();
     this.isLoggedIn = this.authService.isAuthenticated();
@@ -58,6 +66,7 @@ export class MovieDetailsComponent implements OnInit {
     this.loadMovie();
     this.loadFavourites();
     this.loadWatched();
+    this.loadFriends();
     this.loadReviews();
     this.reviewForm = this.fb.group({
       rating: [1, [Validators.required]],
@@ -66,12 +75,25 @@ export class MovieDetailsComponent implements OnInit {
   }
 
   calculateAverageRating() {
-    if (this.existingReviews.length > 0) {
+    if (this.reviews.length > 0) {
       this.rating =
-        this.existingReviews.reduce((acc, review) => acc + review.rating, 0) /
-        this.existingReviews.length;
+        this.reviews.reduce((acc, review) => acc + review.rating, 0) /
+        this.reviews.length;
     } else {
       this.rating = 0;
+    }
+  }
+
+  calculateFriendsRating() {
+    this.friendsReviews = this.reviews.filter((review) =>
+      this.friends.map((friend) => friend.id).includes(review.user_id)
+    );
+    if (this.friendsReviews.length > 0) {
+      this.friendsRating =
+        this.friendsReviews.reduce((acc, review) => acc + review.rating, 0) /
+        this.friendsReviews.length;
+    } else {
+      this.friendsRating = 0;
     }
   }
 
@@ -96,8 +118,10 @@ export class MovieDetailsComponent implements OnInit {
     } else {
       this.movieService.getReviews(this.movieId).subscribe({
         next: (data) => {
-          this.existingReviews = data;
+          this.reviews = data;
           this.calculateAverageRating();
+          this.calculateFriendsRating();
+
           this.user$.pipe(take(1)).subscribe((user) => {
             if (user) {
               const userReviewIndex = data.findIndex(
@@ -106,7 +130,7 @@ export class MovieDetailsComponent implements OnInit {
 
               if (userReviewIndex !== -1) {
                 const [userReview] = data.splice(userReviewIndex, 1);
-                this.existingReviews = [userReview, ...data];
+                this.reviews = [userReview, ...data];
               } else {
                 this.isReviewed = false;
               }
@@ -138,7 +162,7 @@ export class MovieDetailsComponent implements OnInit {
                 this.isReviewed = true;
                 const newReview = response.data.movie_review;
                 newReview.username = user.username;
-                this.existingReviews.unshift(newReview);
+                this.reviews.unshift(newReview);
                 this.calculateAverageRating();
               },
               error: (err) => {
@@ -148,7 +172,7 @@ export class MovieDetailsComponent implements OnInit {
         }
       });
 
-      this.reviewForm.reset({ rating: 2.5, review: '' });
+      this.reviewForm.reset({ rating: 3, review: '' });
       this.showReviewForm = false;
     }
   }
@@ -159,10 +183,10 @@ export class MovieDetailsComponent implements OnInit {
         this.movieService.deleteReview(user.id, this.movieId).subscribe({
           next: () => {
             this.isReviewed = false;
-            const userReviewIndex = this.existingReviews.findIndex(
+            const userReviewIndex = this.reviews.findIndex(
               (review) => review.user_id == user.id
             );
-            this.existingReviews.splice(userReviewIndex, 1);
+            this.reviews.splice(userReviewIndex, 1);
             this.calculateAverageRating();
           },
           error: (err) => {
@@ -174,37 +198,58 @@ export class MovieDetailsComponent implements OnInit {
   }
 
   loadFavourites() {
-    this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movieId) {
-        this.movieService.getFavorites(this.movieId).subscribe({
-          next: (response) => {
-            const favIndex = response.findIndex(
-              (fav) => fav.user_id === user.id
-            );
-            this.isInFavourites = favIndex !== -1 ? true : false;
-            this.favourites = response.length;
-          },
-          error: (err) => {
-            console.error('Error al cargar favoritos', err);
-          },
-        });
-      }
-    });
+    if (this.movieId) {
+      this.movieService.getFavorites(this.movieId).subscribe({
+        next: (response) => {
+          this.favourites = response.length;
+
+          this.user$.pipe(take(1)).subscribe((user) => {
+            if (user) {
+              const favIndex = response.findIndex(
+                (fav) => fav.user_id === user.id
+              );
+              this.isInFavourites = favIndex !== -1 ? true : false;
+            }
+          });
+        },
+        error: (err) => {
+          console.error('Error al cargar favoritos', err);
+        },
+      });
+    }
   }
 
   loadWatched() {
+    if (this.movieId) {
+      this.movieService.getWatched(this.movieId).subscribe({
+        next: (response) => {
+          this.watched = response.length;
+
+          this.user$.pipe(take(1)).subscribe((user) => {
+            if (user) {
+              const watchedIndex = response.findIndex(
+                (watched) => watched.user_id === user.id
+              );
+              this.isInWatched = watchedIndex !== -1 ? true : false;
+            }
+          });
+        },
+        error: (err) => {
+          console.error('Error al cargar vistas', err);
+        },
+      });
+    }
+  }
+
+  loadFriends() {
     this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movieId) {
-        this.movieService.getWatched(this.movieId).subscribe({
+      if (user) {
+        this.userService.getFriendsById(user.id).subscribe({
           next: (response) => {
-            const watchedIndex = response.findIndex(
-              (watched) => watched.user_id === user.id
-            );
-            this.isInWatched = watchedIndex !== -1 ? true : false;
-            this.watched = response.length;
+            this.friends = response;
           },
           error: (err) => {
-            console.error('Error al cargar vistas', err);
+            console.error('Error al cargar amigos', err);
           },
         });
       }
@@ -294,11 +339,19 @@ export class MovieDetailsComponent implements OnInit {
 
   openAddListDialog() {
     this.loadUserLists();
-    this.dialogRef.nativeElement.showModal();
+    this.listDialogRef.nativeElement.showModal();
   }
 
   closeAddListDialog() {
-    this.dialogRef.nativeElement.close();
+    this.listDialogRef.nativeElement.close();
+  }
+
+  openFriendsDialog() {
+    this.friendsDialogRef.nativeElement.showModal();
+  }
+
+  closeFriendsDialog() {
+    this.friendsDialogRef.nativeElement.close();
   }
 
   createList() {

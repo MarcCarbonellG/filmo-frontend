@@ -58,33 +58,27 @@ export class ProfileComponent implements OnInit {
     this.tab = newTab;
   }
 
-  loadProfile(profileUsername: string) {
-    this.loadUserData(profileUsername);
+  loadProfile(profileUsername: string): void {
+    this.userService.getUserByUsername(profileUsername).subscribe({
+      next: (response) => {
+        this.user = response;
+        this.loadUserData(profileUsername);
+      },
+      error: () => {
+        this.errorMessage = 'Error al obtener datos de usuario';
+      },
+    });
+  }
+
+  loadUserData(profileUsername: string) {
     this.loadFavorites();
     this.loadWatched();
-    this.loadLists(profileUsername);
+    this.loadLists();
     this.loadFollowers();
     this.loadFollowed();
     this.user$.pipe(take(1)).subscribe((user) => {
       if (String(user?.username) !== profileUsername) {
         this.loadFollowingRelationship();
-      }
-    });
-  }
-
-  loadUserData(username: string): void {
-    this.user$.pipe(take(1)).subscribe((user) => {
-      if (String(user?.username) === username) {
-        this.user = user;
-      } else {
-        this.userService.getUserByUsername(username).subscribe({
-          next: (response) => {
-            this.user = response;
-          },
-          error: () => {
-            this.errorMessage = 'Error al obtener datos de usuario';
-          },
-        });
       }
     });
   }
@@ -115,36 +109,42 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  loadLists(username: string): void {
+  loadLists(): void {
     this.user$.pipe(take(1)).subscribe((user) => {
-      if (String(user?.username) === username) {
-        this.loadOwnAndSavedLists(username);
-      } else {
-        this.loadOwnLists(username);
+      if (this.user && user) {
+        if (String(this.user.username) === user.username) {
+          this.loadOwnAndSavedLists();
+        } else {
+          this.loadOwnLists();
+        }
       }
     });
   }
 
-  loadOwnLists(username: string) {
-    this.userService.getListsByUsername(username).subscribe({
-      next: (response) => {
-        this.lists = response;
-      },
-      error: () => {
-        this.errorMessage = 'Error al obtener listas';
-      },
-    });
+  loadOwnLists() {
+    if (this.user) {
+      this.userService.getListsByUsername(this.user.username).subscribe({
+        next: (response) => {
+          this.lists = response;
+        },
+        error: () => {
+          this.errorMessage = 'Error al obtener listas';
+        },
+      });
+    }
   }
 
-  loadOwnAndSavedLists(username: string) {
-    this.userService.getProfileLists(username).subscribe({
-      next: (response) => {
-        this.lists = response;
-      },
-      error: () => {
-        this.errorMessage = 'Error al obtener listas';
-      },
-    });
+  loadOwnAndSavedLists() {
+    if (this.user) {
+      this.userService.getProfileLists(this.user.username).subscribe({
+        next: (response) => {
+          this.lists = response;
+        },
+        error: () => {
+          this.errorMessage = 'Error al obtener listas';
+        },
+      });
+    }
   }
 
   loadFollowers() {

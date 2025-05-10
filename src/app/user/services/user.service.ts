@@ -61,6 +61,12 @@ export class UserService {
     );
   }
 
+  getFriendsById(userId: number): Observable<PublicUser[]> {
+    return this.http.get<PublicUser[]>(
+      `${this.API_URL}/user/profile/friends/${userId}`
+    );
+  }
+
   getFollowing(
     follower_id: number,
     followed_id: number
