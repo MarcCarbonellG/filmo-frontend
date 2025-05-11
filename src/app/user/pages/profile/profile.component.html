@@ -26,6 +26,19 @@
           >
             Dejar de seguir
           </button>
+
+          <div *ngIf="user.id !== loggedUser.id; else admin">
+            <p>
+              Tus gustos y los de {{ user.username }} coinciden en un
+              {{ matchPercentage }}%
+            </p>
+            <div *ngIf="commonFavGenres.length > 0">
+              <p>Compartís los siguientes géneros favoritos:</p>
+              <p *ngFor="let genre of commonFavGenres">
+                {{ genre }}
+              </p>
+            </div>
+          </div>
         </div>
         <ng-template #admin>
           <div class="h-full flex items-center">

@@ -6,6 +6,7 @@ import { MutationResponse } from '../../models/mutation-response.interface';
 import { Genre } from '../models/genre.interface';
 import { Language } from '../models/language.interface';
 import { MovieCollection } from '../models/movie-collection.interface';
+import { MovieGenres } from '../models/movie-genres.interface';
 import { Movie } from '../models/movie.interface';
 import { Review } from '../models/review.interface';
 import { SimplifiedMovie } from '../models/simplified-movie.interface';
@@ -133,6 +134,12 @@ export class MovieService {
   getWatched(movie_id: string): Observable<UserMovieRelation[]> {
     return this.http.get<UserMovieRelation[]>(
       `${this.API_URL}/movie/watched/${movie_id}`
+    );
+  }
+
+  getMovieGenres(movieId: number): Observable<MovieGenres> {
+    return this.http.get<MovieGenres>(
+      `${this.API_URL}/movie/genres/${movieId}`
     );
   }
 }

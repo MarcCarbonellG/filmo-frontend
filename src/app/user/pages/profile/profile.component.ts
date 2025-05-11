@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, take } from 'rxjs';
+import { forkJoin, map, Observable, switchMap, take } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
 import { List } from '../../../list/models/list.interface';
 import { DbMovie } from '../../../movie/models/db-movie';
+import { MovieGenres } from '../../../movie/models/movie-genres.interface';
+import { Review } from '../../../movie/models/review.interface';
 import { MovieService } from '../../../movie/services/movie.service';
 import { PublicUser } from '../../models/public-user.interface';
 import { User } from '../../models/user.interface';
@@ -26,6 +28,8 @@ export class ProfileComponent implements OnInit {
   followed: number = 0;
   isFollowedByUser: boolean = false;
   baseImageUrl: string;
+  matchPercentage: number = 0;
+  commonFavGenres: string[] = [];
   tab: 'w' | 'f' | 'l' = 'w';
 
   constructor(
@@ -76,6 +80,7 @@ export class ProfileComponent implements OnInit {
     this.loadLists();
     this.loadFollowers();
     this.loadFollowed();
+    this.loadTasteMatch();
     this.user$.pipe(take(1)).subscribe((user) => {
       if (String(user?.username) !== profileUsername) {
         this.loadFollowingRelationship();
@@ -185,6 +190,71 @@ export class ProfileComponent implements OnInit {
           },
         });
       }
+    });
+  }
+
+  loadReviews(): Observable<{
+    userReviews: Review[];
+    profileReviews: Review[];
+  }> {
+    return this.user$.pipe(
+      take(1),
+      switchMap((user) => {
+        if (!user || !this.user) {
+          throw new Error('Usuario no disponible');
+        }
+
+        return forkJoin({
+          userReviews: this.userService.getReviews(user.id),
+          profileReviews: this.userService.getReviews(this.user.id),
+        });
+      })
+    );
+  }
+
+  loadMovieGenresForReviews(reviews: Review[]): Observable<MovieGenres[]> {
+    const genreCalls = reviews.map((review) =>
+      this.movieService.getMovieGenres(review.movie_id)
+    );
+
+    return forkJoin(genreCalls);
+  }
+
+  loadCommonFavoriteGenres(user1Reviews: Review[], user2Reviews: Review[]) {
+    const user1Genres$ = this.loadMovieGenresForReviews(user1Reviews);
+    const user2Genres$ = this.loadMovieGenresForReviews(user2Reviews);
+
+    return forkJoin([user1Genres$, user2Genres$]).pipe(
+      map(([user1Genres, user2Genres]) => {
+        const user1Pref = this.userService.getGenrePreferences(
+          user1Reviews,
+          user1Genres
+        );
+        const user2Pref = this.userService.getGenrePreferences(
+          user2Reviews,
+          user2Genres
+        );
+        return this.userService.getCommonFavoriteGenres(user1Pref, user2Pref);
+      })
+    );
+  }
+
+  loadTasteMatch() {
+    this.loadReviews().subscribe({
+      next: ({ userReviews, profileReviews }) => {
+        this.matchPercentage = this.userService.calculateTasteMatch(
+          userReviews,
+          profileReviews
+        );
+        this.loadCommonFavoriteGenres(userReviews, profileReviews).subscribe(
+          (result) => {
+            this.commonFavGenres = result;
+          }
+        );
+      },
+      error: () => {
+        this.errorMessage = 'Error al obtener las reseñas';
+      },
     });
   }
 
