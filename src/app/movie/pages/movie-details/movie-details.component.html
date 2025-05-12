@@ -112,7 +112,7 @@
 
               <dialog
                 #friendsDialogRef
-                class="w-[90%] max-w-xl rounded-xl shadow-lg p-6"
+                class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded shadow max-w-md w-full"
               >
                 <button
                   (click)="closeFriendsDialog()"
@@ -146,7 +146,7 @@
 
               <dialog
                 #listDialogRef
-                class="w-[90%] max-w-xl rounded-xl shadow-lg p-6"
+                class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded shadow max-w-md w-full"
               >
                 <button
                   (click)="closeAddListDialog()"
@@ -207,6 +207,40 @@
                           (click)="addToList(list.id)"
                         >
                           {{ list.title }}
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </dialog>
+
+              <button class="primary-btn" (click)="openRecDialog()">
+                Recomendar
+              </button>
+
+              <dialog
+                #recDialogRef
+                class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded shadow max-w-md w-full"
+              >
+                <button
+                  (click)="closeFriendsDialog()"
+                  class="text-sm text-gray-500 float-right"
+                >
+                  ✖
+                </button>
+                <p *ngIf="friends.length < 1">
+                  Añade amigos para poder hacerles recomendaciones!
+                </p>
+                <div *ngIf="friends.length" class="mt-6">
+                  <h3 class="text-lg font-semibold mb-2">Amigos:</h3>
+                  <div class="max-h-50 overflow-y-auto">
+                    <ul *ngFor="let friend of friends">
+                      <li>
+                        <button
+                          class="hover:cursor-pointer"
+                          (click)="recommendMovie(friend.id); closeRecDialog()"
+                        >
+                          {{ friend.username }}
                         </button>
                       </li>
                     </ul>

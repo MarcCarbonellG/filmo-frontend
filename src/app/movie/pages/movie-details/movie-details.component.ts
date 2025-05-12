@@ -22,6 +22,7 @@ export class MovieDetailsComponent implements OnInit {
   @ViewChild('listDialogRef') listDialogRef!: ElementRef<HTMLDialogElement>;
   @ViewChild('friendsDialogRef')
   friendsDialogRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('recDialogRef') recDialogRef!: ElementRef<HTMLDialogElement>;
   movie: Movie | null = null;
   movieId: string | null = null;
   user$!: Observable<User | null>;
@@ -354,6 +355,14 @@ export class MovieDetailsComponent implements OnInit {
     this.friendsDialogRef.nativeElement.close();
   }
 
+  openRecDialog() {
+    this.recDialogRef.nativeElement.showModal();
+  }
+
+  closeRecDialog() {
+    this.recDialogRef.nativeElement.close();
+  }
+
   createList() {
     if (!this.newList.title) return;
 
@@ -411,5 +420,22 @@ export class MovieDetailsComponent implements OnInit {
         },
       });
     }
+  }
+
+  recommendMovie(userId: number) {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.movieId) {
+        this.movieService
+          .recommendMovie(user.id, userId, this.movieId)
+          .subscribe({
+            next: () => {
+              this.closeRecDialog();
+            },
+            error: (err: any) => {
+              console.error('Error al recomendar película', err);
+            },
+          });
+      }
+    });
   }
 }

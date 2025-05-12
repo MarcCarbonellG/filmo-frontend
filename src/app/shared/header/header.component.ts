@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { AuthService } from '../../auth/services/auth.service';
+import { Recommendation } from '../../movie/models/recommendation.interface';
+import { MovieService } from '../../movie/services/movie.service';
 import { User } from '../../user/models/user.interface';
+import { UserService } from '../../user/services/user.service';
 
 @Component({
   selector: 'app-header',
@@ -13,11 +16,30 @@ import { User } from '../../user/models/user.interface';
 export class HeaderComponent implements OnInit {
   user$!: Observable<User | null>;
   searchTerm: string = '';
+  @ViewChild('notifsDialogRef')
+  notifsDialogRef!: ElementRef<HTMLDialogElement>;
+  notifications: Recommendation[] = [];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  openRecsDialog() {
+    this.notifsDialogRef.nativeElement.showModal();
+  }
+
+  closeRecsDialog() {
+    this.notifsDialogRef.nativeElement.close();
+  }
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private userService: UserService,
+    private movieService: MovieService
+  ) {}
 
   ngOnInit(): void {
     this.user$ = this.authService.getCurrentUser();
+    this.user$.subscribe(() => {
+      this.loadNotifications();
+    });
   }
 
   get isLoggedIn(): boolean {
@@ -31,6 +53,38 @@ export class HeaderComponent implements OnInit {
   onSearch() {
     this.router.navigate(['/search'], {
       queryParams: { query: this.searchTerm },
+    });
+  }
+
+  loadNotifications() {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user) {
+        this.userService.getRecommendations(user.id).subscribe({
+          next: (recomendations) => {
+            this.notifications = recomendations;
+          },
+          error: () => {
+            console.error('Error al cargar notificaciones');
+          },
+        });
+      }
+    });
+  }
+
+  deleteNotification(recommendationId: string) {
+    this.movieService.deleteRecommendation(recommendationId).subscribe({
+      next: () => {
+        const notiIndex = this.notifications.findIndex(
+          (noti) => noti.id === recommendationId
+        );
+        if (notiIndex !== -1) {
+          this.notifications.splice(notiIndex, 1);
+        }
+        if (this.notifications.length < 1) this.closeRecsDialog();
+      },
+      error: () => {
+        console.error('Error al eliminar notificación');
+      },
     });
   }
 }

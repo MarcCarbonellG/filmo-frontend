@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { List } from '../../list/models/list.interface';
 import { DbMovie } from '../../movie/models/db-movie';
 import { MovieGenres } from '../../movie/models/movie-genres.interface';
+import { Recommendation } from '../../movie/models/recommendation.interface';
 import { Review } from '../../movie/models/review.interface';
 import { Following } from '../models/following.interface';
 import { PublicUser } from '../models/public-user.interface';
@@ -114,6 +115,12 @@ export class UserService {
 
   getReviews(userId: number): Observable<Review[]> {
     return this.http.get<Review[]>(`${this.API_URL}/user/reviews/${userId}`);
+  }
+
+  getRecommendations(userId: number): Observable<Recommendation[]> {
+    return this.http.get<Recommendation[]>(
+      `${this.API_URL}/user/recommendations/${userId}`
+    );
   }
 
   calculateTasteMatch(user1: Review[], user2: Review[]): number {

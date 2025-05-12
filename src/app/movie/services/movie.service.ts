@@ -142,4 +142,28 @@ export class MovieService {
       `${this.API_URL}/movie/genres/${movieId}`
     );
   }
+
+  deleteRecommendation(recommendationId: string): Observable<MutationResponse> {
+    return this.http.delete<MutationResponse>(
+      `${this.API_URL}/movie/recommendation`,
+      {
+        body: { recommendationId },
+      }
+    );
+  }
+
+  recommendMovie(
+    recommenderId: number,
+    recommendedId: number,
+    movieId: string
+  ): Observable<MutationResponse> {
+    return this.http.post<MutationResponse>(
+      `${this.API_URL}/movie/recommendation`,
+      {
+        recommenderId,
+        recommendedId,
+        movieId,
+      }
+    );
+  }
 }
