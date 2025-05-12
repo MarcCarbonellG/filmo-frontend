@@ -1,0 +1,15 @@
+<div class="relative" [ngClass]="class">
+  <input
+    class="w-full h-7 text-sm text-primary pl-4 bg-secondary rounded-2xl focus:outline-none focus:bg-white"
+    [ngModel]="searchTerm"
+    (ngModelChange)="onInputChange($event)"
+    (keyup.enter)="triggerSearch()"
+    spellcheck="false"
+  />
+  <button
+    class="absolute top-0.25 right-2.5 text-primary hover:cursor-pointer"
+    (click)="triggerSearch()"
+  >
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+</div>

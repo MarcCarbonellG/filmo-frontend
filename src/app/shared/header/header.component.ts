@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, take } from 'rxjs';
 import { AuthService } from '../../auth/services/auth.service';
@@ -16,17 +16,9 @@ import { UserService } from '../../user/services/user.service';
 export class HeaderComponent implements OnInit {
   user$!: Observable<User | null>;
   searchTerm: string = '';
-  @ViewChild('notifsDialogRef')
-  notifsDialogRef!: ElementRef<HTMLDialogElement>;
   notifications: Recommendation[] = [];
-
-  openRecsDialog() {
-    this.notifsDialogRef.nativeElement.showModal();
-  }
-
-  closeRecsDialog() {
-    this.notifsDialogRef.nativeElement.close();
-  }
+  showSearchbar: boolean = false;
+  showNotisPanel: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -34,6 +26,14 @@ export class HeaderComponent implements OnInit {
     private userService: UserService,
     private movieService: MovieService
   ) {}
+
+  toggleSearchbar() {
+    this.showSearchbar = !this.showSearchbar;
+  }
+
+  toggleNotisPanel() {
+    this.showNotisPanel = !this.showNotisPanel;
+  }
 
   ngOnInit(): void {
     this.user$ = this.authService.getCurrentUser();
@@ -47,6 +47,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(): void {
+    this.toggleNotisPanel();
     this.authService.logout();
   }
 
@@ -80,7 +81,7 @@ export class HeaderComponent implements OnInit {
         if (notiIndex !== -1) {
           this.notifications.splice(notiIndex, 1);
         }
-        if (this.notifications.length < 1) this.closeRecsDialog();
+        if (this.notifications.length < 1) this.toggleNotisPanel();
       },
       error: () => {
         console.error('Error al eliminar notificación');

@@ -3,9 +3,10 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './header/header.component';
+import { SearchbarComponent } from './components/searchbar/searchbar.component';
 
 @NgModule({
-  declarations: [HeaderComponent],
+  declarations: [HeaderComponent, SearchbarComponent],
   imports: [CommonModule, RouterModule, FormsModule],
   exports: [HeaderComponent],
 })
