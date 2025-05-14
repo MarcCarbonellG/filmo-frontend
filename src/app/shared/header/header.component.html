@@ -1,19 +1,27 @@
-<header class="relative flex flex-col justify-center items-center">
+<header
+  class="relative flex flex-col justify-center items-center"
+  aria-label="Encabezado principal con navegación y búsqueda"
+>
   <div
     class="flex justify-between w-full bg-primary text-white px-4 py-3 z-20 sm:w-5/6 sm:px-0 md:w-4/5 lg:w-3/4 xl:w-2/3"
   >
     <h1 class="w-1/3 font-black text-3xl"><a routerLink="/">FILMO</a></h1>
 
-    <nav class="flex justify-center items-center max-w-2/3 gap-4">
+    <nav
+      class="flex justify-center items-center max-w-2/3 gap-4"
+      aria-label="Menú de navegación principal"
+    >
       <app-searchbar
         [(searchTerm)]="searchTerm"
         (search)="onSearch()"
         class="hidden sm:block"
+        aria-label="Buscar película por título"
       ></app-searchbar>
 
       <button
         class="hover:cursor-pointer hover:text-secondary sm:hidden"
         (click)="toggleSearchbar()"
+        aria-label="Mostrar barra de búsqueda"
       >
         <i class="fa-solid fa-magnifying-glass"></i>
       </button>
@@ -35,11 +43,16 @@
         >
       </div>
 
-      <div class="relative" *ngIf="isLoggedIn">
+      <div
+        class="relative"
+        *ngIf="isLoggedIn"
+        aria-label="Panel de notificaciones"
+      >
         <button
           class="hover:cursor-pointer hover:text-secondary"
           (click)="toggleNotisPanel()"
           [disabled]="notifications.length < 1"
+          aria-label="Abrir panel de notificaciones"
         >
           <i class="fa-solid fa-bell"></i>
         </button>
@@ -55,7 +68,11 @@
         >
           <div class="w-full flex justify-between items-end">
             <h2 class="text-lg font-medium">Notificaciones</h2>
-            <button class="w-min text-2xl hover" (click)="toggleNotisPanel()">
+            <button
+              class="w-min text-2xl hover"
+              (click)="toggleNotisPanel()"
+              aria-label="Cerrar panel de notificaciones"
+            >
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
@@ -119,6 +136,7 @@
     <app-searchbar
       [(searchTerm)]="searchTerm"
       (search)="onSearch()"
+      aria-label="Buscar película por título"
     ></app-searchbar>
   </div>
 </header>
