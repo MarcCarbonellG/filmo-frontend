@@ -5,7 +5,6 @@ import { environment } from '../../../environments/environment';
 import { MutationResponse } from '../../models/mutation-response.interface';
 import { Genre } from '../models/genre.interface';
 import { Language } from '../models/language.interface';
-import { MovieCollection } from '../models/movie-collection.interface';
 import { MovieGenres } from '../models/movie-genres.interface';
 import { Movie } from '../models/movie.interface';
 import { Review } from '../models/review.interface';
@@ -40,9 +39,15 @@ export class MovieService {
     );
   }
 
-  getMovieCollection(collection: string): Observable<MovieCollection> {
-    return this.http.get<MovieCollection>(
+  getMovieCollection(collection: string): Observable<SimplifiedMovie[]> {
+    return this.http.get<SimplifiedMovie[]>(
       `${this.API_URL}/movie/collection/${collection}`
+    );
+  }
+
+  getPopularAmongFollowed(id: number): Observable<SimplifiedMovie[]> {
+    return this.http.get<SimplifiedMovie[]>(
+      `${this.API_URL}/movie/following/${id}`
     );
   }
 

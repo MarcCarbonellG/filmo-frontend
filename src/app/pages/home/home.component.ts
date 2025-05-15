@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable, take } from 'rxjs';
 import { AuthService } from '../../auth/services/auth.service';
+import { ListShowcase } from '../../list/models/list-showcase.interface';
+import { MovieShowcase } from '../../movie/models/movie-showcase.interface';
 import { SimplifiedMovie } from '../../movie/models/simplified-movie.interface';
 import { MovieService } from '../../movie/services/movie.service';
+import { User } from '../../user/models/user.interface';
 
 @Component({
   selector: 'app-home',
@@ -10,12 +14,15 @@ import { MovieService } from '../../movie/services/movie.service';
   styleUrl: './home.component.css',
 })
 export class HomeComponent implements OnInit {
-  nowPlaying: SimplifiedMovie[] = [];
-  upcoming: SimplifiedMovie[] = [];
-  popular: SimplifiedMovie[] = [];
-  topRated: SimplifiedMovie[] = [];
+  user$!: Observable<User | null>;
   errorMessage: string | null = null;
   baseImageUrl: string;
+  featured: SimplifiedMovie[] = [];
+  movieShowcases: MovieShowcase[] = [];
+  movieFollowingShowcase!: MovieShowcase;
+  listShowcases: ListShowcase[] = [];
+  listFollowingShowcase!: ListShowcase;
+  isLoggedIn: boolean = false;
 
   customOptions = {
     loop: true,
@@ -32,6 +39,8 @@ export class HomeComponent implements OnInit {
     private movieService: MovieService,
     private authService: AuthService
   ) {
+    this.user$ = this.authService.getCurrentUser();
+    this.isLoggedIn = this.authService.isAuthenticated();
     this.baseImageUrl = this.movieService.getImageBaseUrl();
   }
 
@@ -46,7 +55,11 @@ export class HomeComponent implements OnInit {
   loadMovies(): void {
     this.movieService.getMovieCollection('now_playing').subscribe({
       next: (data) => {
-        this.nowPlaying = data.results;
+        this.featured = data.slice(0, 4);
+        this.movieShowcases.push({
+          title: 'En cartelera',
+          movies: data,
+        });
       },
       error: (err) => {
         this.errorMessage = 'Error al cargar películas en cartelera';
@@ -55,7 +68,10 @@ export class HomeComponent implements OnInit {
 
     this.movieService.getMovieCollection('upcoming').subscribe({
       next: (data) => {
-        this.upcoming = data.results;
+        this.movieShowcases.push({
+          title: 'Próximamente',
+          movies: data,
+        });
       },
       error: (err) => {
         this.errorMessage =
@@ -65,7 +81,10 @@ export class HomeComponent implements OnInit {
 
     this.movieService.getMovieCollection('popular').subscribe({
       next: (data) => {
-        this.popular = data.results;
+        this.movieShowcases.push({
+          title: 'Populares (TMDb)',
+          movies: data,
+        });
       },
       error: (err) => {
         this.errorMessage = 'Error al cargar películas populares';
@@ -74,11 +93,32 @@ export class HomeComponent implements OnInit {
 
     this.movieService.getMovieCollection('top_rated').subscribe({
       next: (data) => {
-        this.topRated = data.results;
+        this.movieShowcases.push({
+          title: 'Mejor valoradas',
+          movies: data,
+        });
       },
       error: (err) => {
         this.errorMessage = 'Error al cargar películas mejor valoradas';
       },
     });
+
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user) {
+        this.movieService.getPopularAmongFollowed(user.id).subscribe({
+          next: (data) => {
+            this.movieFollowingShowcase = {
+              title: 'Populares entre tus seguidores',
+              movies: data,
+            };
+          },
+          error: (err) => {
+            this.errorMessage = 'Error al cargar películas mejor valoradas';
+          },
+        });
+      }
+    });
   }
+
+  loadLists() {}
 }

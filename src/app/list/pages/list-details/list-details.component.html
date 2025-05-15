@@ -83,13 +83,7 @@
 
   <div *ngIf="list.movies !== null" class="flex flex-wrap gap-3">
     <div class="relative" *ngFor="let movie of list.movies">
-      <a routerLink="/{{ movie.id }}">
-        <img
-          class="h-[150px] rounded-xs border-1 border-gray-400 hover:opacity-70"
-          src="{{ baseImageUrl + '/w200' + movie.poster }}"
-          alt="{{ movie.title }} poster"
-          width="100px"
-      /></a>
+      <app-movie [movie]="movie"></app-movie>
       <div *ngIf="user$ | async as loggedUser">
         <div *ngIf="list.user_id === loggedUser.id && list.movies.length > 1">
           <button

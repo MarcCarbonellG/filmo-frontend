@@ -91,26 +91,14 @@
     <div *ngIf="tab === 'w'">
       <div class="flex flex-wrap gap-3">
         <div *ngFor="let movie of watched">
-          <a routerLink="/{{ movie.id }}">
-            <img
-              class="h-[150px] rounded-xs border-1 border-gray-400 hover:opacity-70"
-              src="{{ baseImageUrl + '/w200' + movie.poster }}"
-              alt="{{ movie.title }} poster"
-              width="100px"
-          /></a>
+          <app-movie [movie]="movie"></app-movie>
         </div>
       </div>
     </div>
     <div *ngIf="tab === 'f'">
       <div class="flex flex-wrap gap-3">
         <div *ngFor="let movie of favorites">
-          <a routerLink="/{{ movie.id }}">
-            <img
-              class="h-[150px] rounded-xs border-1 border-gray-400 hover:opacity-70"
-              src="{{ baseImageUrl + '/w200' + movie.poster }}"
-              alt="{{ movie.title }} poster"
-              width="100px"
-          /></a>
+          <app-movie [movie]="movie"></app-movie>
         </div>
       </div>
     </div>
@@ -125,7 +113,7 @@
             <div *ngFor="let movie of list.movies">
               <img
                 class="h-[150px] rounded-xs border-1 border-gray-400"
-                src="{{ baseImageUrl + '/w200' + movie.poster }}"
+                src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
                 alt="{{ movie.title }} poster"
                 width="100px"
               />

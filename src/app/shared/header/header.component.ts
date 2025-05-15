@@ -47,7 +47,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(): void {
-    this.toggleNotisPanel();
+    this.showNotisPanel = false;
     this.authService.logout();
   }
 

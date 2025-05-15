@@ -1,0 +1,13 @@
+<section [attr.aria-label]="'Lista de películas: ' + title">
+  <h2 class="text-lg text-white mb-4">
+    {{ title }}
+  </h2>
+  <hr class="w-full border-accent border-2 mb-5" />
+  <div class="h-80 flex flex-wrap justify-between gap-3 overflow-hidden">
+    <ul *ngFor="let movie of movies">
+      <li>
+        <app-movie [movie]="movie"></app-movie>
+      </li>
+    </ul>
+  </div>
+</section>
