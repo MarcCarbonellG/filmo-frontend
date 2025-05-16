@@ -1,0 +1,54 @@
+<section class="flex flex-col gap-4">
+  <div class="flex gap-2">
+    <a class="hover" routerLink="/list/{{ list.id }}">
+      <h3 class="text-lg font-medium">{{ list.title }}</h3>
+    </a>
+    <p>-</p>
+    <div class="flex items-center gap-2">
+      <div class="w-4 h-4 bg-accent rounded-2xl"></div>
+      <a class="hover" routerLink="/user/profile/{{ list.author }}">
+        {{ list.author }}
+      </a>
+    </div>
+  </div>
+  <div *ngIf="list.movies !== null">
+    <a
+      class="group relative flex hover:cursor-pointer overflow-hidden"
+      [style.width]="5 * scale * 100 - 16 * 4 + 'px'"
+      routerLink="/list/{{ list.id }}"
+      aria-label="Ver detalles de lista"
+    >
+      <div
+        class="absolute inset-0 group-hover:border-3 group-hover:border-accent pointer-events-none z-10"
+      ></div>
+
+      <div *ngFor="let _ of [].constructor(5); let i = index; let l = last">
+        <div
+          *ngIf="list.movies[i]; else default"
+          class="relative flex"
+          [style.transform]="'translateX(' + -16 * i + 'px)'"
+          [style.zIndex]="5 - i"
+        >
+          <img
+            class="shrink-0 rounded-xs border-1 border-gray-400"
+            [style.width]="scale * 100 + 'px'"
+            [style.height]="scale * 150 + 'px'"
+            [style.boxShadow]="!l && '4px 0 8px rgba(0,0,0,0.9)'"
+            src="{{ baseImageUrl + '/w200' + list.movies[i].poster_path }}"
+            alt="{{ list.movies[i].title }} poster"
+          />
+        </div>
+        <ng-template #default>
+          <div
+            class="relative bg-primary-light rounded-xs border-1 border-gray-400"
+            [style.width]="scale * 100 + 'px'"
+            [style.height]="scale * 150 + 'px'"
+            [style.transform]="'translateX(' + -16 * i + 'px)'"
+            [style.boxShadow]="!l && '4px 0 8px rgba(0,0,0,0.9)'"
+            [style.zIndex]="5 - i"
+          ></div>
+        </ng-template>
+      </div>
+    </a>
+  </div>
+</section>

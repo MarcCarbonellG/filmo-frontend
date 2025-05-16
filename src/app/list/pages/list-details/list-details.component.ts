@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, take } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
 import { MovieService } from '../../../movie/services/movie.service';
@@ -32,7 +32,8 @@ export class ListDetailsComponent {
     private movieService: MovieService,
     private route: ActivatedRoute,
     private authService: AuthService,
-    private listService: ListService
+    private listService: ListService,
+    private router: Router
   ) {
     this.baseImageUrl = this.movieService.getImageBaseUrl();
     this.isLoggedIn = this.authService.isAuthenticated();
@@ -112,6 +113,23 @@ export class ListDetailsComponent {
         error: (err) => {
           console.error('Error al quitar película de lista', err);
         },
+      });
+    }
+  }
+
+  deleteList() {
+    if (confirm('Seguro que deseas eliminar esta lista?')) {
+      this.user$.pipe(take(1)).subscribe((user) => {
+        if (user && this.listId) {
+          this.listService.deleteList(this.listId).subscribe({
+            next: () => {
+              this.router.navigate(['/user/profile', user.username]);
+            },
+            error: (err: any) => {
+              console.error('Error al eliminar lista', err);
+            },
+          });
+        }
       });
     }
   }

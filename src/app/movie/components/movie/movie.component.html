@@ -1,6 +1,13 @@
-<a routerLink="/{{ movie.id }}">
+<a
+  class="relative group"
+  routerLink="/{{ movie.id }}"
+  aria-label="Acceder a detalles de película"
+>
+  <div
+    class="absolute inset-0 group-hover:border-3 group-hover:border-accent pointer-events-none z-10"
+  ></div>
   <img
-    class="h-[150px] rounded-xs border-1 border-gray-400 hover:border-accent hover:border-2"
+    class="h-[150px] rounded-xs border-1 border-gray-400"
     src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
     alt="Poster de {{ movie.title }}"
     width="100px"

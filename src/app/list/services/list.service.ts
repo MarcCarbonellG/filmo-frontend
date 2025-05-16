@@ -101,4 +101,16 @@ export class ListService {
       description,
     });
   }
+
+  deleteList(listId: string): Observable<List> {
+    return this.http.delete<List>(`${this.API_URL}/list/${listId}`);
+  }
+
+  getPopularLists(): Observable<List[]> {
+    return this.http.get<List[]>(`${this.API_URL}/list/popular`);
+  }
+
+  getFollowedLists(userId: number): Observable<List[]> {
+    return this.http.get<List[]>(`${this.API_URL}/list/followed/${userId}`);
+  }
 }

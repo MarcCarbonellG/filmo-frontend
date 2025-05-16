@@ -3,14 +3,13 @@ import { MovieService } from '../../../movie/services/movie.service';
 import { List } from '../../models/list.interface';
 
 @Component({
-  selector: 'app-list-showcase',
+  selector: 'app-list',
   standalone: false,
-  templateUrl: './list-showcase.component.html',
-  styleUrl: './list-showcase.component.css',
+  templateUrl: './list.component.html',
+  styleUrl: './list.component.css',
 })
-export class ListShowcaseComponent {
-  @Input() title: string = '';
-  @Input() lists: List[] = [];
+export class ListComponent {
+  @Input() list!: List;
   @Input() scale: number = 1;
   baseImageUrl: string = '';
 

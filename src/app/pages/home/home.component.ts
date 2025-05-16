@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable, take } from 'rxjs';
 import { AuthService } from '../../auth/services/auth.service';
 import { ListShowcase } from '../../list/models/list-showcase.interface';
+import { ListService } from '../../list/services/list.service';
 import { MovieShowcase } from '../../movie/models/movie-showcase.interface';
 import { SimplifiedMovie } from '../../movie/models/simplified-movie.interface';
 import { MovieService } from '../../movie/services/movie.service';
@@ -23,6 +24,7 @@ export class HomeComponent implements OnInit {
   listShowcases: ListShowcase[] = [];
   listFollowingShowcase!: ListShowcase;
   isLoggedIn: boolean = false;
+  scale: number = 1;
 
   customOptions = {
     loop: true,
@@ -37,7 +39,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private movieService: MovieService,
-    private authService: AuthService
+    private authService: AuthService,
+    private listService: ListService
   ) {
     this.user$ = this.authService.getCurrentUser();
     this.isLoggedIn = this.authService.isAuthenticated();
@@ -46,6 +49,26 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMovies();
+    this.loadLists();
+    this.setScale(window.innerWidth);
+
+    window.addEventListener('resize', () => {
+      this.setScale(window.innerWidth);
+    });
+  }
+
+  setScale(width: number) {
+    if (width < 640) {
+      this.scale = 0.8;
+    } else if (width < 768) {
+      this.scale = 1;
+    } else if (width < 1024) {
+      this.scale = 0.5;
+    } else if (width < 1280) {
+      this.scale = 0.6;
+    } else {
+      this.scale = 0.8;
+    }
   }
 
   logout() {
@@ -53,72 +76,89 @@ export class HomeComponent implements OnInit {
   }
 
   loadMovies(): void {
-    this.movieService.getMovieCollection('now_playing').subscribe({
-      next: (data) => {
-        this.featured = data.slice(0, 4);
-        this.movieShowcases.push({
-          title: 'En cartelera',
-          movies: data,
-        });
-      },
-      error: (err) => {
-        this.errorMessage = 'Error al cargar películas en cartelera';
-      },
-    });
+    this.loadMovieCollections();
+    this.loadPopularMoviesAmongFollowed();
+  }
 
-    this.movieService.getMovieCollection('upcoming').subscribe({
-      next: (data) => {
-        this.movieShowcases.push({
-          title: 'Próximamente',
-          movies: data,
-        });
-      },
-      error: (err) => {
-        this.errorMessage =
-          'Error al cargar películas que se estrenan próximamente';
-      },
-    });
+  loadMovieCollections() {
+    const collections = [
+      { name: 'now_playing', title: 'En cartelera' },
+      { name: 'upcoming', title: 'Próximamente' },
+      { name: 'popular', title: 'Populares' },
+      { name: 'top_rated', title: 'Mejor valoradas' },
+    ];
 
-    this.movieService.getMovieCollection('popular').subscribe({
-      next: (data) => {
-        this.movieShowcases.push({
-          title: 'Populares (TMDb)',
-          movies: data,
-        });
-      },
-      error: (err) => {
-        this.errorMessage = 'Error al cargar películas populares';
-      },
+    collections.forEach((collection) => {
+      this.movieService.getMovieCollection(collection.name).subscribe({
+        next: (data) => {
+          if (collection.name === 'now_playing')
+            this.featured = data.slice(0, 5);
+          this.movieShowcases.push({
+            title: collection.title,
+            movies: data,
+          });
+        },
+        error: () => {
+          this.errorMessage = `Error al cargar colección de peliculas: ${collection.title}`;
+        },
+      });
     });
+  }
 
-    this.movieService.getMovieCollection('top_rated').subscribe({
-      next: (data) => {
-        this.movieShowcases.push({
-          title: 'Mejor valoradas',
-          movies: data,
-        });
-      },
-      error: (err) => {
-        this.errorMessage = 'Error al cargar películas mejor valoradas';
-      },
-    });
-
+  loadPopularMoviesAmongFollowed() {
     this.user$.pipe(take(1)).subscribe((user) => {
       if (user) {
         this.movieService.getPopularAmongFollowed(user.id).subscribe({
           next: (data) => {
             this.movieFollowingShowcase = {
-              title: 'Populares entre tus seguidores',
+              title: 'Populares entre tus seguidos',
               movies: data,
             };
           },
-          error: (err) => {
-            this.errorMessage = 'Error al cargar películas mejor valoradas';
+          error: () => {
+            this.errorMessage =
+              'Error al cargar películas populares entre tus seguidos';
           },
         });
       }
     });
   }
 
-  loadLists() {}
+  loadLists() {
+    this.loadPopularLists();
+    this.loadFollowedLists();
+  }
+
+  loadPopularLists() {
+    this.listService.getPopularLists().subscribe({
+      next: (data) => {
+        this.listShowcases.push({
+          title: 'Listas populares',
+          lists: data,
+        });
+      },
+      error: () => {
+        this.errorMessage = 'Error al cargar listas populares';
+      },
+    });
+  }
+
+  loadFollowedLists() {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user) {
+        this.listService.getFollowedLists(user.id).subscribe({
+          next: (data) => {
+            this.listFollowingShowcase = {
+              title: 'Listas de tus seguidos',
+              lists: data,
+            };
+          },
+          error: () => {
+            this.errorMessage =
+              'Error al cargar listas de los usuarios seguidos';
+          },
+        });
+      }
+    });
+  }
 }

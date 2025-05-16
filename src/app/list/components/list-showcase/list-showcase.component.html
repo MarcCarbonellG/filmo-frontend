@@ -1,1 +1,13 @@
-<p>list-showcase works!</p>
+<section [attr.aria-label]="'Lista de listas personalizadas: ' + title">
+  <h2 class="text-lg text-white mb-4">
+    {{ title }}
+  </h2>
+  <hr class="w-full border-accent border-2 mb-5" />
+  <div>
+    <ul class="flex flex-wrap justify-between gap-3">
+      <li *ngFor="let list of lists">
+        <app-list [list]="list" [scale]="scale"></app-list>
+      </li>
+    </ul>
+  </div>
+</section>

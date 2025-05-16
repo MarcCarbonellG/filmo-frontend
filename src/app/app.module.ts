@@ -16,6 +16,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
 import { authInterceptor } from './auth/interceptors/auth.interceptor';
+import { ListModule } from './list/list.module';
 import { MovieModule } from './movie/movie.module';
 import { HomeComponent } from './pages/home/home.component';
 import { SharedModule } from './shared/shared.module';
@@ -47,6 +48,7 @@ const metaReducers: Array<MetaReducer<any, any>> = [localStorageSyncReducer];
     AuthModule,
     SharedModule,
     MovieModule,
+    ListModule,
     UserModule,
     BrowserAnimationsModule,
     CarouselModule,

@@ -41,6 +41,7 @@
           <button
             class="hover:cursor-pointer hover:opacity-80"
             *ngIf="!isEditing"
+            (click)="deleteList()"
           >
             <i class="fa-solid fa-trash-can"></i>
           </button>
@@ -89,6 +90,7 @@
           <button
             class="w-5 h-5 flex justify-center items-center absolute bottom-1 right-1 bg-red-800 rounded hover:bg-red-700 hover:cursor-pointer"
             (click)="removeMovie(movie.id)"
+            aria-label="Quitar película de lista"
           >
             <i class="fa-solid fa-minus"></i>
           </button>
