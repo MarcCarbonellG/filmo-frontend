@@ -1,5 +1,7 @@
 <div class="relative" [ngClass]="class">
+  <label for="search" class="sr-only">Buscar películapor título</label>
   <input
+    id="search"
     class="w-full h-7 text-sm text-primary pl-4 bg-secondary rounded-2xl focus:outline-none focus:bg-white"
     [ngModel]="searchTerm"
     (ngModelChange)="onInputChange($event)"
