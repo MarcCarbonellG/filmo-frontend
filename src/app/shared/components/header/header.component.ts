@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, take } from 'rxjs';
-import { AuthService } from '../../auth/services/auth.service';
-import { Recommendation } from '../../movie/models/recommendation.interface';
-import { MovieService } from '../../movie/services/movie.service';
-import { User } from '../../user/models/user.interface';
-import { UserService } from '../../user/services/user.service';
+import { AuthService } from '../../../auth/services/auth.service';
+import { Recommendation } from '../../../movie/models/recommendation.interface';
+import { MovieService } from '../../../movie/services/movie.service';
+import { User } from '../../../user/models/user.interface';
+import { UserService } from '../../../user/services/user.service';
 
 @Component({
   selector: 'app-header',

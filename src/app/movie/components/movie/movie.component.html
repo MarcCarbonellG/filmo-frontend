@@ -4,11 +4,20 @@
   aria-label="Acceder a detalles de película"
 >
   <div
-    class="absolute inset-0 group-hover:border-3 group-hover:border-accent pointer-events-none z-10"
+    class="w-[100px] absolute inset-0 group-hover:border-3 group-hover:border-accent pointer-events-none z-10"
   ></div>
   <img
-    class="h-[150px] rounded-xs border-1 border-gray-400"
+    *ngIf="movie.poster_path !== null; else noPoster"
+    class="w-[100px] h-[150px] rounded-xs border-1 border-gray-400"
     src="{{ baseImageUrl + '/w200' + movie.poster_path }}"
     alt="Poster de {{ movie.title }}"
-    width="100px"
-/></a>
+    onerror=""
+  />
+  <ng-template #noPoster>
+    <div
+      class="w-[100px] h-[150px] flex justify-center items-center bg-primary-light rounded-xs border-1 border-gray-400"
+    >
+      <i class="fa-solid fa-image text-3xl text-secondary"></i>
+    </div>
+  </ng-template>
+</a>

@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Genre } from '../../models/genre.interface';
 import { Language } from '../../models/language.interface';
-import { SimplifiedMovie } from '../../models/simplified-movie.interface';
+import { PagedMovieResult } from '../../models/paged-movie-result.interface';
 import { MovieService } from '../../services/movie.service';
 
 @Component({
@@ -14,8 +14,8 @@ import { MovieService } from '../../services/movie.service';
 })
 export class SearchResultsComponent implements OnInit {
   filterForm!: FormGroup;
-  searchResults: SimplifiedMovie[] = [];
-  originalResults: SimplifiedMovie[] = [];
+  searchResults!: PagedMovieResult;
+  originalResults!: PagedMovieResult;
   searchTerm: string = '';
   genreList: Genre[] = [];
   languageList: Language[] = [];
@@ -40,20 +40,7 @@ export class SearchResultsComponent implements OnInit {
       sortBy: ['popularity'],
       sortOrder: ['desc'],
     });
-    this.getGenres();
-    this.getLanguages();
-    this.route.queryParams.subscribe((params) => {
-      this.searchTerm = params['query'];
-      this.movieService.searchMoviesByTitle(this.searchTerm).subscribe({
-        next: (data) => {
-          this.originalResults = data;
-          this.searchResults = this.originalResults;
-        },
-        error: () => {
-          this.errorMessage = 'Error al cargar películas';
-        },
-      });
-    });
+    this.loadMovies();
   }
 
   toggleGenreDropdown(): void {
@@ -64,10 +51,33 @@ export class SearchResultsComponent implements OnInit {
     this.isLangDropdownOpen = !this.isLangDropdownOpen;
   }
 
+  loadMovies() {
+    this.route.queryParams.subscribe((params) => {
+      this.searchTerm = params['query'];
+      const page = params['page'];
+      this.movieService.searchMoviesByTitle(this.searchTerm, page).subscribe({
+        next: (data) => {
+          this.originalResults = data;
+          this.searchResults = JSON.parse(JSON.stringify(data));
+          this.getGenres();
+          this.getLanguages();
+        },
+        error: () => {
+          this.errorMessage = 'Error al cargar películas';
+        },
+      });
+    });
+  }
+
   getGenres() {
     this.movieService.getGenres().subscribe({
       next: (data) => {
-        this.genreList = data;
+        this.genreList = data.filter((g) =>
+          this.originalResults.movies.some(
+            (m) => m.genre_ids && m.genre_ids.includes(g.id)
+          )
+        );
+
         this.genreList.forEach((genre) => {
           (this.filterForm.get('genres') as FormGroup).addControl(
             `${genre.id}`,
@@ -76,7 +86,7 @@ export class SearchResultsComponent implements OnInit {
         });
       },
       error: () => {
-        this.errorMessage = 'Error al cargar películas';
+        this.errorMessage = 'Error al cargar géneros';
       },
     });
   }
@@ -84,7 +94,11 @@ export class SearchResultsComponent implements OnInit {
   getLanguages() {
     this.movieService.getLanguages().subscribe({
       next: (data) => {
-        this.languageList = data;
+        this.languageList = data.filter((l) =>
+          this.originalResults.movies.some(
+            (m) => m.original_language === l.iso_639_1
+          )
+        );
         this.languageList.forEach((lang) => {
           (this.filterForm.get('languages') as FormGroup).addControl(
             lang.iso_639_1,
@@ -107,7 +121,7 @@ export class SearchResultsComponent implements OnInit {
       .map((key) => +key);
     languages = Object.keys(languages).filter((key) => languages[key]);
 
-    let filtered = [...this.originalResults];
+    let filtered = [...this.originalResults.movies];
 
     if (audience === true) {
       filtered = filtered.filter((m) => m.adult === true);
@@ -143,6 +157,6 @@ export class SearchResultsComponent implements OnInit {
       );
     }
 
-    this.searchResults = filtered;
+    this.searchResults.movies = filtered;
   }
 }

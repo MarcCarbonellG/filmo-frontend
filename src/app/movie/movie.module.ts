@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { SharedModule } from '../shared/shared.module';
 import { MovieShowcaseComponent } from './components/movie-showcase/movie-showcase.component';
 import { MovieComponent } from './components/movie/movie.component';
 import { MovieRoutingModule } from './movie-routing.module';
@@ -24,6 +25,7 @@ import { MoneyShortPipe } from './pipes/money-short.pipe';
     ReactiveFormsModule,
     MoneyShortPipe,
     FormsModule,
+    SharedModule,
   ],
   exports: [MovieComponent, MovieShowcaseComponent],
 })

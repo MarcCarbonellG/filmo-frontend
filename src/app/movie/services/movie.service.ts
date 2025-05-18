@@ -7,6 +7,7 @@ import { Genre } from '../models/genre.interface';
 import { Language } from '../models/language.interface';
 import { MovieGenres } from '../models/movie-genres.interface';
 import { Movie } from '../models/movie.interface';
+import { PagedMovieResult } from '../models/paged-movie-result.interface';
 import { Review } from '../models/review.interface';
 import { SimplifiedMovie } from '../models/simplified-movie.interface';
 
@@ -33,9 +34,12 @@ export class MovieService {
     return this.http.get<Movie>(`${this.API_URL}/movie/${movieId}`);
   }
 
-  searchMoviesByTitle(searchTerm: string) {
-    return this.http.get<SimplifiedMovie[]>(
-      `${this.API_URL}/movie/search?query=${searchTerm}`
+  searchMoviesByTitle(
+    searchTerm: string,
+    page: number
+  ): Observable<PagedMovieResult> {
+    return this.http.get<PagedMovieResult>(
+      `${this.API_URL}/movie/search?query=${searchTerm}&page=${page}`
     );
   }
 
