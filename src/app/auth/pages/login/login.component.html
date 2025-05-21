@@ -3,7 +3,7 @@
     FILM<span class="text-accent">O</span>
   </h1>
   <div class="form-card">
-    <h2 id="form-title" class="text-primary text-2xl font-medium text-center">
+    <h2 id="form-title" class="text-2xl font-medium text-center">
       Iniciar sesión
     </h2>
     <form
@@ -12,11 +12,11 @@
       (ngSubmit)="onSubmit()"
       aria-labelledby="form-title"
     >
-      <div class="w-full flex flex-col gap-2">
+      <div class="w-full flex flex-col">
         <label for="username" class="sr-only">Nombre de usuario</label>
         <input
           id="username"
-          class="form-control"
+          class="form-control z-10"
           formControlName="username"
           placeholder="Nombre de usuario"
         />
@@ -26,16 +26,19 @@
             loginForm.get('username')?.invalid
           "
         >
-          <p class="text-red-600 text-sm" role="alert">
+          <p
+            class="bg-red-400 rounded-b-sm px-1 pt-1 pl-3 text-primary-light text-sm -mt-1"
+            role="alert"
+          >
             Nombre de usuario requerido
           </p>
         </div>
       </div>
-      <div class="w-full flex flex-col gap-2">
+      <div class="w-full flex flex-col">
         <label for="password" class="sr-only">Contraseña</label>
         <input
           id="password"
-          class="form-control"
+          class="form-control z-10"
           type="password"
           formControlName="password"
           placeholder="Contraseña"
@@ -46,25 +49,35 @@
             loginForm.get('password')?.invalid
           "
         >
-          <p class="text-red-600 text-sm" role="alert">Contraseña requerida</p>
+          <p
+            class="bg-red-400 rounded-b-sm px-1 pt-1 pl-3 text-primary-light text-sm -mt-1"
+            role="alert"
+          >
+            Contraseña requerida
+          </p>
         </div>
       </div>
 
-      <div class="w-full flex flex-col gap-2">
-        <div *ngIf="errorMessage">
-          <p class="text-red-600 text-sm" role="alert">{{ errorMessage }}</p>
-        </div>
+      <div class="w-full flex flex-col">
         <button
-          class="primary-btn"
+          class="primary-btn z-10"
           type="submit"
           [disabled]="loginForm.invalid"
         >
           INICIAR SESIÓN
         </button>
+        <div *ngIf="errorMessage">
+          <p
+            class="bg-red-400 rounded-b-sm px-1 pt-1 pl-3 text-primary-light text-sm -mt-1"
+            role="alert"
+          >
+            {{ errorMessage }}
+          </p>
+        </div>
       </div>
 
       <div class="flex flex-col gap-4">
-        <div class="flex items-center gap-2 text-primary-light">
+        <div class="flex items-center gap-2">
           <hr class="w-full" />
           <p>¿Nuevo&nbsp;en&nbsp;Filmo?</p>
           <hr class="w-full" />

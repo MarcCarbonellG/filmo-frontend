@@ -1,10 +1,16 @@
-<div *ngIf="errorMessage" class="text-red-800">
+<div
+  *ngIf="errorMessage"
+  class="text-red-800"
+  role="alert"
+  aria-live="assertive"
+>
   {{ errorMessage }}
 </div>
 
-<div class="mb-8" *ngIf="movie">
-  <div class="relative w-full">
+<main class="mb-8" *ngIf="movie">
+  <div class="relative w-full mb-12">
     <picture
+      *ngIf="movie.backdrop_path; else noBackdrop"
       style="
         mask-image: linear-gradient(
             to top,
@@ -31,239 +37,146 @@
       />
 
       <img
+        class="w-full max-h-80 object-cover"
+        style="object-position: 50% 20%"
         src="{{ baseImageUrl + '/w780' + movie.backdrop_path }}"
-        alt="Imagen responsive y optimizada"
+        alt="Imagen promocional de {{ movie.title }}"
       />
     </picture>
+    <ng-template #noBackdrop>
+      <div
+        class="w-full h-80 flex justify-center items-center bg-primary-light rounded-xs"
+        style="
+          mask-image: linear-gradient(
+              to top,
+              transparent,
+              black,
+              black,
+              transparent
+            ),
+            linear-gradient(to left, transparent, black, black, transparent);
+          mask-composite: intersect;
+          -webkit-mask-composite: destination-in;
+        "
+      >
+        <i class="fa-solid fa-image text-8xl text-secondary"></i>
+      </div>
+    </ng-template>
 
-    <div class="absolute bottom-0 left-0 w-full">
-      <div class="relative w-full">
-        <img
-          class="w-1/5 rounded-xs border-1 border-gray-400"
-          src="{{ baseImageUrl + '/w500' + movie.poster_path }}"
-          alt="{{ movie.title }} poster"
-        />
-        <div class="w-1/5 flex justify-center gap-4">
-          <div class="flex gap-2" *ngIf="isLoggedIn; else notLogged">
-            <button
-              class="hover:cursor-pointer hover:opacity-70"
-              *ngIf="!isInFavourites"
-              type="button"
-              (click)="addToFavourites()"
+    <div class="absolute -bottom-10 left-0 w-full">
+      <div class="w-full flex items-end gap-4">
+        <div class="w-min">
+          <img
+            *ngIf="movie.poster_path !== null; else noPoster"
+            class="w-1/5 min-w-[100px] rounded-xs border-1 border-gray-400"
+            src="{{ baseImageUrl + '/w500' + movie.poster_path }}"
+            alt="Póster de {{ movie.title }}"
+          />
+          <ng-template #noPoster>
+            <div
+              class="w-1/5 min-w-[100px] flex justify-center items-center bg-primary-light rounded-xs border-1 border-gray-400"
+              style="aspect-ratio: 2 / 3"
             >
-              <i class="fa-regular fa-heart"></i>
-            </button>
-            <button
-              class="hover:cursor-pointer hover:opacity-70"
-              *ngIf="isInFavourites"
-              type="button"
-              (click)="removeFromFavourites()"
-            >
-              <i class="fa-solid fa-heart"></i>
-            </button>
-            <p>{{ favourites }}</p>
-            <button
-              class="hover:cursor-pointer hover:opacity-70"
-              *ngIf="!isInWatched"
-              type="button"
-              (click)="addToWatched()"
-            >
-              <i class="fa-regular fa-eye"></i>
-            </button>
-            <button
-              class="hover:cursor-pointer hover:opacity-70"
-              *ngIf="isInWatched"
-              type="button"
-              (click)="removeFromWatched()"
-            >
-              <i class="fa-solid fa-eye"></i>
-            </button>
-            <p>{{ watched }}</p>
-          </div>
-          <ng-template #notLogged>
-            <div class="flex gap-2">
-              <button type="button" disabled>
+              <i class="fa-solid fa-image text-3xl text-secondary"></i>
+            </div>
+          </ng-template>
+          <div class="w-1/5 min-w-[100px] flex justify-center gap-4">
+            <div class="flex gap-2" *ngIf="isLoggedIn; else notLogged">
+              <button
+                class="hover:cursor-pointer hover:opacity-70"
+                *ngIf="!isInFavourites"
+                type="button"
+                (click)="addToFavourites()"
+                aria-label="Añadir película a favoritos"
+              >
                 <i class="fa-regular fa-heart"></i>
               </button>
+              <button
+                class="hover:cursor-pointer hover:opacity-70"
+                *ngIf="isInFavourites"
+                type="button"
+                (click)="removeFromFavourites()"
+                aria-label="Quitar película de favoritos"
+              >
+                <i class="fa-solid fa-heart"></i>
+              </button>
               <p>{{ favourites }}</p>
-              <button type="button" disabled>
+              <button
+                class="hover:cursor-pointer hover:opacity-70"
+                *ngIf="!isInWatched"
+                type="button"
+                (click)="addToWatched()"
+                aria-label="Marcar película como vista"
+              >
                 <i class="fa-regular fa-eye"></i>
+              </button>
+              <button
+                class="hover:cursor-pointer hover:opacity-70"
+                *ngIf="isInWatched"
+                type="button"
+                (click)="removeFromWatched()"
+                aria-label="Quitar película de vistas"
+              >
+                <i class="fa-solid fa-eye"></i>
               </button>
               <p>{{ watched }}</p>
             </div>
-          </ng-template>
+            <ng-template #notLogged>
+              <div class="flex gap-2 items-center">
+                <i class="fa-regular fa-heart"></i>
+                <p>{{ favourites }}</p>
+                <i class="fa-regular fa-eye"></i>
+                <p>{{ watched }}</p>
+              </div>
+            </ng-template>
+          </div>
         </div>
 
-        <div class="absolute bottom-0 left-1/5 ml-4">
-          <div class="flex gap-4 mb-4">
-            <h2 class="text-4xl">
+        <div>
+          <div class="flex gap-4 mb-5">
+            <h1 class="text-3xl md:text-4xl text-shadow-xl">
               {{ movie.title }}
-            </h2>
-            <div class="flex items-end gap-4">
-              <p>FILMO:&nbsp;{{ rating | number : "1.0-1" }}</p>
+            </h1>
 
-              <p
-                class="hover:cursor-pointer"
-                *ngIf="isLoggedIn"
-                (click)="openFriendsDialog()"
-              >
-                Amigos:&nbsp;{{ friendsRating | number : "1.0-1" }}
-              </p>
-
-              <dialog
-                #friendsDialogRef
-                class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded shadow max-w-md w-full"
-              >
-                <button
-                  (click)="closeFriendsDialog()"
-                  class="text-sm text-gray-500 float-right"
-                >
-                  ✖
-                </button>
-
-                <div *ngIf="friendsReviews.length" class="mt-6">
-                  <h3 class="text-lg font-semibold mb-2">
-                    Puntuaciones de tus amigos:
-                  </h3>
-                  <div class="max-h-50 overflow-y-auto">
-                    <ul *ngFor="let review of friendsReviews">
-                      <li>
-                        <p>
-                          <a routerLink="/user/profile/{{ review.username }}">{{
-                            review.username
-                          }}</a
-                          >-{{ review.rating }}
-                        </p>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </dialog>
-
-              <button class="primary-btn" (click)="openAddListDialog()">
-                +&nbsp;Añadir&nbsp;a&nbsp;lista
-              </button>
-
-              <dialog
-                #listDialogRef
-                class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded shadow max-w-md w-full"
-              >
-                <button
-                  (click)="closeAddListDialog()"
-                  class="text-sm text-gray-500 float-right"
-                >
-                  ✖
-                </button>
-
-                <button
-                  (click)="showNewListForm = !showNewListForm"
-                  class="my-4 bg-green-600 text-white px-3 py-1 rounded"
-                >
-                  {{ showNewListForm ? "Cancelar" : "Crear nueva lista" }}
-                </button>
-
-                <form
-                  *ngIf="showNewListForm"
-                  (ngSubmit)="createList()"
-                  class="flex flex-col gap-3 mt-4"
-                >
-                  <input
-                    [(ngModel)]="newList.title"
-                    name="title"
-                    required
-                    placeholder="Título"
-                    class="p-2 border rounded"
-                  />
-                  <textarea
-                    [(ngModel)]="newList.description"
-                    name="description"
-                    placeholder="Descripción (opcional)"
-                    class="p-2 border rounded"
-                  ></textarea>
-                  <button
-                    type="submit"
-                    class="bg-blue-500 text-white px-4 py-2 rounded"
-                  >
-                    Guardar
-                  </button>
-                </form>
-
-                <div *ngIf="userLists.length" class="mt-6">
-                  <h3 class="text-lg font-semibold mb-2">Tus listas:</h3>
-                  <div class="max-h-50 overflow-y-auto">
-                    <ul>
-                      <li *ngFor="let list of userLists">
-                        <button
-                          type="button"
-                          class="text-green-400"
-                          *ngIf="list.has_movie"
-                          (click)="removeFromList(list.id)"
-                        >
-                          {{ list.title }}
-                        </button>
-                        <button
-                          type="button"
-                          *ngIf="!list.has_movie"
-                          (click)="addToList(list.id)"
-                        >
-                          {{ list.title }}
-                        </button>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </dialog>
-
-              <button class="primary-btn" (click)="openRecDialog()">
-                Recomendar
-              </button>
-
-              <dialog
-                #recDialogRef
-                class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded shadow max-w-md w-full"
-              >
-                <button
-                  (click)="closeFriendsDialog()"
-                  class="text-sm text-gray-500 float-right"
-                >
-                  ✖
-                </button>
-                <p *ngIf="friends.length < 1">
-                  Añade amigos para poder hacerles recomendaciones!
+            <div class="hidden lg:flex lg:items-end lg:gap-4">
+              <div class="flex gap-4">
+                <p class="text-xl">
+                  FILMO:&nbsp;<span class="font-bold">{{
+                    rating | number : "1.0-1"
+                  }}</span
+                  ><span class="text-base">/5</span>
                 </p>
-                <div *ngIf="friends.length" class="mt-6">
-                  <h3 class="text-lg font-semibold mb-2">Amigos:</h3>
-                  <div class="max-h-50 overflow-y-auto">
-                    <ul *ngFor="let friend of friends">
-                      <li>
-                        <button
-                          class="hover:cursor-pointer"
-                          (click)="recommendMovie(friend.id); closeRecDialog()"
-                        >
-                          {{ friend.username }}
-                        </button>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </dialog>
-            </div>
-          </div>
-          <div class="flex gap-4">
-            <div class="flex flex-wrap gap-x-2">
-              <p>FECHA DE ESTRENO: {{ movie.release_date }}</p>
-              <p>DURACIÓN: {{ movie.runtime }}</p>
-              <p>PAÍS: {{ movie.origin_country }}</p>
-              <p>IDIOMA ORIGINAL: {{ movie.original_language }}</p>
-              <!-- <p>PRODUCTORAS:</p>
-              <div *ngFor="let producer of movie.production_companies">
-                <p>{{ producer.name }}</p>
-              </div> -->
-              <p>PRESUPUESTO: {{ movie.budget | moneyShort }}</p>
-              <p>RECAUDACIÓN: {{ movie.revenue | moneyShort }}</p>
-              <p>GÉNEROS:</p>
-              <div *ngFor="let genre of movie.genres">
-                <p>{{ genre.name }}</p>
+
+                <button
+                  class="text-xl"
+                  [ngClass]="friendsReviews.length > 0 ? 'hover' : null"
+                  *ngIf="isLoggedIn"
+                  (click)="openFriendsDialog()"
+                  [disabled]="friendsReviews.length === 0"
+                  aria-label="Mostrar puntuaciones de tus amigos"
+                >
+                  Amigos:&nbsp;<span class="font-bold">{{
+                    friendsRating | number : "1.0-1"
+                  }}</span
+                  ><span class="text-base">/5</span>
+                </button>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  class="w-8 h-8 bg-accent rounded hover"
+                  (click)="openAddListDialog()"
+                  aria-label="Añadir película a lista personalizada"
+                >
+                  <i class="fa-solid fa-plus text-primary"></i>
+                </button>
+
+                <button
+                  class="w-8 h-8 bg-accent rounded hover"
+                  (click)="openRecDialog()"
+                  aria-label="Recomendar película a amigos"
+                >
+                  <i class="fa-solid fa-share text-primary"></i>
+                </button>
               </div>
             </div>
           </div>
@@ -273,29 +186,115 @@
   </div>
 
   <div class="flex flex-col gap-4 mt-8">
-    <p class="italic">{{ movie.tagline }}</p>
+    <div class="flex gap-4 lg:hidden mt-2">
+      <div class="flex gap-4">
+        <p class="text-xl">
+          FILMO:&nbsp;<span class="font-bold">{{
+            rating | number : "1.0-1"
+          }}</span
+          ><span class="text-base">/5</span>
+        </p>
+
+        <button
+          class="text-xl hover:cursor-pointer"
+          *ngIf="isLoggedIn"
+          (click)="openFriendsDialog()"
+          [disabled]="friendsReviews.length === 0"
+          aria-label="Mostrar puntuaciones de tus amigos"
+        >
+          Amigos:&nbsp;<span class="font-bold">{{
+            friendsRating | number : "1.0-1"
+          }}</span
+          ><span class="text-base">/5</span>
+        </button>
+      </div>
+      <div class="flex gap-2">
+        <button
+          class="w-8 h-8 bg-accent rounded hover"
+          (click)="openAddListDialog()"
+          aria-label="Añadir película a lista personalizada"
+        >
+          <i class="fa-solid fa-plus text-primary"></i>
+        </button>
+
+        <button
+          class="w-8 h-8 bg-accent rounded hover"
+          (click)="openRecDialog()"
+          aria-label="Recomendar película a amigos"
+        >
+          <i class="fa-solid fa-share text-primary"></i>
+        </button>
+      </div>
+    </div>
+
+    <section class="flex gap-4">
+      <div class="flex flex-wrap gap-x-2">
+        <div *ngIf="movie.release_date" class="flex gap-2">
+          <p class="font-bold text-secondary">FECHA DE ESTRENO:</p>
+          <p>{{ movie.release_date }}</p>
+        </div>
+        <div *ngIf="movie.runtime" class="flex gap-2">
+          <p class="font-bold text-secondary">DURACIÓN:</p>
+          <p>{{ movie.runtime | duration }}</p>
+        </div>
+        <div *ngIf="movie.origin_country" class="flex gap-2">
+          <p class="font-bold text-secondary">PAÍS:</p>
+          <p>{{ movie.origin_country }}</p>
+        </div>
+        <div *ngIf="movie.original_language" class="flex gap-2">
+          <p class="font-bold text-secondary">IDIOMA ORIGINAL:</p>
+          <p>{{ movie.original_language }}</p>
+        </div>
+        <div *ngIf="movie.budget" class="flex gap-2">
+          <p class="font-bold text-secondary">PRESUPUESTO:</p>
+          <p>{{ movie.budget | moneyShort }}</p>
+        </div>
+        <div *ngIf="movie.revenue" class="flex gap-2">
+          <p class="font-bold text-secondary">RECAUDACIÓN:</p>
+          <p>{{ movie.revenue | moneyShort }}</p>
+        </div>
+        <div *ngIf="movie.genres.length > 0" class="flex gap-2">
+          <p class="font-bold text-secondary">GÉNEROS:</p>
+          <div *ngFor="let genre of movie.genres; let last = last">
+            <p>{{ genre.name }}<span *ngIf="!last">,</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p *ngIf="movie.tagline" class="italic">{{ movie.tagline }}</p>
     <p>{{ movie.overview }}</p>
 
-    <div class="mt-6">
+    <section class="my-6">
       <div class="w-full flex justify-between">
-        <h3 class="text-lg font-semibold mb-2">Reseñas:</h3>
-        <div *ngIf="isLoggedIn && !isReviewed">
-          <button
-            class="bg-blue-600 text-white px-4 py-2 rounded hover:cursor-pointer hover:bg-blue-700 transition"
-            (click)="toggleReviewForm()"
-          >
-            Añadir reseña
-          </button>
+        <div class="w-full flex flex-col gap-4 mb-4">
+          <div class="w-full flex justify-between items-end">
+            <h3 class="text-lg font-semibold h-min">Reseñas</h3>
+            <div *ngIf="isLoggedIn && !isReviewed && !showReviewForm">
+              <button class="primary-btn" (click)="toggleReviewForm()">
+                Añadir reseña
+              </button>
+            </div>
+          </div>
+          <hr class="w-full border-accent border-2" />
         </div>
       </div>
       <div *ngIf="showReviewForm" class="mt-4">
         <form
           [formGroup]="reviewForm"
           (ngSubmit)="submitReview()"
-          class="space-y-4 p-4 border rounded-lg shadow"
+          class="space-y-4 p-4 border-2 rounded-lg shadow my-4"
         >
-          <div>
-            <label class="block text-sm font-medium mb-1">Puntuación:</label>
+          <div class="relative">
+            <button
+              class="absolute top-0 right-1 hover"
+              type="button"
+              (click)="toggleReviewForm()"
+              aria-label="Cerrar formulario de creación de reseña"
+            >
+              <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <p class="font-medium mb-1">Puntuación:</p>
             <div class="flex flex-row-reverse justify-end gap-1">
               <ng-container *ngFor="let star of stars">
                 <input
@@ -320,7 +319,7 @@
             </p>
           </div>
           <div>
-            <label class="block text-sm font-medium mb-1">Reseña:</label>
+            <p class="font-medium mb-3">Reseña:</p>
             <textarea
               formControlName="review"
               rows="4"
@@ -329,46 +328,229 @@
             ></textarea>
           </div>
 
-          <button
-            class="bg-red-700 text-white px-4 py-2 rounded hover:cursor-pointer hover:bg-red-800 transition"
-            (click)="toggleReviewForm()"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            [disabled]="reviewForm.invalid"
-            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-          >
-            Enviar reseña
-          </button>
-        </form>
-      </div>
-      <div *ngFor="let review of reviews">
-        <div class="flex items-center gap-2 p-2">
-          <a
-            class="font-medium"
-            routerLink="/user/profile/{{ review.username }}"
-            >{{ review.username }}</a
-          >
-          <span class="text-yellow-500"> {{ review.rating }} ★ </span>
-          <span class="text-gray-500 text-sm"
-            >({{ review.date | date : "d/M/yy" }})</span
-          >
-          <p class="mt-1">{{ review.content }}</p>
-
-          <div *ngIf="user$ | async as user">
+          <div class="w-full flex justify-end">
             <button
-              *ngIf="review.user_id === user.id"
-              class="bg-red-800 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:opacity-80"
-              type="button"
-              (click)="deleteReview()"
+              type="submit"
+              [disabled]="reviewForm.invalid"
+              class="primary-btn !w-30"
             >
-              <i class="fa-regular fa-trash-can"></i>
+              Enviar reseña
             </button>
           </div>
-        </div>
+        </form>
       </div>
+      <p *ngIf="reviews.length === 0">
+        ¡Haz la primera reseña de esta película!
+      </p>
+      <div *ngFor="let review of reviews; let last = last">
+        <div class="flex flex-col gap-1 p-2">
+          <div class="flex justify-between">
+            <div>
+              <a
+                class="font-medium"
+                routerLink="/user/profile/{{ review.username }}"
+                >{{ review.username }}</a
+              >
+              <span class="text-yellow-500"> {{ review.rating }} ★ </span>
+              <span class="opacity-60 text-sm">{{
+                review.date | date : "d/M/yy"
+              }}</span>
+            </div>
+            <div *ngIf="user$ | async as user">
+              <button
+                *ngIf="review.user_id === user.id"
+                class="bg-red-800 text-xs font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:opacity-80"
+                type="button"
+                (click)="openDelReviewDialog()"
+                aria-label="Eliminar reseña"
+              >
+                <i class="fa-regular fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+          <p>{{ review.content }}</p>
+        </div>
+        <hr *ngIf="!last" class="w-full border-accent border my-4" />
+      </div>
+    </section>
+  </div>
+</main>
+
+<dialog
+  #friendsDialogRef
+  class="dialog"
+  aria-label="Ventana modal para ver puntuaciones de tus amigos"
+>
+  <button
+    (click)="closeFriendsDialog()"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+
+  <div *ngIf="friendsReviews.length" class="mt-6">
+    <h3 class="text-lg font-semibold mb-4">Puntuaciones de tus amigos:</h3>
+    <div class="max-h-50 overflow-y-auto">
+      <ul *ngFor="let review of friendsReviews; let last = last">
+        <li>
+          <div class="w-full flex justify-between">
+            <a class="hover" routerLink="/user/profile/{{ review.username }}">{{
+              review.username
+            }}</a>
+
+            <p class="text-lg font-medium text-accent">
+              {{ review.rating }}<span class="text-sm text-white">/5</span>
+            </p>
+          </div>
+
+          <hr *ngIf="!last" class="w-full border-accent border mb-2 mt-3" />
+        </li>
+      </ul>
     </div>
   </div>
-</div>
+</dialog>
+
+<dialog
+  #listDialogRef
+  class="dialog"
+  aria-label="Ventana modal para añadir película a una lista"
+>
+  <button
+    (click)="closeAddListDialog(); showNewListForm = false"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+
+  <div class="w-full flex justify-center">
+    <button
+      *ngIf="!showNewListForm"
+      (click)="showNewListForm = !showNewListForm"
+      class="primary-btn !w-40"
+    >
+      Crear nueva lista
+    </button>
+  </div>
+
+  <form
+    *ngIf="showNewListForm"
+    (ngSubmit)="createList()"
+    class="flex flex-col gap-3 mt-4"
+  >
+    <input
+      [(ngModel)]="newList.title"
+      name="title"
+      required
+      placeholder="Título"
+      class="p-2 border rounded"
+    />
+    <textarea
+      [(ngModel)]="newList.description"
+      name="description"
+      placeholder="Descripción (opcional)"
+      class="p-2 border rounded"
+    ></textarea>
+    <div class="flex gap-4">
+      <button
+        (click)="showNewListForm = !showNewListForm"
+        class="secondary-btn"
+      >
+        Cancelar</button
+      ><button type="submit" class="primary-btn">Guardar</button>
+    </div>
+  </form>
+
+  <div *ngIf="userLists.length" class="mt-6">
+    <h3 class="text-lg font-semibold mb-2">Tus listas:</h3>
+    <div class="max-h-50 overflow-y-auto">
+      <ul>
+        <li *ngFor="let list of userLists; let last = last">
+          <button
+            class="hover"
+            type="button"
+            *ngIf="list.has_movie"
+            (click)="removeFromList(list.id)"
+            aria-label="Quitar película de la lista"
+          >
+            <i class="fa-solid fa-circle-check text-accent"></i>
+            {{ list.title }}
+          </button>
+          <button
+            class="hover"
+            type="button"
+            *ngIf="!list.has_movie"
+            (click)="addToList(list.id)"
+            aria-label="Añadir película a la lista"
+          >
+            <i class="fa-regular fa-circle"></i>
+            {{ list.title }}
+          </button>
+
+          <hr *ngIf="!last" class="w-full border-accent border mb-2 mt-3" />
+        </li>
+      </ul>
+    </div>
+  </div>
+</dialog>
+
+<dialog
+  #recDialogRef
+  class="dialog"
+  aria-label="Ventana modal para recomendar película a un amigo"
+>
+  <button
+    (click)="closeRecDialog()"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+  <p *ngIf="friends.length < 1">
+    Añade amigos para poder hacerles recomendaciones!
+  </p>
+  <div *ngIf="friends.length" class="mt-6">
+    <h3 class="text-lg font-semibold mb-4">Amigos:</h3>
+    <div class="max-h-50 overflow-y-auto">
+      <ul *ngFor="let friend of friends; let last = last">
+        <li>
+          <button
+            class="hover:cursor-pointer"
+            (click)="recommendMovie(friend.id); closeRecDialog()"
+            aria-label="Enviar recomendación de película"
+          >
+            {{ friend.username }}
+          </button>
+          <hr *ngIf="!last" class="w-full border-accent border mb-2 mt-3" />
+        </li>
+      </ul>
+    </div>
+  </div>
+</dialog>
+
+<dialog
+  #delReviewRef
+  class="dialog"
+  aria-label="Ventana modal para confirmar eliminación de reseña"
+>
+  <button
+    (click)="closeDelReviewDialog()"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+  <p class="my-5">¿Estás seguro de que quieres eliminar tu reseña?</p>
+  <div class="flex gap-4">
+    <button class="secondary-btn" (click)="closeDelReviewDialog()">
+      Cancelar
+    </button>
+    <button
+      class="primary-btn"
+      (click)="closeDelReviewDialog(); deleteReview()"
+    >
+      Aceptar
+    </button>
+  </div>
+</dialog>

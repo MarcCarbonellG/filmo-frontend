@@ -23,6 +23,7 @@ export class MovieDetailsComponent implements OnInit {
   @ViewChild('friendsDialogRef')
   friendsDialogRef!: ElementRef<HTMLDialogElement>;
   @ViewChild('recDialogRef') recDialogRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('delReviewRef') delReviewRef!: ElementRef<HTMLDialogElement>;
   movie: Movie | null = null;
   movieId: string | null = null;
   user$!: Observable<User | null>;
@@ -361,6 +362,14 @@ export class MovieDetailsComponent implements OnInit {
 
   closeRecDialog() {
     this.recDialogRef.nativeElement.close();
+  }
+
+  openDelReviewDialog() {
+    this.delReviewRef.nativeElement.showModal();
+  }
+
+  closeDelReviewDialog() {
+    this.delReviewRef.nativeElement.close();
   }
 
   createList() {

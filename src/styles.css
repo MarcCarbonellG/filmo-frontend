@@ -7,7 +7,7 @@
   --color-primary: #2d2d2d;
   --color-primary-light: #3d3d3d;
   --color-secondary: #d9d9d9;
-  --color-accent: #5500bd;
+  --color-accent: #28edff;
 }
 
 .hover {
@@ -15,7 +15,7 @@
 }
 
 .form-card {
-  @apply w-75 bg-secondary rounded-2xl flex flex-col justify-center p-8 gap-6 mt-6;
+  @apply w-75 text-white bg-primary-light rounded-2xl flex flex-col justify-center p-8 gap-6 mt-6;
 }
 
 .form-control {
@@ -23,9 +23,17 @@
 }
 
 .primary-btn {
-  @apply w-full text-white font-medium bg-accent rounded-md h-9 hover:cursor-pointer hover:opacity-80 px-2 py-1;
+  @apply w-full text-primary font-medium bg-accent rounded-md h-9 hover:cursor-pointer hover:opacity-80 px-2 py-1;
+}
+
+.secondary-btn {
+  @apply w-full text-accent font-medium border-2 border-accent rounded-md h-9 hover:cursor-pointer hover:bg-accent hover:text-primary hover:opacity-80 px-2 py-1;
 }
 
 .secondary-a {
-  @apply flex justify-center items-center w-full font-medium text-accent border-2 border-accent rounded-md h-9 hover:cursor-pointer hover:bg-accent hover:text-white;
+  @apply flex justify-center items-center w-full font-medium text-accent border-2 border-accent rounded-md h-9 hover:cursor-pointer hover:bg-accent hover:text-primary;
+}
+
+.dialog {
+  @apply fixed text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-primary-light p-6 rounded shadow max-w-sm w-[calc(100%-2rem)];
 }
