@@ -8,4 +8,7 @@ export interface List {
   user_id: number;
   movies: DbMovie[];
   saved: number;
+  page: number;
+  total_results: number;
+  total_pages: number;
 }

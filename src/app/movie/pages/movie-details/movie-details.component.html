@@ -359,12 +359,12 @@
             <div *ngIf="user$ | async as user">
               <button
                 *ngIf="review.user_id === user.id"
-                class="bg-red-800 text-xs font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:opacity-80"
+                class="hover"
                 type="button"
                 (click)="openDelReviewDialog()"
                 aria-label="Eliminar reseña"
               >
-                <i class="fa-regular fa-trash-can"></i>
+                <i class="fa-solid fa-trash-can"></i>
               </button>
             </div>
           </div>
@@ -541,7 +541,10 @@
   >
     <i class="fa-solid fa-xmark text-xl"></i>
   </button>
-  <p class="my-5">¿Estás seguro de que quieres eliminar tu reseña?</p>
+  <p class="my-5">
+    ¿Estás seguro de que quieres eliminar tu reseña? Esta acción es
+    irreversible.
+  </p>
   <div class="flex gap-4">
     <button class="secondary-btn" (click)="closeDelReviewDialog()">
       Cancelar

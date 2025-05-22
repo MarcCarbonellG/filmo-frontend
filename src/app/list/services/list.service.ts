@@ -62,8 +62,10 @@ export class ListService {
     });
   }
 
-  getListById(listId: string): Observable<List> {
-    return this.http.get<List>(`${this.API_URL}/list/${listId}`);
+  getListById(listId: string, page?: number): Observable<List> {
+    return this.http.get<List>(
+      `${this.API_URL}/list/${listId}${page ? '?page=' + page : ''}`
+    );
   }
 
   getSaved(userId: number, listId: string): Observable<UserListRelation> {

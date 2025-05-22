@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, take } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
@@ -14,6 +14,8 @@ import { ListService } from '../../services/list.service';
   styleUrl: './list-details.component.css',
 })
 export class ListDetailsComponent {
+  @ViewChild('delListRef')
+  delListRef!: ElementRef<HTMLDialogElement>;
   list: List | null = null;
   listId: string | null = null;
   user$!: Observable<User | null>;
@@ -46,11 +48,23 @@ export class ListDetailsComponent {
     this.loadSaved();
   }
 
-  loadList() {
+  goToPageList(page: number) {
+    this.loadList(page);
+  }
+
+  openDelListDialog() {
+    this.delListRef.nativeElement.showModal();
+  }
+
+  closeDelListDialog() {
+    this.delListRef.nativeElement.close();
+  }
+
+  loadList(page?: number) {
     if (!this.listId) {
       this.errorMessage = 'Error al cargar lista';
     } else {
-      this.listService.getListById(this.listId).subscribe({
+      this.listService.getListById(this.listId, page ?? undefined).subscribe({
         next: (data) => {
           this.list = data;
           this.localSaved = data.saved;

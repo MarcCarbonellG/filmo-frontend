@@ -1,7 +1,7 @@
-<div class="w-full flex flex-col gap-4 my-8" *ngIf="list">
+<main class="w-full max-w-200 flex flex-col gap-4 my-8" *ngIf="list">
   <div class="flex justify-between">
     <h1
-      class="text-3xl font-medium border-b-1 border-primary pb-1"
+      class="text-3xl font-medium border-b-1 border-primary"
       *ngIf="!isEditing"
     >
       {{ title }}
@@ -15,16 +15,18 @@
     <div *ngIf="user$ | async as loggedUser">
       <div *ngIf="list.user_id !== loggedUser.id" class="h-full flex items-end">
         <button
-          class="hover:cursor-pointer hover:opacity-80"
+          class="hover"
           *ngIf="!isSaved"
           (click)="saveList()"
+          aria-label="Guardar lista"
         >
           <i class="fa-regular fa-square-plus text-2xl"></i>
         </button>
         <button
-          class="w-4 hover:cursor-pointer hover:opacity-80"
+          class="hover"
           *ngIf="isSaved"
           (click)="removeFromSave()"
+          aria-label="Quitar lista de guardados"
         >
           <i class="fa-solid fa-square-check text-2xl"></i>
         </button>
@@ -32,32 +34,26 @@
       <div *ngIf="list.user_id === loggedUser.id" class="h-full flex items-end">
         <div class="flex gap-2">
           <button
-            class="hover:cursor-pointer hover:opacity-80"
+            class="hover"
             *ngIf="!isEditing"
             (click)="openEditForm()"
+            aria-label="Editar nombre y descripción de lista"
           >
             <i class="fa-solid fa-pen"></i>
           </button>
           <button
-            class="hover:cursor-pointer hover:opacity-80"
+            class="hover"
             *ngIf="!isEditing"
-            (click)="deleteList()"
+            (click)="openDelListDialog()"
+            aria-label="Eliminar lista"
           >
             <i class="fa-solid fa-trash-can"></i>
           </button>
         </div>
         <div class="flex gap-2" *ngIf="isEditing">
-          <button
-            class="hover:cursor-pointer hover:opacity-80"
-            (click)="saveChanges()"
-          >
-            Guardar
-          </button>
-          <button
-            class="hover:cursor-pointer hover:opacity-80"
-            (click)="closeEditForm()"
-          >
-            <i class="fa-solid fa-xmark"></i>
+          <button class="primary-btn" (click)="saveChanges()">Guardar</button>
+          <button class="secondary-btn" (click)="closeEditForm()">
+            Cancelar
           </button>
         </div>
       </div>
@@ -82,20 +78,59 @@
     </p>
   </div>
 
-  <div *ngIf="list.movies !== null" class="flex flex-wrap gap-3">
-    <div class="relative" *ngFor="let movie of list.movies">
-      <app-movie [movie]="movie"></app-movie>
-      <div *ngIf="user$ | async as loggedUser">
-        <div *ngIf="list.user_id === loggedUser.id && list.movies.length > 1">
-          <button
-            class="w-5 h-5 flex justify-center items-center absolute bottom-1 right-1 bg-red-800 rounded hover:bg-red-700 hover:cursor-pointer"
-            (click)="removeMovie(movie.id)"
-            aria-label="Quitar película de lista"
-          >
-            <i class="fa-solid fa-minus"></i>
-          </button>
-        </div>
-      </div>
+  <section class="w-full flex flex-col items-center gap-6 mt-2">
+    <div
+      *ngIf="list.movies !== null"
+      class="w-full grid gap-3 grid-cols-[repeat(auto-fill,minmax(100px,1fr))]"
+    >
+      <ul *ngFor="let movie of list.movies">
+        <li class="relative">
+          <app-movie [movie]="movie"></app-movie>
+          <div *ngIf="user$ | async as loggedUser">
+            <div
+              *ngIf="list.user_id === loggedUser.id && list.movies.length > 1"
+            >
+              <button
+                class="w-5 h-5 flex justify-center items-center absolute bottom-1 left-[76px] bg-red-800 rounded hover:bg-red-700 hover:cursor-pointer"
+                (click)="removeMovie(movie.id)"
+                aria-label="Quitar película de lista"
+              >
+                <i class="fa-solid fa-minus"></i>
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
+    <app-pagination
+      [results]="list"
+      [goToPage]="goToPageList.bind(this)"
+    ></app-pagination>
+  </section>
+</main>
+
+<dialog
+  #delListRef
+  class="dialog"
+  aria-label="Ventana modal para confirmar eliminación de cuenta"
+>
+  <button
+    (click)="closeDelListDialog()"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+  <p class="my-5">
+    ¿Estás seguro de que quieres eliminar esta lista? Esta acción es
+    irreversible.
+  </p>
+  <div class="flex gap-4">
+    <button class="secondary-btn" (click)="closeDelListDialog()">
+      Cancelar
+    </button>
+    <button class="primary-btn" (click)="closeDelListDialog(); deleteList()">
+      Aceptar
+    </button>
   </div>
-</div>
+</dialog>

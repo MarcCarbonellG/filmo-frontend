@@ -104,6 +104,18 @@ export class ProfileComponent implements OnInit {
     this.tab = newTab;
   }
 
+  goToPageFav(page: number) {
+    this.loadFavorites(page);
+  }
+
+  goToPageWatched(page: number) {
+    this.loadWatched(page);
+  }
+
+  goToPageLists(page: number) {
+    this.loadLists(page);
+  }
+
   loadProfile(profileUsername: string): void {
     this.userService.getUserByUsername(profileUsername).subscribe({
       next: (response) => {
@@ -128,18 +140,6 @@ export class ProfileComponent implements OnInit {
         this.loadFollowingRelationship();
       }
     });
-  }
-
-  goToPageFav(page: number) {
-    this.loadFavorites(page);
-  }
-
-  goToPageWatched(page: number) {
-    this.loadWatched(page);
-  }
-
-  goToPageLists(page: number) {
-    this.loadLists(page);
   }
 
   loadFavorites(page?: number): void {
