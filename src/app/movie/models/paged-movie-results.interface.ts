@@ -1,6 +1,6 @@
 import { SimplifiedMovie } from './simplified-movie.interface';
 
-export interface PagedMovieResult {
+export interface PagedMovieResults {
   page: number;
   movies: SimplifiedMovie[];
   total_pages: number;

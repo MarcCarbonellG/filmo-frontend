@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { List } from '../../list/models/list.interface';
-import { DbMovie } from '../../movie/models/db-movie';
+import { PagedLists } from '../../list/models/paged-lists.interface';
 import { MovieGenres } from '../../movie/models/movie-genres.interface';
+import { PagedDbMovies } from '../../movie/models/paged-db-movies.interface';
 import { Recommendation } from '../../movie/models/recommendation.interface';
 import { Review } from '../../movie/models/review.interface';
 import { Following } from '../models/following.interface';
@@ -28,38 +28,52 @@ export class UserService {
     return this.http.get<PublicUser>(`${this.API_URL}/user/${username}`);
   }
 
-  getFavoritesByUsername(username: string): Observable<DbMovie[]> {
-    return this.http.get<DbMovie[]>(
-      `${this.API_URL}/user/profile/fav/${username}`
+  getFavoritesByUsername(
+    username: string,
+    page?: number
+  ): Observable<PagedDbMovies> {
+    return this.http.get<PagedDbMovies>(
+      `${this.API_URL}/user/profile/fav/${username}${
+        page ? '?page=' + page : ''
+      }`
     );
   }
 
-  getWatchedByUsername(username: string): Observable<DbMovie[]> {
-    return this.http.get<DbMovie[]>(
-      `${this.API_URL}/user/profile/watched/${username}`
+  getWatchedByUsername(
+    username: string,
+    page?: number
+  ): Observable<PagedDbMovies> {
+    return this.http.get<PagedDbMovies>(
+      `${this.API_URL}/user/profile/watched/${username}${
+        page ? '?page=' + page : ''
+      }`
     );
   }
 
-  getListsByUsername(username: string): Observable<List[]> {
-    return this.http.get<List[]>(
-      `${this.API_URL}/user/profile/lists/${username}`
+  getListsByUsername(username: string, page?: number): Observable<PagedLists> {
+    return this.http.get<PagedLists>(
+      `${this.API_URL}/user/profile/lists/${username}${
+        page ? '?page=' + page : ''
+      }`
     );
   }
 
-  getProfileLists(username: string): Observable<List[]> {
-    return this.http.get<List[]>(
-      `${this.API_URL}/user/profile/lists/all/${username}`
+  getProfileLists(username: string, page?: number): Observable<PagedLists> {
+    return this.http.get<PagedLists>(
+      `${this.API_URL}/user/profile/lists/all/${username}${
+        page ? '?page=' + page : ''
+      }`
     );
   }
 
-  getFollowersById(user_id: number): Observable<Following[]> {
-    return this.http.get<Following[]>(
+  getFollowersById(user_id: number): Observable<PublicUser[]> {
+    return this.http.get<PublicUser[]>(
       `${this.API_URL}/user/profile/followers/${user_id}`
     );
   }
 
-  getFollowedById(user_id: number): Observable<Following[]> {
-    return this.http.get<Following[]>(
+  getFollowedById(user_id: number): Observable<PublicUser[]> {
+    return this.http.get<PublicUser[]>(
       `${this.API_URL}/user/profile/followed/${user_id}`
     );
   }

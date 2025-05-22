@@ -197,6 +197,7 @@
       <app-pagination
         [results]="searchResults"
         [query]="searchTerm"
+        [goToPage]="goToPage.bind(this)"
       ></app-pagination>
     </section>
   </div>

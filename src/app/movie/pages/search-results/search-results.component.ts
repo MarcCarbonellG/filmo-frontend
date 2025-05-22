@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Genre } from '../../models/genre.interface';
 import { Language } from '../../models/language.interface';
-import { PagedMovieResult } from '../../models/paged-movie-result.interface';
+import { PagedMovieResults } from '../../models/paged-movie-results.interface';
 import { MovieService } from '../../services/movie.service';
 
 @Component({
@@ -14,8 +14,8 @@ import { MovieService } from '../../services/movie.service';
 })
 export class SearchResultsComponent implements OnInit {
   filterForm!: FormGroup;
-  searchResults!: PagedMovieResult;
-  originalResults!: PagedMovieResult;
+  searchResults!: PagedMovieResults;
+  originalResults!: PagedMovieResults;
   searchTerm: string = '';
   genreList: Genre[] = [];
   languageList: Language[] = [];
@@ -27,7 +27,8 @@ export class SearchResultsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private movieService: MovieService
+    private movieService: MovieService,
+    private router: Router
   ) {
     this.baseImageUrl = this.movieService.getImageBaseUrl();
   }
@@ -41,6 +42,15 @@ export class SearchResultsComponent implements OnInit {
       sortOrder: ['desc'],
     });
     this.loadMovies();
+  }
+
+  goToPage(page: number, query?: string) {
+    this.router.navigate(['/search'], {
+      queryParams: {
+        page,
+        query,
+      },
+    });
   }
 
   toggleGenreDropdown(): void {

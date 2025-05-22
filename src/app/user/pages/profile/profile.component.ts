@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, map, Observable, switchMap, take } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
-import { List } from '../../../list/models/list.interface';
-import { DbMovie } from '../../../movie/models/db-movie';
+import { PagedLists } from '../../../list/models/paged-lists.interface';
 import { MovieGenres } from '../../../movie/models/movie-genres.interface';
+import { PagedDbMovies } from '../../../movie/models/paged-db-movies.interface';
 import { Review } from '../../../movie/models/review.interface';
 import { MovieService } from '../../../movie/services/movie.service';
 import { PublicUser } from '../../models/public-user.interface';
@@ -18,19 +18,26 @@ import { UserService } from '../../services/user.service';
   styleUrl: './profile.component.css',
 })
 export class ProfileComponent implements OnInit {
+  @ViewChild('followersDialogRef')
+  followersRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('followedDialogRef')
+  followedRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('delAccountRef')
+  delAccountRef!: ElementRef<HTMLDialogElement>;
   user$!: Observable<User | null>;
   user!: PublicUser | User | null;
   errorMessage: string = '';
-  favorites: DbMovie[] = [];
-  watched: DbMovie[] = [];
-  lists: List[] = [];
-  followers: number = 0;
-  followed: number = 0;
+  favorites!: PagedDbMovies;
+  watched!: PagedDbMovies;
+  lists!: PagedLists;
+  followers: PublicUser[] = [];
+  followed: PublicUser[] = [];
   isFollowedByUser: boolean = false;
   baseImageUrl: string;
   matchPercentage: number = 0;
   commonFavGenres: string[] = [];
   tab: 'w' | 'f' | 'l' = 'w';
+  scale: number = 1;
 
   constructor(
     private authService: AuthService,
@@ -52,6 +59,41 @@ export class ProfileComponent implements OnInit {
         this.errorMessage = 'Error al cargar datos de perfil';
       }
     });
+    window.addEventListener('resize', () => {
+      this.setScale(window.innerWidth);
+    });
+  }
+
+  openFollowersDialog() {
+    this.followersRef.nativeElement.showModal();
+  }
+
+  closeFollowersDialog() {
+    this.followersRef.nativeElement.close();
+  }
+
+  openFollowedDialog() {
+    this.followedRef.nativeElement.showModal();
+  }
+
+  closeFollowedDialog() {
+    this.followedRef.nativeElement.close();
+  }
+
+  openDelAccountDialog() {
+    this.delAccountRef.nativeElement.showModal();
+  }
+
+  closeDelAccountDialog() {
+    this.delAccountRef.nativeElement.close();
+  }
+
+  setScale(width: number) {
+    if (width < 640) {
+      this.scale = 0.8;
+    } else {
+      this.scale = 1;
+    }
   }
 
   get isLoggedIn(): boolean {
@@ -88,67 +130,87 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  loadFavorites(): void {
+  goToPageFav(page: number) {
+    this.loadFavorites(page);
+  }
+
+  goToPageWatched(page: number) {
+    this.loadWatched(page);
+  }
+
+  goToPageLists(page: number) {
+    this.loadLists(page);
+  }
+
+  loadFavorites(page?: number): void {
     if (this.user) {
-      this.userService.getFavoritesByUsername(this.user.username).subscribe({
-        next: (response) => {
-          this.favorites = response;
-        },
-        error: () => {
-          this.errorMessage = 'Error al obtener películas favoritas';
-        },
-      });
+      this.userService
+        .getFavoritesByUsername(this.user.username, page ?? undefined)
+        .subscribe({
+          next: (response) => {
+            this.favorites = response;
+          },
+          error: () => {
+            this.errorMessage = 'Error al obtener películas favoritas';
+          },
+        });
     }
   }
 
-  loadWatched(): void {
+  loadWatched(page?: number): void {
     if (this.user) {
-      this.userService.getWatchedByUsername(this.user.username).subscribe({
-        next: (response) => {
-          this.watched = response;
-        },
-        error: () => {
-          this.errorMessage = 'Error al obtener películas vistas';
-        },
-      });
+      this.userService
+        .getWatchedByUsername(this.user.username, page ?? undefined)
+        .subscribe({
+          next: (response) => {
+            this.watched = response;
+          },
+          error: () => {
+            this.errorMessage = 'Error al obtener películas vistas';
+          },
+        });
     }
   }
 
-  loadLists(): void {
+  loadLists(page?: number): void {
     this.user$.pipe(take(1)).subscribe((user) => {
       if (this.user && user) {
         if (String(this.user.username) === user.username) {
-          this.loadOwnAndSavedLists();
+          this.loadOwnAndSavedLists(page);
         } else {
-          this.loadOwnLists();
+          this.loadOwnLists(page);
         }
       }
     });
   }
 
-  loadOwnLists() {
+  loadOwnLists(page?: number) {
     if (this.user) {
-      this.userService.getListsByUsername(this.user.username).subscribe({
-        next: (response) => {
-          this.lists = response;
-        },
-        error: () => {
-          this.errorMessage = 'Error al obtener listas';
-        },
-      });
+      this.userService
+        .getListsByUsername(this.user.username, page ?? undefined)
+        .subscribe({
+          next: (response) => {
+            this.lists = response;
+          },
+          error: () => {
+            this.errorMessage = 'Error al obtener listas';
+          },
+        });
     }
   }
 
-  loadOwnAndSavedLists() {
+  loadOwnAndSavedLists(page?: number) {
     if (this.user) {
-      this.userService.getProfileLists(this.user.username).subscribe({
-        next: (response) => {
-          this.lists = response;
-        },
-        error: () => {
-          this.errorMessage = 'Error al obtener listas';
-        },
-      });
+      this.userService
+        .getProfileLists(this.user.username, page ?? undefined)
+        .subscribe({
+          next: (response) => {
+            this.lists = response;
+          },
+          error: () => {
+            this.errorMessage = 'Error al obtener listas';
+          },
+        });
     }
   }
 
@@ -156,7 +218,7 @@ export class ProfileComponent implements OnInit {
     if (this.user) {
       this.userService.getFollowersById(this.user.id).subscribe({
         next: (response) => {
-          this.followers = response.length;
+          this.followers = response;
         },
         error: () => {
           this.errorMessage = 'Error al cargar seguidores';
@@ -169,7 +231,7 @@ export class ProfileComponent implements OnInit {
     if (this.user) {
       this.userService.getFollowedById(this.user.id).subscribe({
         next: (response) => {
-          this.followed = response.length;
+          this.followed = response;
         },
         error: () => {
           this.errorMessage = 'Error al cargar seguidos';
@@ -263,7 +325,12 @@ export class ProfileComponent implements OnInit {
       if (user && this.user) {
         this.userService.follow(user.id, this.user.id).subscribe({
           next: () => {
-            this.followers++;
+            this.followers.push({
+              id: user.id,
+              username: user.username,
+              avatar: user.avatar,
+              is_admin: user.is_admin,
+            });
             this.isFollowedByUser = true;
           },
           error: () => {
@@ -279,7 +346,12 @@ export class ProfileComponent implements OnInit {
       if (user && this.user) {
         this.userService.unfollow(user.id, this.user.id).subscribe({
           next: () => {
-            this.followers--;
+            const followerIndex = this.followers.findIndex(
+              (follower) => follower.id === user.id
+            );
+            if (followerIndex !== -1) {
+              this.followers.slice(followerIndex, 1);
+            }
             this.isFollowedByUser = false;
           },
           error: () => {
@@ -291,11 +363,7 @@ export class ProfileComponent implements OnInit {
   }
 
   deleteAccount() {
-    const confirmed = confirm(
-      '¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.'
-    );
-
-    if (confirmed && this.user) {
+    if (this.user) {
       this.userService.deleteAccount(this.user.id).subscribe({
         next: () => {
           alert('Cuenta eliminada correctamente.');

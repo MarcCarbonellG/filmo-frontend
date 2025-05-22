@@ -1,7 +1,10 @@
-<section class="flex flex-col gap-4">
+<section
+  class="flex flex-col gap-4"
+  [style.width]="5 * scale * 100 - 16 * 4 + 'px'"
+>
   <div class="flex gap-2">
     <a class="hover" routerLink="/list/{{ list.id }}">
-      <h3>{{ list.title }}</h3>
+      <h3 class="text-lg">{{ list.title }}</h3>
     </a>
     <p>-</p>
     <div class="flex items-center gap-2">
@@ -13,8 +16,7 @@
   </div>
   <div *ngIf="list.movies !== null">
     <a
-      class="group relative flex hover:cursor-pointer overflow-hidden"
-      [style.width]="5 * scale * 100 - 16 * 4 + 'px'"
+      class="w-full group relative flex hover:cursor-pointer overflow-hidden"
       routerLink="/list/{{ list.id }}"
       aria-label="Ver detalles de lista"
     >

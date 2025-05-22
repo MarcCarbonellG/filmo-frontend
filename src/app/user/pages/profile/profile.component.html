@@ -1,122 +1,286 @@
-<div
-  class="w-full flex flex-col justify-center gap-8 my-8"
+<main
+  class="w-full flex flex-col justify-center items-center gap-4"
+  [style]="isLoggedIn ? null : 'margin-block: 32px'"
   *ngIf="user; else loadError"
 >
-  <div class="flex flex-col gap-4">
-    <div class="flex justify-center gap-4">
-      <h1 class="text-4xl font-medium">
-        {{ user.username }}
-      </h1>
-      <div *ngIf="user$ | async as loggedUser">
+  <section class="w-full flex flex-col items-center gap-4">
+    <div class="w-full flex justify-center gap-4">
+      <div class="w-full flex flex-col items-center">
         <div
-          class="h-full flex items-end"
-          *ngIf="user.id !== loggedUser.id; else admin"
+          class="w-full max-w-200 flex justify-end"
+          *ngIf="user$ | async as loggedUser"
         >
           <button
-            *ngIf="!isFollowedByUser"
-            (click)="follow()"
-            class="bg-blue-500 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:opacity-80"
+            *ngIf="user.id === loggedUser.id"
+            (click)="openDelAccountDialog()"
+            class="bg-red-800 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:bg-red-700"
           >
-            Seguir
+            Eliminar cuenta
           </button>
-          <button
-            *ngIf="isFollowedByUser"
-            (click)="unfollow()"
-            class="bg-blue-500 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:opacity-80"
-          >
-            Dejar de seguir
-          </button>
-
-          <div *ngIf="user.id !== loggedUser.id; else admin">
-            <p>
-              Tus gustos y los de {{ user.username }} coinciden en un
-              {{ matchPercentage }}%
-            </p>
-            <div *ngIf="commonFavGenres.length > 0">
-              <p>Compartís los siguientes géneros favoritos:</p>
-              <p *ngFor="let genre of commonFavGenres">
-                {{ genre }}
-              </p>
-            </div>
+        </div>
+        <div
+          class="w-full max-w-200 flex justify-end mb-4"
+          *ngIf="user$ | async as loggedUser"
+        >
+          <div class="h-full flex items-end" *ngIf="user.id !== loggedUser.id">
+            <button
+              *ngIf="!isFollowedByUser"
+              (click)="follow()"
+              class="primary-btn !w-25"
+            >
+              Seguir
+            </button>
+            <button
+              *ngIf="isFollowedByUser"
+              (click)="unfollow()"
+              class="secondary-btn !w-25"
+            >
+              Siguiendo
+            </button>
           </div>
         </div>
-        <ng-template #admin>
-          <div class="h-full flex items-center">
-            <span *ngIf="user.is_admin">[ADMIN]</span>
+        <div class="w-full flex justify-center">
+          <div class="relative w-min">
+            <h1 class="text-center text-4xl font-medium">
+              {{ user.username }}
+            </h1>
+            <i
+              *ngIf="user.is_admin"
+              class="absolute top-0 -right-4 fa-solid fa-star text-yellow-500"
+              aria-label="Etiqueta de administrador"
+            ></i>
           </div>
-        </ng-template>
+        </div>
       </div>
     </div>
     <div class="flex justify-center gap-2 font-medium">
-      <p>{{ followed }}</p>
-      <p class="opacity-80">siguiendo</p>
-      <p>{{ followers }}</p>
-      <p class="opacity-80">seguidores</p>
+      <button
+        [ngClass]="{ hover: followed.length >= 1 }"
+        (click)="openFollowedDialog()"
+        [disabled]="followed.length < 1"
+        aria-label="Ver lista de usuarios seguidos"
+      >
+        {{ followed.length }} <span class="opacity-80">siguiendo</span>
+      </button>
+      <button
+        [ngClass]="{ hover: followed.length >= 1 }"
+        (click)="openFollowersDialog()"
+        [disabled]="followers.length < 1"
+        aria-label="Ver lista de seguidores"
+      >
+        {{ followers.length }} <span class="opacity-80">seguidores</span>
+      </button>
     </div>
-  </div>
-  <div class="flex flex-col gap-8">
-    <div class="flex justify-center gap-16 text-lg font-medium">
-      <p *ngIf="tab === 'w'" class="border-b-3 border-white px-3 pb-1">
+    <div
+      class="w-full flex justify-center mb-4 text-center"
+      *ngIf="user$ | async as loggedUser"
+    >
+      <div
+        class="flex flex-wrap justify-center gap-3 mt-2"
+        *ngIf="user.id !== loggedUser.id"
+      >
+        <p class="rounded p-2 bg-accent/20 border-2 border-accent">
+          Coincidencia de gustos:
+          <span class="font-medium">{{ matchPercentage }}%</span>
+        </p>
+        <div
+          class="max-w-120 flex justify-center gap-2"
+          *ngIf="commonFavGenres.length > 0"
+        >
+          <p class="rounded p-2 bg-accent/20 border-2 border-accent">
+            Géneros favoritos en común:
+            <span class="font-medium">{{ commonFavGenres.join(",") }}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="w-full max-w-200 flex flex-col items-center gap-8">
+    <nav
+      role="tablist"
+      class="w-full max-w-100 flex justify-between gap-8 text-lg font-medium"
+    >
+      <h2
+        *ngIf="tab === 'w'"
+        role="tab"
+        class="border-b-3 border-accent px-3 pb-1"
+      >
         VISTAS
-      </p>
-      <p
+      </h2>
+      <h2
         *ngIf="tab !== 'w'"
+        role="tab"
         class="px-3 pb-1 hover:opacity-80 hover:cursor-pointer"
         (click)="changeTab('w')"
       >
         VISTAS
-      </p>
-      <p *ngIf="tab === 'f'" class="border-b-3 border-white px-3 pb-1">
+      </h2>
+      <h2
+        *ngIf="tab === 'f'"
+        role="tab"
+        class="border-b-3 border-accent px-3 pb-1"
+      >
         FAVORITAS
-      </p>
-      <p
+      </h2>
+      <h2
         *ngIf="tab !== 'f'"
+        role="tab"
         class="px-3 pb-1 hover:opacity-80 hover:cursor-pointer"
         (click)="changeTab('f')"
       >
         FAVORITAS
-      </p>
-      <p *ngIf="tab === 'l'" class="border-b-3 border-white px-3 pb-1">
+      </h2>
+      <h2
+        *ngIf="tab === 'l'"
+        role="tab"
+        class="border-b-3 border-accent px-3 pb-1"
+      >
         LISTAS
-      </p>
-      <p
+      </h2>
+      <h2
         *ngIf="tab !== 'l'"
+        role="tab"
         class="px-3 pb-1 hover:opacity-80 hover:cursor-pointer"
         (click)="changeTab('l')"
       >
         LISTAS
-      </p>
-    </div>
+      </h2>
+    </nav>
 
-    <div *ngIf="tab === 'w'">
-      <div class="flex flex-wrap gap-3">
-        <div *ngFor="let movie of watched">
+    <div *ngIf="tab === 'w'" class="w-full flex flex-col gap-6">
+      <ul
+        *ngIf="watched && watched.movies"
+        class="grid gap-3 grid-cols-[repeat(auto-fill,minmax(100px,1fr))] overflow-hidden"
+      >
+        <li *ngFor="let movie of watched.movies">
           <app-movie [movie]="movie"></app-movie>
-        </div>
-      </div>
+        </li>
+      </ul>
+      <app-pagination
+        [results]="watched"
+        [goToPage]="goToPageWatched.bind(this)"
+      ></app-pagination>
     </div>
-    <div *ngIf="tab === 'f'">
-      <div class="flex flex-wrap gap-3">
-        <div *ngFor="let movie of favorites">
+    <div *ngIf="tab === 'f'" class="w-full flex flex-col gap-6">
+      <ul
+        *ngIf="favorites && favorites.movies"
+        class="grid gap-3 grid-cols-[repeat(auto-fill,minmax(100px,1fr))] overflow-hidden"
+      >
+        <li *ngFor="let movie of favorites.movies">
           <app-movie [movie]="movie"></app-movie>
-        </div>
-      </div>
+        </li>
+      </ul>
+      <app-pagination
+        [results]="favorites"
+        [goToPage]="goToPageWatched.bind(this)"
+      ></app-pagination>
     </div>
-    <div *ngIf="tab === 'l'" class="flex flex-col gap-8">
-      <div *ngFor="let list of lists">
-        <app-list [list]="list"></app-list>
-      </div>
+    <div *ngIf="tab === 'l'" class="w-full flex flex-col items-center gap-6">
+      <ul
+        *ngIf="lists && lists.lists"
+        class="grid gap-y-8 grid-cols-[repeat(auto-fill,minmax(336px,1fr))] overflow-hidden"
+      >
+        <li *ngFor="let list of lists.lists">
+          <app-list [list]="list" [scale]="scale"></app-list>
+        </li>
+      </ul>
+      <app-pagination
+        [results]="lists"
+        [goToPage]="goToPageLists.bind(this)"
+      ></app-pagination>
     </div>
-  </div>
-  <div *ngIf="user$ | async as loggedUser">
-    <button
-      *ngIf="user.id === loggedUser.id"
-      (click)="deleteAccount()"
-      class="bg-red-800 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:bg-red-700"
-    >
-      Eliminar cuenta
-    </button>
-  </div>
-</div>
+  </section>
+</main>
 
 <ng-template #loadError>{{ errorMessage }}</ng-template>
+
+<dialog
+  #followersDialogRef
+  class="dialog"
+  aria-label="Ventana modal para recomendar película a un amigo"
+>
+  <button
+    (click)="closeFollowersDialog()"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+  <div *ngIf="followers.length" class="mt-6">
+    <h3 class="text-lg font-semibold mb-4">Seguidores:</h3>
+    <div class="max-h-50 overflow-y-auto">
+      <ul *ngFor="let follower of followers; let last = last">
+        <li>
+          <a
+            class="hover"
+            routerLink="/user/profile/{{ follower.username }}"
+            aria-label="Enviar recomendación de película"
+          >
+            {{ follower.username }}
+          </a>
+          <hr *ngIf="!last" class="w-full border-accent border mb-2 mt-3" />
+        </li>
+      </ul>
+    </div>
+  </div>
+</dialog>
+
+<dialog
+  #followedDialogRef
+  class="dialog"
+  aria-label="Ventana modal para recomendar película a un amigo"
+>
+  <button
+    (click)="closeFollowedDialog()"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+  <div *ngIf="followed.length" class="mt-6">
+    <h3 class="text-lg font-semibold mb-4">Siguiendo:</h3>
+    <div class="max-h-50 overflow-y-auto">
+      <ul *ngFor="let followed of followed; let last = last">
+        <li>
+          <a
+            class="hover"
+            routerLink="/user/profile/{{ followed.username }}"
+            aria-label="Enviar recomendación de película"
+          >
+            {{ followed.username }}
+          </a>
+          <hr *ngIf="!last" class="w-full border-accent border mb-2 mt-3" />
+        </li>
+      </ul>
+    </div>
+  </div>
+</dialog>
+
+<dialog
+  #delAccountRef
+  class="dialog"
+  aria-label="Ventana modal para confirmar eliminación de cuenta"
+>
+  <button
+    (click)="closeDelAccountDialog()"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+  <p class="my-5">
+    ¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es
+    irreversible.
+  </p>
+  <div class="flex gap-4">
+    <button class="secondary-btn" (click)="closeDelAccountDialog()">
+      Cancelar
+    </button>
+    <button
+      class="primary-btn"
+      (click)="closeDelAccountDialog(); deleteAccount()"
+    >
+      Aceptar
+    </button>
+  </div>
+</dialog>
