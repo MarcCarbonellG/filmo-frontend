@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, take } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
 import { ListWithMovieStatus } from '../../../list/models/list-with-movie-status.interface';
@@ -53,6 +53,7 @@ export class MovieDetailsComponent implements OnInit {
   constructor(
     private movieService: MovieService,
     private route: ActivatedRoute,
+    public router: Router,
     private fb: FormBuilder,
     private authService: AuthService,
     private listService: ListService,

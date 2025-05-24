@@ -11,6 +11,7 @@
   <div class="relative w-full mb-12">
     <picture
       *ngIf="movie.backdrop_path; else noBackdrop"
+      class="w-full"
       style="
         mask-image: linear-gradient(
             to top,
@@ -134,7 +135,10 @@
 
         <div>
           <div class="flex gap-4 mb-5">
-            <h1 class="text-3xl md:text-4xl text-shadow-xl">
+            <h1
+              class="text-3xl md:text-4xl"
+              style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7)"
+            >
               {{ movie.title }}
             </h1>
 
@@ -164,7 +168,11 @@
               <div class="flex gap-2">
                 <button
                   class="w-8 h-8 bg-accent rounded hover"
-                  (click)="openAddListDialog()"
+                  (click)="
+                    isLoggedIn
+                      ? openAddListDialog()
+                      : router.navigate(['/login'])
+                  "
                   aria-label="Añadir película a lista personalizada"
                 >
                   <i class="fa-solid fa-plus text-primary"></i>
@@ -172,7 +180,9 @@
 
                 <button
                   class="w-8 h-8 bg-accent rounded hover"
-                  (click)="openRecDialog()"
+                  (click)="
+                    isLoggedIn ? openRecDialog() : router.navigate(['/login'])
+                  "
                   aria-label="Recomendar película a amigos"
                 >
                   <i class="fa-solid fa-share text-primary"></i>
@@ -211,7 +221,9 @@
       <div class="flex gap-2">
         <button
           class="w-8 h-8 bg-accent rounded hover"
-          (click)="openAddListDialog()"
+          (click)="
+            isLoggedIn ? openAddListDialog() : router.navigate(['/login'])
+          "
           aria-label="Añadir película a lista personalizada"
         >
           <i class="fa-solid fa-plus text-primary"></i>
@@ -219,7 +231,7 @@
 
         <button
           class="w-8 h-8 bg-accent rounded hover"
-          (click)="openRecDialog()"
+          (click)="isLoggedIn ? openRecDialog() : router.navigate(['/login'])"
           aria-label="Recomendar película a amigos"
         >
           <i class="fa-solid fa-share text-primary"></i>
@@ -253,7 +265,7 @@
           <p class="font-bold text-secondary">RECAUDACIÓN:</p>
           <p>{{ movie.revenue | moneyShort }}</p>
         </div>
-        <div *ngIf="movie.genres.length > 0" class="flex gap-2">
+        <div *ngIf="movie.genres.length > 0" class="flex flex-wrap gap-2">
           <p class="font-bold text-secondary">GÉNEROS:</p>
           <div *ngFor="let genre of movie.genres; let last = last">
             <p>{{ genre.name }}<span *ngIf="!last">,</span></p>

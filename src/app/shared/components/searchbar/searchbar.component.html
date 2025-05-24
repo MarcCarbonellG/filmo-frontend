@@ -6,6 +6,7 @@
     [ngModel]="searchTerm"
     (ngModelChange)="onInputChange($event)"
     (keyup.enter)="triggerSearch()"
+    (keydown.enter)="triggerSearch()"
     spellcheck="false"
   />
   <button
