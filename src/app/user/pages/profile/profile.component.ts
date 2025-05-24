@@ -37,7 +37,7 @@ export class ProfileComponent implements OnInit {
   matchPercentage: number = 0;
   commonFavGenres: string[] = [];
   tab: 'w' | 'f' | 'l' = 'w';
-  scale: number = 1;
+  scale: number = 0.8;
 
   constructor(
     private authService: AuthService,
@@ -174,12 +174,10 @@ export class ProfileComponent implements OnInit {
 
   loadLists(page?: number): void {
     this.user$.pipe(take(1)).subscribe((user) => {
-      if (this.user && user) {
-        if (String(this.user.username) === user.username) {
-          this.loadOwnAndSavedLists(page);
-        } else {
-          this.loadOwnLists(page);
-        }
+      if (this.user && user && String(this.user.username) === user.username) {
+        this.loadOwnAndSavedLists(page);
+      } else {
+        this.loadOwnLists(page);
       }
     });
   }

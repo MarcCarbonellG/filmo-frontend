@@ -33,6 +33,10 @@ export class PaginationComponent implements OnChanges {
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
+    if (pages.length === 0) {
+      pages.push(1);
+      this.current = 1;
+    }
     return pages;
   }
 }

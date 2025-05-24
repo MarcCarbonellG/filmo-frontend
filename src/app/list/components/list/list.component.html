@@ -34,6 +34,7 @@
           <img
             class="shrink-0 rounded-xs border-1 border-gray-400"
             [style.width]="scale * 100 + 'px'"
+            [style.minWidth]="scale * 100 + 'px'"
             [style.height]="scale * 150 + 'px'"
             [style.boxShadow]="!l && '4px 0 8px rgba(0,0,0,0.9)'"
             src="{{ baseImageUrl + '/w200' + list.movies[i].poster_path }}"
