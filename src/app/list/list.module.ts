@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MovieModule } from '../movie/movie.module';
 import { SharedModule } from '../shared/shared.module';
 import { ListShowcaseComponent } from './components/list-showcase/list-showcase.component';
@@ -17,6 +18,7 @@ import { ListDetailsComponent } from './pages/list-details/list-details.componen
     FormsModule,
     MovieModule,
     SharedModule,
+    MatProgressSpinnerModule,
   ],
   exports: [ListComponent, ListShowcaseComponent],
 })

@@ -172,6 +172,13 @@
     </form>
 
     <section
+      class="w-full h-full flex justify-center items-center mt-[25%]"
+      *ngIf="!searchResults"
+    >
+      <mat-spinner [diameter]="75"></mat-spinner>
+    </section>
+
+    <section
       class="w-full flex flex-col justify-between gap-8"
       *ngIf="searchResults"
       aria-labelledby="resultados-busqueda"

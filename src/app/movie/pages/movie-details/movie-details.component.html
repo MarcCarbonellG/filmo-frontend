@@ -1,11 +1,9 @@
-<div
-  *ngIf="errorMessage"
-  class="text-red-800"
-  role="alert"
-  aria-live="assertive"
+<main
+  class="w-full h-full flex justify-center items-center mt-[25%]"
+  *ngIf="!movie"
 >
-  {{ errorMessage }}
-</div>
+  <mat-spinner [diameter]="75"></mat-spinner>
+</main>
 
 <main class="mb-8" *ngIf="movie">
   <div class="relative w-full mb-12">

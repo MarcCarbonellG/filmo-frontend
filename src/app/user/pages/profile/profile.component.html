@@ -147,47 +147,64 @@
       </h2>
     </nav>
 
-    <div *ngIf="tab === 'w'" class="w-full flex flex-col gap-6">
-      <ul
-        *ngIf="watched && watched.movies"
-        class="grid gap-3 grid-cols-[repeat(auto-fill,minmax(100px,1fr))] overflow-hidden"
+    <ng-template #loadingSpinner>
+      <div class="w-full h-full flex justify-center items-center mt-[10%]">
+        <mat-spinner [diameter]="75"></mat-spinner>
+      </div>
+    </ng-template>
+    <div *ngIf="tab === 'w'" class="w-full">
+      <div
+        *ngIf="watched && watched.movies; else loadingSpinner"
+        class="w-full flex flex-col gap-6"
       >
-        <li *ngFor="let movie of watched.movies">
-          <app-movie [movie]="movie"></app-movie>
-        </li>
-      </ul>
-      <app-pagination
-        [results]="watched"
-        [goToPage]="goToPageWatched.bind(this)"
-      ></app-pagination>
+        <ul
+          class="grid gap-3 grid-cols-[repeat(auto-fill,minmax(100px,1fr))] overflow-hidden"
+        >
+          <li *ngFor="let movie of watched.movies">
+            <app-movie [movie]="movie"></app-movie>
+          </li>
+        </ul>
+        <app-pagination
+          [results]="watched"
+          [goToPage]="goToPageWatched.bind(this)"
+        ></app-pagination>
+      </div>
     </div>
-    <div *ngIf="tab === 'f'" class="w-full flex flex-col gap-6">
-      <ul
-        *ngIf="favorites && favorites.movies"
-        class="grid gap-3 grid-cols-[repeat(auto-fill,minmax(100px,1fr))] overflow-hidden"
+    <div *ngIf="tab === 'f'" class="w-full">
+      <div
+        *ngIf="favorites && favorites.movies; else loadingSpinner"
+        class="w-full flex flex-col gap-6"
       >
-        <li *ngFor="let movie of favorites.movies">
-          <app-movie [movie]="movie"></app-movie>
-        </li>
-      </ul>
-      <app-pagination
-        [results]="favorites"
-        [goToPage]="goToPageWatched.bind(this)"
-      ></app-pagination>
+        <ul
+          class="grid gap-3 grid-cols-[repeat(auto-fill,minmax(100px,1fr))] overflow-hidden"
+        >
+          <li *ngFor="let movie of favorites.movies">
+            <app-movie [movie]="movie"></app-movie>
+          </li>
+        </ul>
+        <app-pagination
+          [results]="favorites"
+          [goToPage]="goToPageWatched.bind(this)"
+        ></app-pagination>
+      </div>
     </div>
-    <div *ngIf="tab === 'l'" class="w-full flex flex-col items-center gap-6">
-      <ul
-        *ngIf="lists && lists.lists"
-        class="grid gap-y-8 grid-cols-[repeat(auto-fill,minmax(336px,1fr))] overflow-hidden"
+    <div *ngIf="tab === 'l'" class="w-full">
+      <div
+        *ngIf="lists && lists.lists; else loadingSpinner"
+        class="w-full flex flex-col items-center gap-6"
       >
-        <li *ngFor="let list of lists.lists">
-          <app-list [list]="list" [scale]="scale"></app-list>
-        </li>
-      </ul>
-      <app-pagination
-        [results]="lists"
-        [goToPage]="goToPageLists.bind(this)"
-      ></app-pagination>
+        <ul
+          class="grid gap-y-8 grid-cols-[repeat(auto-fill,minmax(336px,1fr))] overflow-hidden"
+        >
+          <li *ngFor="let list of lists.lists">
+            <app-list [list]="list" [scale]="scale"></app-list>
+          </li>
+        </ul>
+        <app-pagination
+          [results]="lists"
+          [goToPage]="goToPageLists.bind(this)"
+        ></app-pagination>
+      </div>
     </div>
   </section>
 </main>

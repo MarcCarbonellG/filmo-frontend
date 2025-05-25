@@ -57,6 +57,11 @@
       </ng-template>
     </owl-carousel-o>
   </div>
+  <ng-template #loadingSpinner>
+    <div class="w-full h-full flex justify-center items-center mt-10">
+      <mat-spinner [diameter]="75"></mat-spinner>
+    </div>
+  </ng-template>
   <section
     *ngIf="isLoggedIn"
     class="w-full flex flex-col gap-6 my-8"
@@ -67,7 +72,8 @@
       <div class="w-full flex flex-col gap-4">
         <div
           *ngIf="
-            movieFollowingShowcase && movieFollowingShowcase.movies.length > 0
+            movieFollowingShowcase && movieFollowingShowcase.movies.length > 0;
+            else loadingSpinner
           "
         >
           <app-movie-showcase
@@ -80,7 +86,8 @@
       <div class="md:w-min flex flex-col gap-4">
         <div
           *ngIf="
-            listFollowingShowcase && listFollowingShowcase.lists.length > 0
+            listFollowingShowcase && listFollowingShowcase.lists.length > 0;
+            else loadingSpinner
           "
         >
           <app-list-showcase
@@ -101,7 +108,7 @@
     <div class="flex flex-col md:flex-row gap-10">
       <div class="w-full flex flex-col gap-4">
         <div *ngFor="let showcase of movieShowcases">
-          <div *ngIf="showcase.movies.length > 0">
+          <div *ngIf="showcase.movies.length > 0; else loadingSpinner">
             <app-movie-showcase
               title="{{ showcase.title }}"
               [movies]="showcase.movies"
@@ -112,7 +119,7 @@
 
       <div class="md:w-min flex flex-col gap-4">
         <div *ngFor="let showcase of listShowcases">
-          <div *ngIf="showcase.lists.length > 0">
+          <div *ngIf="showcase.lists.length > 0; else loadingSpinner">
             <app-list-showcase
               title="{{ showcase.title }}"
               [lists]="showcase.lists"

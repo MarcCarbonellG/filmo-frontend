@@ -6,6 +6,7 @@ import {
 } from '@angular/platform-browser';
 
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActionReducer, MetaReducer, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -58,6 +59,7 @@ const metaReducers: Array<MetaReducer<any, any>> = [localStorageSyncReducer];
       logOnly: environment.production,
     }),
     HttpClientModule,
+    MatProgressSpinnerModule,
   ],
   providers: [
     provideClientHydration(withEventReplay()),

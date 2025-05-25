@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { MovieShowcaseComponent } from './components/movie-showcase/movie-showcase.component';
@@ -28,6 +29,7 @@ import { MoneyShortPipe } from './pipes/money-short.pipe';
     MoneyShortPipe,
     FormsModule,
     SharedModule,
+    MatProgressSpinnerModule,
   ],
   exports: [MovieComponent, MovieShowcaseComponent],
 })
