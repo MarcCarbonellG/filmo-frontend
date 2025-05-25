@@ -5,7 +5,7 @@ import {
   withEventReplay,
 } from '@angular/platform-browser';
 
-import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActionReducer, MetaReducer, StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -15,7 +15,7 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
-import { authInterceptor } from './auth/interceptors/auth.interceptor';
+import { AuthInterceptor } from './auth/interceptors/auth.interceptor';
 import { ListModule } from './list/list.module';
 import { MovieModule } from './movie/movie.module';
 import { HomeComponent } from './pages/home/home.component';
@@ -57,13 +57,13 @@ const metaReducers: Array<MetaReducer<any, any>> = [localStorageSyncReducer];
       maxAge: 25,
       logOnly: environment.production,
     }),
+    HttpClientModule,
   ],
   providers: [
     provideClientHydration(withEventReplay()),
-    provideHttpClient(),
     {
       provide: HTTP_INTERCEPTORS,
-      useFactory: authInterceptor,
+      useClass: AuthInterceptor,
       multi: true,
     },
     { provide: PLATFORM_ID, useValue: PLATFORM_ID },

@@ -9,8 +9,8 @@ import { MovieComponent } from './components/movie/movie.component';
 import { MovieRoutingModule } from './movie-routing.module';
 import { MovieDetailsComponent } from './pages/movie-details/movie-details.component';
 import { SearchResultsComponent } from './pages/search-results/search-results.component';
-import { MoneyShortPipe } from './pipes/money-short.pipe';
 import { DurationPipe } from './pipes/duration.pipe';
+import { MoneyShortPipe } from './pipes/money-short.pipe';
 
 @NgModule({
   declarations: [
