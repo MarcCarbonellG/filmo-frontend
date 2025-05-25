@@ -28,7 +28,14 @@ export class RegisterComponent {
     this.registerForm = this.fb.group(
       {
         email: ['', [Validators.required, Validators.email]],
-        username: ['', [Validators.required, Validators.maxLength(20)]],
+        username: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(20),
+            Validators.pattern(/^\S+$/),
+          ],
+        ],
         password: [
           '',
           [
@@ -54,7 +61,9 @@ export class RegisterComponent {
 
     const { email, username, password } = this.registerForm.value;
 
-    this.authService.register(email, username, password).subscribe({
+    const cleanUsername = username.trim().replace(/\s/g, '');
+
+    this.authService.register(email, cleanUsername, password).subscribe({
       next: () => {
         alert('Account successfully created');
         this.router.navigate(['/login']);

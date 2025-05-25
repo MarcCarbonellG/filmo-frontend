@@ -60,14 +60,22 @@
             registerForm.get('username')?.invalid
           "
         >
-          <small *ngIf="registerForm.get('username')?.errors?.['required']"
-            ><p
+          <small *ngIf="registerForm.get('username')?.errors?.['required']">
+            <p
               class="bg-red-400 rounded-b-sm px-1 pt-1 pl-3 text-primary-light text-sm -mt-1"
               role="alert"
             >
               Nombre de usuario requerido
-            </p></small
-          >
+            </p>
+          </small>
+          <small *ngIf="registerForm.get('username')?.errors?.['pattern']">
+            <p
+              class="bg-red-400 rounded-b-sm px-1 pt-1 pl-3 text-primary-light text-sm -mt-1"
+              role="alert"
+            >
+              El nombre de usuario no puede contener espacios en blanco
+            </p>
+          </small>
           <small *ngIf="registerForm.get('username')?.errors?.['maxlength']"
             ><p
               class="bg-red-400 rounded-b-sm px-1 pt-1 pl-3 text-primary-light text-sm -mt-1"
