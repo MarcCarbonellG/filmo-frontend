@@ -158,13 +158,7 @@
       </div>
 
       <div class="w-full flex flex-col">
-        <button
-          class="primary-btn z-10"
-          type="submit"
-          [disabled]="registerForm.invalid"
-        >
-          REGISTRARSE
-        </button>
+        <button class="primary-btn z-10" type="submit">REGISTRARSE</button>
         <div *ngIf="errorMessage">
           <p
             class="bg-red-400 rounded-b-sm px-1 pt-1 pl-3 text-primary-light text-sm -mt-1"
@@ -186,3 +180,26 @@
     </form>
   </div>
 </main>
+
+<dialog
+  #regSuccessRef
+  class="dialog"
+  aria-label="Ventana modal para informar de registro existoso"
+>
+  <button
+    (click)="closeRegSuccessDialog()"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+  <div class="flex items-center gap-3">
+    <i class="fa-solid fa-circle-check text-green-400 text-2xl"></i>
+    <p class="my-5">Usuario registrado correctamente.</p>
+  </div>
+  <div class="flex gap-4">
+    <button class="primary-btn" (click)="closeRegSuccessDialog()">
+      Aceptar
+    </button>
+  </div>
+</dialog>

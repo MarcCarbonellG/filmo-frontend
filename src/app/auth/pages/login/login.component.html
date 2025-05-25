@@ -59,13 +59,7 @@
       </div>
 
       <div class="w-full flex flex-col">
-        <button
-          class="primary-btn z-10"
-          type="submit"
-          [disabled]="loginForm.invalid"
-        >
-          INICIAR SESIÓN
-        </button>
+        <button class="primary-btn z-10" type="submit">INICIAR SESIÓN</button>
         <div *ngIf="errorMessage">
           <p
             class="bg-red-400 rounded-b-sm px-1 pt-1 pl-3 text-primary-light text-sm -mt-1"

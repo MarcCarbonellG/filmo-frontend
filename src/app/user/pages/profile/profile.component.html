@@ -284,3 +284,49 @@
     </button>
   </div>
 </dialog>
+
+<dialog
+  #delSuccessRef
+  class="dialog"
+  aria-label="Ventana modal para informar de eliminación de cuenta existosa"
+>
+  <button
+    (click)="closeDelSuccessDialog()"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+  <div class="flex items-center gap-3">
+    <i class="fa-solid fa-circle-check text-green-400 text-2xl"></i>
+    <p class="my-5">Cuenta eliminada correctamente.</p>
+  </div>
+  <div class="flex gap-4">
+    <button class="primary-btn" (click)="closeDelSuccessDialog()">
+      Aceptar
+    </button>
+  </div>
+</dialog>
+
+<dialog
+  #delErrorRef
+  class="dialog"
+  aria-label="Ventana modal para informar de error en la eliminación de cuenta"
+>
+  <button
+    (click)="closeDelErrorDialog()"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+  <div class="flex items-center gap-3">
+    <i class="fa-solid fa-circle-xmark text-red-400 text-2xl"></i>
+    <p class="my-5">
+      Hubo un problema al eliminar la cuenta. Inténtalo de nuevo más tarde.
+    </p>
+  </div>
+  <div class="flex gap-4">
+    <button class="primary-btn" (click)="closeDelErrorDialog()">Aceptar</button>
+  </div>
+</dialog>

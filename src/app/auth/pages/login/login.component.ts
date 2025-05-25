@@ -29,7 +29,10 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
     const { username, password } = this.loginForm.value;
 
@@ -43,7 +46,7 @@ export class LoginComponent {
         this.router.navigate(['/']);
       },
       error: (err) => {
-        this.errorMessage = err.error.message || 'Login failed';
+        this.errorMessage = err.error.message || 'Error al iniciar sesión';
       },
     });
   }

@@ -24,6 +24,8 @@ export class ProfileComponent implements OnInit {
   followedRef!: ElementRef<HTMLDialogElement>;
   @ViewChild('delAccountRef')
   delAccountRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('delSuccessRef') delSuccessRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('delErrorRef') delErrorRef!: ElementRef<HTMLDialogElement>;
   user$!: Observable<User | null>;
   user!: PublicUser | User | null;
   errorMessage: string = '';
@@ -86,6 +88,23 @@ export class ProfileComponent implements OnInit {
 
   closeDelAccountDialog() {
     this.delAccountRef.nativeElement.close();
+  }
+
+  openDelSuccessDialog() {
+    this.delSuccessRef.nativeElement.showModal();
+  }
+
+  closeDelSuccessDialog() {
+    this.delSuccessRef.nativeElement.close();
+    this.router.navigate(['/']);
+  }
+
+  openDelErrorDialog() {
+    this.delErrorRef.nativeElement.showModal();
+  }
+
+  closeDelErrorDialog() {
+    this.delErrorRef.nativeElement.close();
   }
 
   setScale(width: number) {
@@ -364,12 +383,11 @@ export class ProfileComponent implements OnInit {
     if (this.user) {
       this.userService.deleteAccount(this.user.id).subscribe({
         next: () => {
-          alert('Cuenta eliminada correctamente.');
+          this.openDelSuccessDialog();
           this.authService.logout();
-          this.router.navigate(['/']);
         },
         error: () => {
-          alert('Hubo un problema al eliminar la cuenta. Inténtalo de nuevo.');
+          this.openDelErrorDialog();
         },
       });
     }

@@ -24,6 +24,8 @@ export class MovieDetailsComponent implements OnInit {
   friendsDialogRef!: ElementRef<HTMLDialogElement>;
   @ViewChild('recDialogRef') recDialogRef!: ElementRef<HTMLDialogElement>;
   @ViewChild('delReviewRef') delReviewRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('listCreatedRef') listCreatedRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('listErrorRef') listErrorRef!: ElementRef<HTMLDialogElement>;
   movie: Movie | null = null;
   movieId: string | null = null;
   user$!: Observable<User | null>;
@@ -373,6 +375,22 @@ export class MovieDetailsComponent implements OnInit {
     this.delReviewRef.nativeElement.close();
   }
 
+  openListCreatedDialog() {
+    this.listCreatedRef.nativeElement.showModal();
+  }
+
+  closeListCreatedDialog() {
+    this.listCreatedRef.nativeElement.close();
+  }
+
+  openListErrorDialog() {
+    this.listErrorRef.nativeElement.showModal();
+  }
+
+  closeListErrorDialog() {
+    this.listErrorRef.nativeElement.close();
+  }
+
   createList() {
     if (!this.newList.title) return;
 
@@ -387,10 +405,10 @@ export class MovieDetailsComponent implements OnInit {
           )
           .subscribe({
             next: (response) => {
-              alert('Lista creada con éxito');
               this.newList = { title: '', description: '' };
               this.showNewListForm = false;
               this.closeAddListDialog();
+              this.openListCreatedDialog();
             },
             error: (err) => {
               console.error('Error al crear lista', err);

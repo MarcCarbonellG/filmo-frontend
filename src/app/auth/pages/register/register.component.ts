@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -17,6 +17,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class RegisterComponent {
   errorMessage: string | null = null;
+  @ViewChild('regSuccessRef') regSuccessRef!: ElementRef<HTMLDialogElement>;
 
   registerForm: FormGroup;
 
@@ -56,8 +57,19 @@ export class RegisterComponent {
     return password === confirm ? null : { passwordMismatch: true };
   }
 
+  openRegSuccessDialog() {
+    this.regSuccessRef.nativeElement.showModal();
+  }
+
+  closeRegSuccessDialog() {
+    this.regSuccessRef.nativeElement.close();
+    this.router.navigate(['/login']);
+  }
   onSubmit() {
-    if (this.registerForm.invalid) return;
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      return;
+    }
 
     const { email, username, password } = this.registerForm.value;
 
@@ -65,11 +77,10 @@ export class RegisterComponent {
 
     this.authService.register(email, cleanUsername, password).subscribe({
       next: () => {
-        alert('Account successfully created');
-        this.router.navigate(['/login']);
+        this.openRegSuccessDialog();
       },
       error: (err) => {
-        this.errorMessage = err.error.message || 'Registration failed';
+        this.errorMessage = err.error.message || 'Error en el registro';
       },
     });
   }

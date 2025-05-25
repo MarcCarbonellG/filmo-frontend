@@ -31,7 +31,6 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    console.log('TOKEN');
     return this.localStorageService.getFromLocalStorage('auth_token');
   }
 

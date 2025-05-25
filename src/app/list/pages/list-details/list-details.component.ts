@@ -16,6 +16,8 @@ import { ListService } from '../../services/list.service';
 export class ListDetailsComponent {
   @ViewChild('delListRef')
   delListRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('delSuccessRef') delSuccessRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('delErrorRef') delErrorRef!: ElementRef<HTMLDialogElement>;
   list: List | null = null;
   listId: string | null = null;
   user$!: Observable<User | null>;
@@ -58,6 +60,23 @@ export class ListDetailsComponent {
 
   closeDelListDialog() {
     this.delListRef.nativeElement.close();
+  }
+
+  openDelSuccessDialog() {
+    this.delSuccessRef.nativeElement.showModal();
+  }
+
+  closeDelSuccessDialog() {
+    this.delSuccessRef.nativeElement.close();
+    // this.router.navigate(['/']);
+  }
+
+  openDelErrorDialog() {
+    this.delErrorRef.nativeElement.showModal();
+  }
+
+  closeDelErrorDialog() {
+    this.delErrorRef.nativeElement.close();
   }
 
   loadList(page?: number) {
@@ -132,20 +151,18 @@ export class ListDetailsComponent {
   }
 
   deleteList() {
-    if (confirm('Seguro que deseas eliminar esta lista?')) {
-      this.user$.pipe(take(1)).subscribe((user) => {
-        if (user && this.listId) {
-          this.listService.deleteList(this.listId).subscribe({
-            next: () => {
-              this.router.navigate(['/user/profile', user.username]);
-            },
-            error: (err: any) => {
-              console.error('Error al eliminar lista', err);
-            },
-          });
-        }
-      });
-    }
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.listId) {
+        this.listService.deleteList(this.listId).subscribe({
+          next: () => {
+            this.openDelSuccessDialog();
+          },
+          error: (err: any) => {
+            this.openDelErrorDialog();
+          },
+        });
+      }
+    });
   }
 
   removeFromSave() {

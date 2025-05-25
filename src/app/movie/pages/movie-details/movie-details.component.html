@@ -569,3 +569,49 @@
     </button>
   </div>
 </dialog>
+
+<dialog
+  #listCreatedRef
+  class="dialog"
+  aria-label="Ventana modal para informar de creación exitosa de lista"
+>
+  <button
+    (click)="closeListCreatedDialog()"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+  <div class="flex items-center gap-3">
+    <i class="fa-solid fa-circle-check text-green-400 text-2xl"></i>
+    <p class="my-5">Lista creada correctamente.</p>
+  </div>
+  <div class="flex gap-4">
+    <button class="primary-btn" (click)="closeListCreatedDialog()">
+      Aceptar
+    </button>
+  </div>
+</dialog>
+
+<dialog
+  #listErrorRef
+  class="dialog"
+  aria-label="Ventana modal para informar de error en la creación de lista"
+>
+  <button
+    (click)="closeListErrorDialog()"
+    class="text-sm float-right hover"
+    aria-label="Cerrar ventana modal"
+  >
+    <i class="fa-solid fa-xmark text-xl"></i>
+  </button>
+  <div class="flex items-center gap-3">
+    <i class="fa-solid fa-circle-xmark text-red-400 text-2xl"></i>
+    <p class="my-5">Error al crear la lista. Inténtelo de nuevo más tarde.</p>
+  </div>
+  <div class="flex gap-4">
+    <button class="primary-btn" (click)="closeListErrorDialog()">
+      Aceptar
+    </button>
+  </div>
+</dialog>
