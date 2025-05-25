@@ -1,7 +1,7 @@
 <main
   class="w-full flex flex-col justify-center items-center gap-4"
   [style]="isLoggedIn ? null : 'margin-block: 32px'"
-  *ngIf="user; else loadError"
+  *ngIf="user; else loadingSpinner"
 >
   <section class="w-full flex flex-col items-center gap-4">
     <div class="w-full flex justify-center gap-4">
@@ -209,7 +209,10 @@
   </section>
 </main>
 
-<ng-template #loadError>{{ errorMessage }}</ng-template>
+<ng-template #loadingSpinner
+  ><div class="w-full h-full flex justify-center items-center mt-[25%]">
+    <mat-spinner [diameter]="75"></mat-spinner></div
+></ng-template>
 
 <dialog
   #followersDialogRef

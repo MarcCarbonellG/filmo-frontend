@@ -28,7 +28,6 @@ export class ProfileComponent implements OnInit {
   @ViewChild('delErrorRef') delErrorRef!: ElementRef<HTMLDialogElement>;
   user$!: Observable<User | null>;
   user!: PublicUser | User | null;
-  errorMessage: string = '';
   favorites!: PagedDbMovies;
   watched!: PagedDbMovies;
   lists!: PagedLists;
@@ -58,7 +57,7 @@ export class ProfileComponent implements OnInit {
       if (profileUsername) {
         this.loadProfile(profileUsername);
       } else {
-        this.errorMessage = 'Error al cargar datos de perfil';
+        console.error('Error al cargar datos de perfil');
       }
     });
     window.addEventListener('resize', () => {
@@ -142,7 +141,7 @@ export class ProfileComponent implements OnInit {
         this.loadUserData(profileUsername);
       },
       error: () => {
-        this.errorMessage = 'Error al obtener datos de usuario';
+        console.error('Error al obtener datos de usuario');
       },
     });
   }
@@ -170,7 +169,7 @@ export class ProfileComponent implements OnInit {
             this.favorites = response;
           },
           error: () => {
-            this.errorMessage = 'Error al obtener películas favoritas';
+            console.error('Error al obtener películas favoritas');
           },
         });
     }
@@ -185,7 +184,7 @@ export class ProfileComponent implements OnInit {
             this.watched = response;
           },
           error: () => {
-            this.errorMessage = 'Error al obtener películas vistas';
+            console.error('Error al obtener películas vistas');
           },
         });
     }
@@ -210,7 +209,7 @@ export class ProfileComponent implements OnInit {
             this.lists = response;
           },
           error: () => {
-            this.errorMessage = 'Error al obtener listas';
+            console.error('Error al obtener listas');
           },
         });
     }
@@ -225,7 +224,7 @@ export class ProfileComponent implements OnInit {
             this.lists = response;
           },
           error: () => {
-            this.errorMessage = 'Error al obtener listas';
+            console.error('Error al obtener listas');
           },
         });
     }
@@ -238,7 +237,7 @@ export class ProfileComponent implements OnInit {
           this.followers = response;
         },
         error: () => {
-          this.errorMessage = 'Error al cargar seguidores';
+          console.error('Error al cargar seguidores');
         },
       });
     }
@@ -251,7 +250,7 @@ export class ProfileComponent implements OnInit {
           this.followed = response;
         },
         error: () => {
-          this.errorMessage = 'Error al cargar seguidos';
+          console.error('Error al cargar seguidos');
         },
       });
     }
@@ -265,7 +264,7 @@ export class ProfileComponent implements OnInit {
             this.isFollowedByUser = response ? true : false;
           },
           error: () => {
-            this.errorMessage = 'Error al comporbar estado de seguimiento';
+            console.error('Error al comporbar estado de seguimiento');
           },
         });
       }
@@ -332,7 +331,7 @@ export class ProfileComponent implements OnInit {
         );
       },
       error: () => {
-        this.errorMessage = 'Error al obtener las reseñas';
+        console.error('Error al obtener las reseñas');
       },
     });
   }
@@ -351,7 +350,7 @@ export class ProfileComponent implements OnInit {
             this.isFollowedByUser = true;
           },
           error: () => {
-            this.errorMessage = 'Error al comporbar estado de seguimiento';
+            console.error('Error al comporbar estado de seguimiento');
           },
         });
       }
@@ -372,7 +371,7 @@ export class ProfileComponent implements OnInit {
             this.isFollowedByUser = false;
           },
           error: () => {
-            this.errorMessage = 'Error al comporbar estado de seguimiento';
+            console.error('Error al comporbar estado de seguimiento');
           },
         });
       }

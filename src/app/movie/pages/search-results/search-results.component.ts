@@ -19,7 +19,6 @@ export class SearchResultsComponent implements OnInit {
   searchTerm: string = '';
   genreList: Genre[] = [];
   languageList: Language[] = [];
-  errorMessage: string | null = null;
   baseImageUrl: string;
   isGenreDropdownOpen = false;
   isLangDropdownOpen = false;
@@ -73,7 +72,7 @@ export class SearchResultsComponent implements OnInit {
           this.getLanguages();
         },
         error: () => {
-          this.errorMessage = 'Error al cargar películas';
+          console.error('Error al cargar películas');
         },
       });
     });
@@ -96,7 +95,7 @@ export class SearchResultsComponent implements OnInit {
         });
       },
       error: () => {
-        this.errorMessage = 'Error al cargar géneros';
+        console.error('Error al cargar géneros');
       },
     });
   }
@@ -117,7 +116,7 @@ export class SearchResultsComponent implements OnInit {
         });
       },
       error: () => {
-        this.errorMessage = 'Error al cargar películas';
+        console.error('Error al cargar películas');
       },
     });
   }

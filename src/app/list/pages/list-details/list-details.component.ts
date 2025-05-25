@@ -21,7 +21,6 @@ export class ListDetailsComponent {
   list: List | null = null;
   listId: string | null = null;
   user$!: Observable<User | null>;
-  errorMessage: string | null = null;
   baseImageUrl: string;
   isLoggedIn: boolean = false;
   isSaved: boolean = false;
@@ -80,9 +79,7 @@ export class ListDetailsComponent {
   }
 
   loadList(page?: number) {
-    if (!this.listId) {
-      this.errorMessage = 'Error al cargar lista';
-    } else {
+    if (this.listId) {
       this.listService.getListById(this.listId, page ?? undefined).subscribe({
         next: (data) => {
           this.list = data;
@@ -93,7 +90,7 @@ export class ListDetailsComponent {
           this.newDescription = data.description;
         },
         error: (err) => {
-          this.errorMessage = 'Error al cargar lista';
+          console.error('Error al cargar lista');
         },
       });
     }

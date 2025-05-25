@@ -29,7 +29,6 @@ export class MovieDetailsComponent implements OnInit {
   movie: Movie | null = null;
   movieId: string | null = null;
   user$!: Observable<User | null>;
-  errorMessage: string | null = null;
   baseImageUrl: string;
   showReviewForm = false;
   reviewForm!: FormGroup;
@@ -103,24 +102,20 @@ export class MovieDetailsComponent implements OnInit {
   }
 
   loadMovie() {
-    if (!this.movieId) {
-      this.errorMessage = 'Error al cargar película';
-    } else {
+    if (this.movieId) {
       this.movieService.getMovieById(this.movieId).subscribe({
         next: (data) => {
           this.movie = data;
         },
         error: (err) => {
-          this.errorMessage = 'Error al cargar película';
+          console.error('Error al cargar película');
         },
       });
     }
   }
 
   loadReviews() {
-    if (!this.movieId) {
-      this.errorMessage = 'Error al cargar reseñas';
-    } else {
+    if (this.movieId) {
       this.movieService.getReviews(this.movieId).subscribe({
         next: (data) => {
           this.reviews = data;
@@ -143,7 +138,7 @@ export class MovieDetailsComponent implements OnInit {
           });
         },
         error: () => {
-          this.errorMessage = 'Error al cargar reseñas';
+          console.error('Error al cargar reseñas');
         },
       });
     }

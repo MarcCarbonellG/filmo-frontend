@@ -16,7 +16,6 @@ import { User } from '../../user/models/user.interface';
 })
 export class HomeComponent implements OnInit {
   user$!: Observable<User | null>;
-  errorMessage: string | null = null;
   baseImageUrl: string;
   featured: SimplifiedMovie[] = [];
   movieShowcases: MovieShowcase[] = [];
@@ -99,7 +98,9 @@ export class HomeComponent implements OnInit {
           });
         },
         error: () => {
-          this.errorMessage = `Error al cargar colección de peliculas: ${collection.title}`;
+          console.error(
+            `Error al cargar colección de peliculas: ${collection.title}`
+          );
         },
       });
     });
@@ -116,8 +117,9 @@ export class HomeComponent implements OnInit {
             };
           },
           error: () => {
-            this.errorMessage =
-              'Error al cargar películas populares entre tus seguidos';
+            console.error(
+              'Error al cargar películas populares entre tus seguidos'
+            );
           },
         });
       }
@@ -138,7 +140,7 @@ export class HomeComponent implements OnInit {
         });
       },
       error: () => {
-        this.errorMessage = 'Error al cargar listas populares';
+        console.error('Error al cargar listas populares');
       },
     });
   }
@@ -154,8 +156,7 @@ export class HomeComponent implements OnInit {
             };
           },
           error: () => {
-            this.errorMessage =
-              'Error al cargar listas de los usuarios seguidos';
+            console.error('Error al cargar listas de los usuarios seguidos');
           },
         });
       }
