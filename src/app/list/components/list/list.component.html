@@ -6,13 +6,18 @@
     <a class="hover" routerLink="/list/{{ list.id }}">
       <h3 class="text-lg">{{ list.title }}</h3>
     </a>
-    <p>-</p>
-    <div class="flex items-center gap-2">
-      <div class="w-4 h-4 bg-accent rounded-2xl"></div>
-      <a class="hover" routerLink="/user/profile/{{ list.author }}">
-        {{ list.author }}
-      </a>
-    </div>
+    <p class="text-lg">&middot;</p>
+    <a
+      class="flex items-center gap-2 hover"
+      routerLink="/user/profile/{{ list.author }}"
+    >
+      <app-avatar
+        class="mt-[3px]"
+        [code]="list.author_avatar"
+        size="xs"
+      ></app-avatar>
+      {{ list.author }}
+    </a>
   </div>
   <div *ngIf="list.movies !== null">
     <a

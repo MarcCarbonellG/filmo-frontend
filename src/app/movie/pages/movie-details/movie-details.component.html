@@ -353,33 +353,10 @@
         ¡Haz la primera reseña de esta película!
       </p>
       <div *ngFor="let review of reviews; let last = last">
-        <article class="flex flex-col gap-1 p-2">
-          <div class="flex justify-between">
-            <div>
-              <a
-                class="font-medium"
-                routerLink="/user/profile/{{ review.username }}"
-                >{{ review.username }}</a
-              >
-              <span class="text-yellow-500"> {{ review.rating }} ★ </span>
-              <span class="opacity-60 text-sm">{{
-                review.date | date : "d/M/yy"
-              }}</span>
-            </div>
-            <div *ngIf="user$ | async as user">
-              <button
-                *ngIf="review.user_id === user.id"
-                class="hover"
-                type="button"
-                (click)="openDelReviewDialog()"
-                aria-label="Eliminar reseña"
-              >
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            </div>
-          </div>
-          <p>{{ review.content }}</p>
-        </article>
+        <app-review
+          [review]="review"
+          [onDelete]="openDelReviewDialog.bind(this)"
+        ></app-review>
         <hr *ngIf="!last" class="w-full border-accent border my-4" />
       </div>
     </section>

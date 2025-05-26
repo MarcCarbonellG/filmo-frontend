@@ -39,7 +39,8 @@
             </button>
           </div>
         </div>
-        <div class="w-full flex justify-center">
+        <div class="w-full flex flex-col items-center gap-2">
+          <app-avatar [code]="user.avatar" size="2xl"></app-avatar>
           <div class="relative w-min">
             <h1 class="text-center text-4xl font-medium">
               {{ user.username }}
@@ -235,6 +236,7 @@
             class="hover"
             routerLink="/user/profile/{{ follower.username }}"
             aria-label="Enviar recomendación de película"
+            (click)="closeFollowersDialog()"
           >
             {{ follower.username }}
           </a>
@@ -266,6 +268,7 @@
             class="hover"
             routerLink="/user/profile/{{ followed.username }}"
             aria-label="Enviar recomendación de película"
+            (click)="closeFollowedDialog()"
           >
             {{ followed.username }}
           </a>

@@ -11,7 +11,7 @@ import { User } from '../../user/models/user.interface';
 interface LoginResponse {
   token: string;
   message: string;
-  user: any;
+  user: User;
 }
 
 @Injectable({

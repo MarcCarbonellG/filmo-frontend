@@ -1,0 +1,33 @@
+<article class="flex flex-col gap-1 p-2">
+  <div class="flex justify-between">
+    <div>
+      <a
+        class="flex gap-2 items-center hover font-medium"
+        routerLink="/user/profile/{{ review.username }}"
+      >
+        <app-avatar
+          class="mt-[1px]"
+          [code]="review.avatar"
+          size="xs"
+        ></app-avatar>
+        {{ review.username }}
+      </a>
+      <span class="text-yellow-500"> {{ review.rating }} ★ </span>
+      <span class="opacity-60 text-sm">{{
+        review.date | date : "d/M/yy"
+      }}</span>
+    </div>
+    <div *ngIf="user$ | async as user">
+      <button
+        *ngIf="review.user_id === user.id"
+        class="hover"
+        type="button"
+        (click)="onDelete()"
+        aria-label="Eliminar reseña"
+      >
+        <i class="fa-solid fa-trash-can"></i>
+      </button>
+    </div>
+  </div>
+  <p>{{ review.content }}</p>
+</article>

@@ -39,10 +39,12 @@
       <div *ngIf="user$ | async as user">
         <a
           *ngIf="isLoggedIn"
-          class="font-medium hover:cursor-pointer hover:text-secondary"
+          class="font-medium hover"
           routerLink="/user/profile/{{ user.username }}"
-          >Perfil</a
+          aria-label="Acceder al perfil"
         >
+          <app-avatar [code]="user.avatar"></app-avatar>
+        </a>
       </div>
 
       <div
