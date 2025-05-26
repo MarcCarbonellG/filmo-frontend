@@ -34,6 +34,11 @@ export class HomeComponent implements OnInit {
         items: 1,
       },
     },
+    autoplay: true,
+    autoplayTimeout: 3000,
+    autoplayHoverPause: true,
+    autoplaySpeed: 1000,
+    smartSpeed: 600,
   };
 
   constructor(

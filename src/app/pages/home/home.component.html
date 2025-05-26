@@ -3,6 +3,7 @@
     class="w-full sm:w-[calc(100vw*5/6)] md:w-[calc(100vw*4/5)] lg:w-[calc(100vw*3/4)] xl:w-[calc(100vw*2/3)]"
   >
     <owl-carousel-o
+      *ngIf="featured.length > 0"
       [options]="customOptions"
       aria-label="Carrusel de películas destacadas"
     >
