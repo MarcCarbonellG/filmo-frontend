@@ -19,7 +19,7 @@ export class ListDetailsComponent {
   @ViewChild('delSuccessRef') delSuccessRef!: ElementRef<HTMLDialogElement>;
   @ViewChild('delErrorRef') delErrorRef!: ElementRef<HTMLDialogElement>;
   list: List | null = null;
-  listId: string | null = null;
+  listId: number | null = null;
   user$!: Observable<User | null>;
   baseImageUrl: string;
   isLoggedIn: boolean = false;
@@ -45,7 +45,7 @@ export class ListDetailsComponent {
 
   ngOnInit(): void {
     this.user$ = this.authService.getCurrentUser();
-    this.listId = this.route.snapshot.paramMap.get('id');
+    this.listId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadList();
     this.loadSaved();
   }

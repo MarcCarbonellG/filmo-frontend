@@ -18,7 +18,7 @@ export class ListService {
   createList(
     userId: number,
     title: string,
-    movieId: string,
+    movieId: number,
     description?: string
   ): Observable<MutationResponse> {
     return this.http.post<MutationResponse>(`${this.API_URL}/list`, {
@@ -31,14 +31,14 @@ export class ListService {
 
   getUserListsWithMovieStatus(
     userId: number,
-    movieId: string
+    movieId: number
   ): Observable<ListWithMovieStatus[]> {
     return this.http.get<ListWithMovieStatus[]>(
       `${this.API_URL}/list?userId=${userId}&movieId=${movieId}`
     );
   }
 
-  addToList(listId: number, movieId: string): Observable<MutationResponse> {
+  addToList(listId: number, movieId: number): Observable<MutationResponse> {
     return this.http.post<MutationResponse>(`${this.API_URL}/list/movie`, {
       listId,
       movieId,
@@ -57,19 +57,19 @@ export class ListService {
     });
   }
 
-  getListById(listId: string, page?: number): Observable<List> {
+  getListById(listId: number, page?: number): Observable<List> {
     return this.http.get<List>(
       `${this.API_URL}/list/${listId}${page ? '?page=' + page : ''}`
     );
   }
 
-  getSaved(userId: number, listId: string): Observable<UserListRelation> {
+  getSaved(userId: number, listId: number): Observable<UserListRelation> {
     return this.http.get<UserListRelation>(
       `${this.API_URL}/list/saved?userId=${userId}&listId=${listId}`
     );
   }
 
-  saveList(userId: number, listId: string): Observable<MutationResponse> {
+  saveList(userId: number, listId: number): Observable<MutationResponse> {
     return this.http.post<MutationResponse>(`${this.API_URL}/list/saved`, {
       userId,
       listId,
@@ -78,7 +78,7 @@ export class ListService {
 
   removeFromSaved(
     userId: number,
-    listId: string
+    listId: number
   ): Observable<MutationResponse> {
     return this.http.delete<MutationResponse>(`${this.API_URL}/list/saved`, {
       body: {
@@ -89,7 +89,7 @@ export class ListService {
   }
 
   editList(
-    listId: string,
+    listId: number,
     title: string,
     description: string
   ): Observable<List> {
@@ -99,7 +99,7 @@ export class ListService {
     });
   }
 
-  deleteList(listId: string): Observable<List> {
+  deleteList(listId: number): Observable<List> {
     return this.http.delete<List>(`${this.API_URL}/list/${listId}`);
   }
 

@@ -27,7 +27,7 @@ export class MovieDetailsComponent implements OnInit {
   @ViewChild('listCreatedRef') listCreatedRef!: ElementRef<HTMLDialogElement>;
   @ViewChild('listErrorRef') listErrorRef!: ElementRef<HTMLDialogElement>;
   movie: Movie | null = null;
-  movieId: string | null = null;
+  movieId: number | null = null;
   user$!: Observable<User | null>;
   baseImageUrl: string;
   showReviewForm = false;
@@ -68,7 +68,7 @@ export class MovieDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.user$ = this.authService.getCurrentUser();
-    this.movieId = this.route.snapshot.paramMap.get('id');
+    this.movieId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadMovie();
     this.loadFavourites();
     this.loadWatched();

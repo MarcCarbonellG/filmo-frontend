@@ -25,7 +25,7 @@ export class MovieService {
     return this.IMAGE_BASE_URL;
   }
 
-  getMovieById(movieId: string): Observable<Movie> {
+  getMovieById(movieId: number): Observable<Movie> {
     return this.http.get<Movie>(`${this.API_URL}/movie/${movieId}`);
   }
 
@@ -59,85 +59,79 @@ export class MovieService {
   }
 
   addReview(
-    user_id: number,
-    movie_id: string,
+    userId: number,
+    movieId: number,
     rating: number,
     content: string
   ): Observable<MutationResponse> {
     return this.http.post<MutationResponse>(`${this.API_URL}/movie/review`, {
-      user_id,
-      movie_id,
+      userId,
+      movieId,
       rating,
       content,
     });
   }
 
-  deleteReview(
-    user_id: number,
-    movie_id: string
-  ): Observable<MutationResponse> {
+  deleteReview(userId: number, movieId: number): Observable<MutationResponse> {
     return this.http.delete<MutationResponse>(`${this.API_URL}/movie/review`, {
-      body: { user_id, movie_id },
+      body: { userId, movieId },
     });
   }
 
-  getReviews(movie_id: string): Observable<Review[]> {
-    return this.http.get<Review[]>(`${this.API_URL}/movie/review/${movie_id}`);
+  getReviews(movieId: number): Observable<Review[]> {
+    return this.http.get<Review[]>(`${this.API_URL}/movie/review/${movieId}`);
   }
 
   addToFavorites(
-    user_id: number,
-    movie_id: string
+    userId: number,
+    movieId: number
   ): Observable<MutationResponse> {
     return this.http.post<MutationResponse>(`${this.API_URL}/movie/fav`, {
-      user_id,
-      movie_id,
+      userId,
+      movieId,
     });
   }
 
   removeFromFavorites(
-    user_id: number,
-    movie_id: string
+    userId: number,
+    movieId: number
   ): Observable<MutationResponse> {
     return this.http.delete<MutationResponse>(`${this.API_URL}/movie/fav`, {
       body: {
-        user_id,
-        movie_id,
+        userId,
+        movieId,
       },
     });
   }
 
-  getFavorites(movie_id: string): Observable<UserMovieRelation[]> {
+  getFavorites(movieId: number): Observable<UserMovieRelation[]> {
     return this.http.get<UserMovieRelation[]>(
-      `${this.API_URL}/movie/fav/${movie_id}`
+      `${this.API_URL}/movie/fav/${movieId}`
     );
   }
 
-  addToWatched(
-    user_id: number,
-    movie_id: string
-  ): Observable<MutationResponse> {
+  addToWatched(userId: number, movieId: number): Observable<MutationResponse> {
     return this.http.post<MutationResponse>(`${this.API_URL}/movie/watched`, {
-      user_id,
-      movie_id,
+      userId,
+      movieId,
     });
   }
 
   removeFromWatched(
-    user_id: number,
-    movie_id: string
+    userId: number,
+    movieId: number
   ): Observable<MutationResponse> {
     return this.http.delete<MutationResponse>(`${this.API_URL}/movie/watched`, {
       body: {
-        user_id,
-        movie_id,
+        userId,
+        movieId,
       },
     });
   }
 
-  getWatched(movie_id: string): Observable<UserMovieRelation[]> {
+  getWatched(movieId: number): Observable<UserMovieRelation[]> {
     return this.http.get<UserMovieRelation[]>(
-      `${this.API_URL}/movie/watched/${movie_id}`
+      `${this.API_URL}/movie/watched/${movieId}`
     );
   }
 
@@ -159,7 +153,7 @@ export class MovieService {
   recommendMovie(
     recommenderId: number,
     recommendedId: number,
-    movieId: string
+    movieId: number
   ): Observable<MutationResponse> {
     return this.http.post<MutationResponse>(
       `${this.API_URL}/movie/recommendation`,

@@ -61,15 +61,15 @@ export class UserService {
     );
   }
 
-  getFollowersById(user_id: number): Observable<PublicUser[]> {
+  getFollowersById(userId: number): Observable<PublicUser[]> {
     return this.http.get<PublicUser[]>(
-      `${this.API_URL}/user/profile/followers/${user_id}`
+      `${this.API_URL}/user/profile/followers/${userId}`
     );
   }
 
-  getFollowedById(user_id: number): Observable<PublicUser[]> {
+  getFollowedById(userId: number): Observable<PublicUser[]> {
     return this.http.get<PublicUser[]>(
-      `${this.API_URL}/user/profile/followed/${user_id}`
+      `${this.API_URL}/user/profile/followed/${userId}`
     );
   }
 
@@ -79,47 +79,39 @@ export class UserService {
     );
   }
 
-  getFollowing(
-    follower_id: number,
-    followed_id: number
-  ): Observable<Following> {
+  getFollowing(followerId: number, followedId: number): Observable<Following> {
     return this.http.get<Following>(
-      `${this.API_URL}/user/profile/following?follower_id=${follower_id}&followed_id=${followed_id}`
+      `${this.API_URL}/user/profile/following?follower_id=${followerId}&followed_id=${followedId}`
     );
   }
 
-  follow(
-    follower_id: number,
-    followed_id: number
-  ): Observable<MutationResponse> {
+  follow(followerId: number, followedId: number): Observable<MutationResponse> {
     return this.http.post<MutationResponse>(
       `${this.API_URL}/user/profile/follow`,
       {
-        follower_id,
-        followed_id,
+        followerId,
+        followedId,
       }
     );
   }
 
   unfollow(
-    follower_id: number,
-    followed_id: number
+    followerId: number,
+    followedId: number
   ): Observable<MutationResponse> {
     return this.http.delete<MutationResponse>(
       `${this.API_URL}/user/profile/unfollow`,
       {
         body: {
-          follower_id,
-          followed_id,
+          followerId,
+          followedId,
         },
       }
     );
   }
 
-  deleteAccount(user_id: number): Observable<MutationResponse> {
-    return this.http.delete<MutationResponse>(
-      `${this.API_URL}/user/${user_id}`
-    );
+  deleteAccount(userId: number): Observable<MutationResponse> {
+    return this.http.delete<MutationResponse>(`${this.API_URL}/user/${userId}`);
   }
 
   getReviews(userId: number): Observable<Review[]> {
