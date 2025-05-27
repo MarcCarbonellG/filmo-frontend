@@ -35,7 +35,7 @@
 }
 
 .dialog {
-  @apply fixed text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-primary-light p-6 rounded shadow max-w-[390px] w-[calc(100%-2rem)];
+  @apply fixed text-white top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-primary-light p-6 rounded shadow max-w-sm w-[calc(100%-2rem)];
 }
 
 html,
