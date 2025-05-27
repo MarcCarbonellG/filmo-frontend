@@ -62,7 +62,7 @@
           <button
             class="hover"
             *ngIf="!isEditing"
-            (click)="openDelListDialog()"
+            (click)="openDialog('del')"
             aria-label="Eliminar lista"
           >
             <i class="fa-solid fa-trash-can text-lg"></i>
@@ -140,7 +140,7 @@
   aria-label="Ventana modal para confirmar eliminación de cuenta"
 >
   <button
-    (click)="closeDelListDialog()"
+    (click)="closeDialog('del')"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -151,10 +151,8 @@
     irreversible.
   </p>
   <div class="flex gap-4">
-    <button class="secondary-btn" (click)="closeDelListDialog()">
-      Cancelar
-    </button>
-    <button class="primary-btn" (click)="closeDelListDialog(); deleteList()">
+    <button class="secondary-btn" (click)="closeDialog('del')">Cancelar</button>
+    <button class="primary-btn" (click)="closeDialog('del'); deleteList()">
       Aceptar
     </button>
   </div>
@@ -166,7 +164,7 @@
   aria-label="Ventana modal para informar de eliminación de lista existosa"
 >
   <button
-    (click)="closeDelSuccessDialog()"
+    (click)="closeDialog('success'); router.navigate(['/'])"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -177,7 +175,10 @@
     <p class="my-5">Lista eliminada correctamente.</p>
   </div>
   <div class="flex gap-4">
-    <button class="primary-btn" (click)="closeDelSuccessDialog()">
+    <button
+      class="primary-btn"
+      (click)="closeDialog('success'); router.navigate(['/'])"
+    >
       Aceptar
     </button>
   </div>
@@ -189,7 +190,7 @@
   aria-label="Ventana modal para informar de error en la eliminación de lista"
 >
   <button
-    (click)="closeDelErrorDialog()"
+    (click)="closeDialog('error')"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -202,6 +203,6 @@
     </p>
   </div>
   <div class="flex gap-4">
-    <button class="primary-btn" (click)="closeDelErrorDialog()">Aceptar</button>
+    <button class="primary-btn" (click)="closeDialog('error')">Aceptar</button>
   </div>
 </dialog>

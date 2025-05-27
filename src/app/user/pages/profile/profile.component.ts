@@ -40,13 +40,14 @@ export class ProfileComponent implements OnInit {
   tab: 'w' | 'f' | 'l' = 'w';
   scale: number = 0.8;
   notFound: boolean = false;
+  dialogs: Record<string, ElementRef<HTMLDialogElement>> = {};
 
   constructor(
     private authService: AuthService,
     public route: ActivatedRoute,
     private userService: UserService,
     private movieService: MovieService,
-    private router: Router
+    public router: Router
   ) {
     this.user$ = this.authService.getCurrentUser();
     this.baseImageUrl = this.movieService.getImageBaseUrl();
@@ -66,45 +67,22 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  openFollowersDialog() {
-    this.followersRef.nativeElement.showModal();
+  ngAfterViewInit() {
+    this.dialogs = {
+      followers: this.followersRef,
+      followed: this.followedRef,
+      account: this.delAccountRef,
+      success: this.delSuccessRef,
+      error: this.delErrorRef,
+    };
   }
 
-  closeFollowersDialog() {
-    this.followersRef.nativeElement.close();
+  openDialog(key: string) {
+    this.dialogs[key]?.nativeElement.showModal();
   }
 
-  openFollowedDialog() {
-    this.followedRef.nativeElement.showModal();
-  }
-
-  closeFollowedDialog() {
-    this.followedRef.nativeElement.close();
-  }
-
-  openDelAccountDialog() {
-    this.delAccountRef.nativeElement.showModal();
-  }
-
-  closeDelAccountDialog() {
-    this.delAccountRef.nativeElement.close();
-  }
-
-  openDelSuccessDialog() {
-    this.delSuccessRef.nativeElement.showModal();
-  }
-
-  closeDelSuccessDialog() {
-    this.delSuccessRef.nativeElement.close();
-    this.router.navigate(['/']);
-  }
-
-  openDelErrorDialog() {
-    this.delErrorRef.nativeElement.showModal();
-  }
-
-  closeDelErrorDialog() {
-    this.delErrorRef.nativeElement.close();
+  closeDialog(key: string) {
+    this.dialogs[key]?.nativeElement.close();
   }
 
   setScale(width: number) {
@@ -387,7 +365,7 @@ export class ProfileComponent implements OnInit {
     if (this.user) {
       this.userService.deleteAccount(this.user.id).subscribe({
         next: () => {
-          this.openDelSuccessDialog();
+          this.openDialog('success');
           this.user$.pipe(take(1)).subscribe((user) => {
             if (user && this.user && user.id === this.user.id) {
               this.authService.logout();
@@ -395,7 +373,7 @@ export class ProfileComponent implements OnInit {
           });
         },
         error: () => {
-          this.openDelErrorDialog();
+          this.openDialog('error');
         },
       });
     }

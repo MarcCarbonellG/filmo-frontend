@@ -31,13 +31,14 @@ export class ListDetailsComponent {
   newTitle!: string;
   newDescription!: string;
   notFound: boolean = false;
+  dialogs: Record<string, ElementRef<HTMLDialogElement>> = {};
 
   constructor(
     private movieService: MovieService,
     private route: ActivatedRoute,
     private authService: AuthService,
     private listService: ListService,
-    private router: Router
+    public router: Router
   ) {
     this.baseImageUrl = this.movieService.getImageBaseUrl();
     this.isLoggedIn = this.authService.isAuthenticated();
@@ -50,33 +51,24 @@ export class ListDetailsComponent {
     this.loadSaved();
   }
 
+  ngAfterViewInit() {
+    this.dialogs = {
+      del: this.delListRef,
+      success: this.delSuccessRef,
+      error: this.delErrorRef,
+    };
+  }
+
+  openDialog(key: string) {
+    this.dialogs[key]?.nativeElement.showModal();
+  }
+
+  closeDialog(key: string) {
+    this.dialogs[key]?.nativeElement.close();
+  }
+
   goToPageList(page: number) {
     this.loadList(page);
-  }
-
-  openDelListDialog() {
-    this.delListRef.nativeElement.showModal();
-  }
-
-  closeDelListDialog() {
-    this.delListRef.nativeElement.close();
-  }
-
-  openDelSuccessDialog() {
-    this.delSuccessRef.nativeElement.showModal();
-  }
-
-  closeDelSuccessDialog() {
-    this.delSuccessRef.nativeElement.close();
-    this.router.navigate(['/']);
-  }
-
-  openDelErrorDialog() {
-    this.delErrorRef.nativeElement.showModal();
-  }
-
-  closeDelErrorDialog() {
-    this.delErrorRef.nativeElement.close();
   }
 
   loadList(page?: number) {
@@ -155,10 +147,10 @@ export class ListDetailsComponent {
     if (this.listId) {
       this.listService.deleteList(this.listId).subscribe({
         next: () => {
-          this.openDelSuccessDialog();
+          this.openDialog('success');
         },
         error: (err: any) => {
-          this.openDelErrorDialog();
+          this.openDialog('error');
         },
       });
     }

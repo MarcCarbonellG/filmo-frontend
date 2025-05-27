@@ -158,7 +158,7 @@
                   class="text-xl"
                   [ngClass]="friendsReviews.length > 0 ? 'hover' : null"
                   *ngIf="isLoggedIn"
-                  (click)="openFriendsDialog()"
+                  (click)="openDialog('friends')"
                   [disabled]="friendsReviews.length === 0"
                   aria-label="Mostrar puntuaciones de tus amigos"
                 >
@@ -184,7 +184,7 @@
                 <button
                   class="w-8 h-8 bg-accent rounded hover"
                   (click)="
-                    isLoggedIn ? openRecDialog() : router.navigate(['/login'])
+                    isLoggedIn ? openDialog('rec') : router.navigate(['/login'])
                   "
                   aria-label="Recomendar película a amigos"
                 >
@@ -211,7 +211,7 @@
         <button
           class="text-xl hover:cursor-pointer"
           *ngIf="isLoggedIn"
-          (click)="openFriendsDialog()"
+          (click)="openDialog('friends')"
           [disabled]="friendsReviews.length === 0"
           aria-label="Mostrar puntuaciones de tus amigos"
         >
@@ -234,7 +234,7 @@
 
         <button
           class="w-8 h-8 bg-accent rounded hover"
-          (click)="isLoggedIn ? openRecDialog() : router.navigate(['/login'])"
+          (click)="isLoggedIn ? openDialog('rec') : router.navigate(['/login'])"
           aria-label="Recomendar película a amigos"
         >
           <i class="fa-solid fa-share text-primary"></i>
@@ -374,7 +374,7 @@
   aria-label="Ventana modal para ver puntuaciones de tus amigos"
 >
   <button
-    (click)="closeFriendsDialog()"
+    (click)="closeDialog('friends')"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -411,7 +411,7 @@
   aria-label="Ventana modal para añadir película a una lista"
 >
   <button
-    (click)="closeAddListDialog(); showNewListForm = false"
+    (click)="closeDialog('list'); showNewListForm = false"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -497,7 +497,7 @@
   aria-label="Ventana modal para recomendar película a un amigo"
 >
   <button
-    (click)="closeRecDialog()"
+    (click)="closeDialog('rec')"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -515,7 +515,7 @@
         <li>
           <button
             class="hover:cursor-pointer"
-            (click)="recommendMovie(friend.id); closeRecDialog()"
+            (click)="recommendMovie(friend.id); closeDialog('rec')"
             aria-label="Enviar recomendación de película"
           >
             {{ friend.username }}
@@ -533,7 +533,7 @@
   aria-label="Ventana modal para confirmar eliminación de reseña"
 >
   <button
-    (click)="closeDelReviewDialog()"
+    (click)="closeDialog('delReview')"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -544,12 +544,12 @@
     irreversible.
   </p>
   <div class="flex gap-4">
-    <button class="secondary-btn" (click)="closeDelReviewDialog()">
+    <button class="secondary-btn" (click)="closeDialog('delReview')">
       Cancelar
     </button>
     <button
       class="primary-btn"
-      (click)="closeDelReviewDialog(); deleteReview()"
+      (click)="closeDialog('delReview'); deleteReview()"
     >
       Aceptar
     </button>
@@ -562,7 +562,7 @@
   aria-label="Ventana modal para informar de creación exitosa de lista"
 >
   <button
-    (click)="closeListCreatedDialog()"
+    (click)="closeDialog('listCreated')"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -573,7 +573,7 @@
     <p class="my-5">Lista creada correctamente.</p>
   </div>
   <div class="flex gap-4">
-    <button class="primary-btn" (click)="closeListCreatedDialog()">
+    <button class="primary-btn" (click)="closeDialog('listCreated')">
       Aceptar
     </button>
   </div>
@@ -585,7 +585,7 @@
   aria-label="Ventana modal para informar de error en la creación de lista"
 >
   <button
-    (click)="closeListErrorDialog()"
+    (click)="closeDialog('listError')"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -596,7 +596,7 @@
     <p class="my-5">Error al crear la lista. Inténtelo de nuevo más tarde.</p>
   </div>
   <div class="flex gap-4">
-    <button class="primary-btn" (click)="closeListErrorDialog()">
+    <button class="primary-btn" (click)="closeDialog('listError')">
       Aceptar
     </button>
   </div>

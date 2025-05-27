@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, take } from 'rxjs';
@@ -18,7 +24,7 @@ import { MovieService } from '../../services/movie.service';
   templateUrl: './movie-details.component.html',
   styleUrl: './movie-details.component.css',
 })
-export class MovieDetailsComponent implements OnInit {
+export class MovieDetailsComponent implements OnInit, AfterViewInit {
   @ViewChild('listDialogRef') listDialogRef!: ElementRef<HTMLDialogElement>;
   @ViewChild('friendsDialogRef')
   friendsDialogRef!: ElementRef<HTMLDialogElement>;
@@ -52,6 +58,7 @@ export class MovieDetailsComponent implements OnInit {
   };
   friends: PublicUser[] = [];
   notFound: boolean = false;
+  dialogs: Record<string, ElementRef<HTMLDialogElement>> = {};
 
   constructor(
     private movieService: MovieService,
@@ -78,6 +85,39 @@ export class MovieDetailsComponent implements OnInit {
       rating: [1, [Validators.required]],
       review: ['', []],
     });
+  }
+
+  ngAfterViewInit() {
+    this.dialogs = {
+      list: this.listDialogRef,
+      friends: this.friendsDialogRef,
+      rec: this.recDialogRef,
+      delReview: this.delReviewRef,
+      listCreated: this.listCreatedRef,
+      listError: this.listErrorRef,
+    };
+  }
+
+  openDialog(key: string) {
+    this.dialogs[key]?.nativeElement.showModal();
+  }
+
+  closeDialog(key: string) {
+    this.dialogs[key]?.nativeElement.close();
+  }
+
+  openAddListDialog() {
+    this.loadUserLists();
+    this.listDialogRef.nativeElement.showModal();
+  }
+
+  openDelReviewDialog(userId: number) {
+    this.reviewUserId = userId;
+    this.delReviewRef.nativeElement.showModal();
+  }
+
+  toggleReviewForm(): void {
+    this.showReviewForm = !this.showReviewForm;
   }
 
   calculateAverageRating() {
@@ -149,60 +189,6 @@ export class MovieDetailsComponent implements OnInit {
     }
   }
 
-  toggleReviewForm(): void {
-    this.showReviewForm = !this.showReviewForm;
-  }
-
-  submitReview(): void {
-    if (this.reviewForm.valid) {
-      const rating = this.reviewForm.value.rating;
-      const review = this.reviewForm.value.review;
-
-      this.user$.pipe(take(1)).subscribe((user) => {
-        if (user && this.movieId) {
-          this.movieService
-            .addReview(user.id, this.movieId, rating, review)
-            .subscribe({
-              next: (response) => {
-                this.isReviewed = true;
-                const newReview = response.data.movie_review;
-                newReview.username = user.username;
-                newReview.avatar = user.avatar;
-                this.reviews.unshift(newReview);
-                this.calculateAverageRating();
-              },
-              error: (err) => {
-                console.error('Error al añadir la review:', err);
-              },
-            });
-        }
-      });
-
-      this.reviewForm.reset({ rating: 3, review: '' });
-      this.showReviewForm = false;
-    }
-  }
-
-  deleteReview() {
-    if (this.reviewUserId && this.movieId) {
-      this.movieService
-        .deleteReview(this.reviewUserId, this.movieId)
-        .subscribe({
-          next: () => {
-            this.isReviewed = false;
-            const userReviewIndex = this.reviews.findIndex(
-              (review) => review.user_id == this.reviewUserId
-            );
-            this.reviews.splice(userReviewIndex, 1);
-            this.calculateAverageRating();
-          },
-          error: (err) => {
-            console.error('Error al eliminar la reseña:', err);
-          },
-        });
-    }
-  }
-
   loadFavourites() {
     if (this.movieId) {
       this.movieService.getFavorites(this.movieId).subscribe({
@@ -262,6 +248,53 @@ export class MovieDetailsComponent implements OnInit {
     });
   }
 
+  loadUserLists() {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.movieId) {
+        this.listService
+          .getUserListsWithMovieStatus(user.id, this.movieId)
+          .subscribe({
+            next: (response) => {
+              this.userLists = response;
+            },
+            error: (err) => {
+              console.error('Error al cargar listas', err);
+            },
+          });
+      }
+    });
+  }
+
+  submitReview(): void {
+    if (this.reviewForm.valid) {
+      const rating = this.reviewForm.value.rating;
+      const review = this.reviewForm.value.review;
+
+      this.user$.pipe(take(1)).subscribe((user) => {
+        if (user && this.movieId) {
+          this.movieService
+            .addReview(user.id, this.movieId, rating, review)
+            .subscribe({
+              next: (response) => {
+                this.isReviewed = true;
+                const newReview = response.data.movie_review;
+                newReview.username = user.username;
+                newReview.avatar = user.avatar;
+                this.reviews.unshift(newReview);
+                this.calculateAverageRating();
+              },
+              error: (err) => {
+                console.error('Error al añadir la review:', err);
+              },
+            });
+        }
+      });
+
+      this.reviewForm.reset({ rating: 3, review: '' });
+      this.showReviewForm = false;
+    }
+  }
+
   addToFavourites() {
     this.user$.pipe(take(1)).subscribe((user) => {
       if (user && this.movieId) {
@@ -292,6 +325,87 @@ export class MovieDetailsComponent implements OnInit {
         });
       }
     });
+  }
+
+  addToList(listId: number) {
+    if (this.movieId) {
+      this.listService.addToList(listId, this.movieId).subscribe({
+        next: () => {
+          const list = this.userLists.find((list) => list.id === listId);
+          if (list) {
+            list.has_movie = true;
+          }
+        },
+        error: (err) => {
+          console.error('Error al añadir película a lista', err);
+        },
+      });
+    }
+  }
+
+  createList() {
+    if (!this.newList.title) return;
+
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.movieId) {
+        this.listService
+          .createList(
+            user.id,
+            this.newList.title,
+            this.movieId,
+            this.newList.description
+          )
+          .subscribe({
+            next: (response) => {
+              this.newList = { title: '', description: '' };
+              this.showNewListForm = false;
+              this.closeDialog('list');
+              this.openDialog('listCreated');
+            },
+            error: (err) => {
+              this.openDialog('listError');
+              console.error('Error al crear lista', err);
+            },
+          });
+      }
+    });
+  }
+
+  recommendMovie(userId: number) {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user && this.movieId) {
+        this.movieService
+          .recommendMovie(user.id, userId, this.movieId)
+          .subscribe({
+            next: () => {
+              this.closeDialog('rec');
+            },
+            error: (err: any) => {
+              console.error('Error al recomendar película', err);
+            },
+          });
+      }
+    });
+  }
+
+  deleteReview() {
+    if (this.reviewUserId && this.movieId) {
+      this.movieService
+        .deleteReview(this.reviewUserId, this.movieId)
+        .subscribe({
+          next: () => {
+            this.isReviewed = false;
+            const userReviewIndex = this.reviews.findIndex(
+              (review) => review.user_id == this.reviewUserId
+            );
+            this.reviews.splice(userReviewIndex, 1);
+            this.calculateAverageRating();
+          },
+          error: (err) => {
+            console.error('Error al eliminar la reseña:', err);
+          },
+        });
+    }
   }
 
   removeFromFavourites() {
@@ -326,116 +440,6 @@ export class MovieDetailsComponent implements OnInit {
     });
   }
 
-  loadUserLists() {
-    this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movieId) {
-        this.listService
-          .getUserListsWithMovieStatus(user.id, this.movieId)
-          .subscribe({
-            next: (response) => {
-              this.userLists = response;
-            },
-            error: (err) => {
-              console.error('Error al cargar listas', err);
-            },
-          });
-      }
-    });
-  }
-
-  openAddListDialog() {
-    this.loadUserLists();
-    this.listDialogRef.nativeElement.showModal();
-  }
-
-  closeAddListDialog() {
-    this.listDialogRef.nativeElement.close();
-  }
-
-  openFriendsDialog() {
-    this.friendsDialogRef.nativeElement.showModal();
-  }
-
-  closeFriendsDialog() {
-    this.friendsDialogRef.nativeElement.close();
-  }
-
-  openRecDialog() {
-    this.recDialogRef.nativeElement.showModal();
-  }
-
-  closeRecDialog() {
-    this.recDialogRef.nativeElement.close();
-  }
-
-  openDelReviewDialog(userId: number) {
-    this.reviewUserId = userId;
-    this.delReviewRef.nativeElement.showModal();
-  }
-
-  closeDelReviewDialog() {
-    this.delReviewRef.nativeElement.close();
-  }
-
-  openListCreatedDialog() {
-    this.listCreatedRef.nativeElement.showModal();
-  }
-
-  closeListCreatedDialog() {
-    this.listCreatedRef.nativeElement.close();
-  }
-
-  openListErrorDialog() {
-    this.listErrorRef.nativeElement.showModal();
-  }
-
-  closeListErrorDialog() {
-    this.listErrorRef.nativeElement.close();
-  }
-
-  createList() {
-    if (!this.newList.title) return;
-
-    this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movieId) {
-        this.listService
-          .createList(
-            user.id,
-            this.newList.title,
-            this.movieId,
-            this.newList.description
-          )
-          .subscribe({
-            next: (response) => {
-              this.newList = { title: '', description: '' };
-              this.showNewListForm = false;
-              this.closeAddListDialog();
-              this.openListCreatedDialog();
-            },
-            error: (err) => {
-              console.error('Error al crear lista', err);
-            },
-          });
-      }
-    });
-  }
-
-  addToList(listId: number) {
-    if (this.movieId) {
-      this.listService.addToList(listId, this.movieId).subscribe({
-        next: () => {
-          const list = this.userLists.find((list) => list.id === listId);
-          if (list) {
-            list.has_movie = true;
-          }
-        },
-        error: (err) => {
-          console.error('Error al añadir película a lista', err);
-        },
-      });
-    }
-  }
-
   removeFromList(listId: number) {
     if (this.movieId) {
       this.listService.removeFromList(listId, +this.movieId).subscribe({
@@ -450,22 +454,5 @@ export class MovieDetailsComponent implements OnInit {
         },
       });
     }
-  }
-
-  recommendMovie(userId: number) {
-    this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movieId) {
-        this.movieService
-          .recommendMovie(user.id, userId, this.movieId)
-          .subscribe({
-            next: () => {
-              this.closeRecDialog();
-            },
-            error: (err: any) => {
-              console.error('Error al recomendar película', err);
-            },
-          });
-      }
-    });
   }
 }

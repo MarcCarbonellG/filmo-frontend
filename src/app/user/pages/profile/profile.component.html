@@ -48,7 +48,7 @@
           <div *ngIf="user$ | async as loggedUser">
             <button
               *ngIf="user.id === loggedUser.id || loggedUser.is_admin"
-              (click)="openDelAccountDialog()"
+              (click)="openDialog('account')"
               class="h-9 bg-red-800 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:bg-red-700"
             >
               Eliminar&nbsp;cuenta
@@ -73,7 +73,7 @@
     <div class="flex justify-center gap-2 font-medium">
       <button
         [ngClass]="{ hover: followed.length >= 1 }"
-        (click)="openFollowedDialog()"
+        (click)="openDialog('followed')"
         [disabled]="followed.length < 1"
         aria-label="Ver lista de usuarios seguidos"
       >
@@ -81,7 +81,7 @@
       </button>
       <button
         [ngClass]="{ hover: followed.length >= 1 }"
-        (click)="openFollowersDialog()"
+        (click)="openDialog('followers')"
         [disabled]="followers.length < 1"
         aria-label="Ver lista de seguidores"
       >
@@ -226,7 +226,7 @@
   aria-label="Ventana modal para recomendar película a un amigo"
 >
   <button
-    (click)="closeFollowersDialog()"
+    (click)="closeDialog('followers')"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -243,7 +243,7 @@
             class="hover"
             routerLink="/user/profile/{{ follower.username }}"
             aria-label="Enviar recomendación de película"
-            (click)="closeFollowersDialog()"
+            (click)="closeDialog('followers')"
           >
             {{ follower.username }}
           </a>
@@ -260,7 +260,7 @@
   aria-label="Ventana modal para recomendar película a un amigo"
 >
   <button
-    (click)="closeFollowedDialog()"
+    (click)="closeDialog('followed')"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -277,7 +277,7 @@
             class="hover"
             routerLink="/user/profile/{{ followed.username }}"
             aria-label="Enviar recomendación de película"
-            (click)="closeFollowedDialog()"
+            (click)="closeDialog('followed')"
           >
             {{ followed.username }}
           </a>
@@ -294,7 +294,7 @@
   aria-label="Ventana modal para confirmar eliminación de cuenta"
 >
   <button
-    (click)="closeDelAccountDialog()"
+    (click)="closeDialog('account')"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -305,12 +305,12 @@
     irreversible.
   </p>
   <div class="flex gap-4">
-    <button class="secondary-btn" (click)="closeDelAccountDialog()">
+    <button class="secondary-btn" (click)="closeDialog('account')">
       Cancelar
     </button>
     <button
       class="primary-btn"
-      (click)="closeDelAccountDialog(); deleteAccount()"
+      (click)="closeDialog('account'); deleteAccount()"
     >
       Aceptar
     </button>
@@ -323,7 +323,7 @@
   aria-label="Ventana modal para informar de eliminación de cuenta existosa"
 >
   <button
-    (click)="closeDelSuccessDialog()"
+    (click)="closeDialog('success'); router.navigate(['/'])"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -334,7 +334,10 @@
     <p class="my-5">Cuenta eliminada correctamente.</p>
   </div>
   <div class="flex gap-4">
-    <button class="primary-btn" (click)="closeDelSuccessDialog()">
+    <button
+      class="primary-btn"
+      (click)="closeDialog('success'); router.navigate(['/'])"
+    >
       Aceptar
     </button>
   </div>
@@ -346,7 +349,7 @@
   aria-label="Ventana modal para informar de error en la eliminación de cuenta"
 >
   <button
-    (click)="closeDelErrorDialog()"
+    (click)="closeDialog('error')"
     class="text-sm float-right hover"
     aria-label="Cerrar ventana modal"
   >
@@ -359,6 +362,6 @@
     </p>
   </div>
   <div class="flex gap-4">
-    <button class="primary-btn" (click)="closeDelErrorDialog()">Aceptar</button>
+    <button class="primary-btn" (click)="closeDialog('error')">Aceptar</button>
   </div>
 </dialog>
