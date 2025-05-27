@@ -12,7 +12,7 @@ import { Review } from '../../models/review.interface';
 })
 export class ReviewComponent {
   @Input() review!: Review;
-  @Input() onDelete!: () => void;
+  @Input() onDelete!: (userId: number) => void;
   user$!: Observable<User | null>;
 
   constructor(private authService: AuthService) {}

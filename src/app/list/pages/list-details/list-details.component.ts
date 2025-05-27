@@ -30,6 +30,7 @@ export class ListDetailsComponent {
   description!: string;
   newTitle!: string;
   newDescription!: string;
+  notFound: boolean = false;
 
   constructor(
     private movieService: MovieService,
@@ -67,7 +68,7 @@ export class ListDetailsComponent {
 
   closeDelSuccessDialog() {
     this.delSuccessRef.nativeElement.close();
-    // this.router.navigate(['/']);
+    this.router.navigate(['/']);
   }
 
   openDelErrorDialog() {
@@ -90,6 +91,9 @@ export class ListDetailsComponent {
           this.newDescription = data.description;
         },
         error: (err) => {
+          if (err.status === 404) {
+            this.notFound = true;
+          }
           console.error('Error al cargar lista');
         },
       });
@@ -148,18 +152,16 @@ export class ListDetailsComponent {
   }
 
   deleteList() {
-    this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.listId) {
-        this.listService.deleteList(this.listId).subscribe({
-          next: () => {
-            this.openDelSuccessDialog();
-          },
-          error: (err: any) => {
-            this.openDelErrorDialog();
-          },
-        });
-      }
-    });
+    if (this.listId) {
+      this.listService.deleteList(this.listId).subscribe({
+        next: () => {
+          this.openDelSuccessDialog();
+        },
+        error: (err: any) => {
+          this.openDelErrorDialog();
+        },
+      });
+    }
   }
 
   removeFromSave() {

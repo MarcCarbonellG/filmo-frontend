@@ -1,8 +1,13 @@
-<main
-  class="w-full h-full flex justify-center items-center mt-[25%]"
-  *ngIf="!list"
->
-  <mat-spinner [diameter]="75"></mat-spinner>
+<main class="w-full h-full" *ngIf="!list">
+  <div *ngIf="notFound">
+    <app-not-found></app-not-found>
+  </div>
+  <div
+    *ngIf="!notFound"
+    class="w-full h-full flex justify-center items-center mt-[25%]"
+  >
+    <mat-spinner [diameter]="75"></mat-spinner>
+  </div>
 </main>
 
 <main class="w-full max-w-200 flex flex-col gap-4 my-8" *ngIf="list">
@@ -19,8 +24,11 @@
       type="text"
       [(ngModel)]="newTitle"
     />
-    <div *ngIf="user$ | async as loggedUser">
-      <div *ngIf="list.user_id !== loggedUser.id" class="h-full flex items-end">
+    <div *ngIf="user$ | async as loggedUser" class="flex justify-end gap-2">
+      <div
+        *ngIf="list.user_id !== loggedUser.id && !isEditing"
+        class="h-full flex items-end mt-[1.5px]"
+      >
         <button
           class="hover"
           *ngIf="!isSaved"
@@ -38,7 +46,10 @@
           <i class="fa-solid fa-square-check text-2xl"></i>
         </button>
       </div>
-      <div *ngIf="list.user_id === loggedUser.id" class="h-full flex items-end">
+      <div
+        *ngIf="list.user_id === loggedUser.id || loggedUser.is_admin"
+        class="h-full flex items-end"
+      >
         <div class="flex gap-2">
           <button
             class="hover"
@@ -46,7 +57,7 @@
             (click)="openEditForm()"
             aria-label="Editar nombre y descripción de lista"
           >
-            <i class="fa-solid fa-pen"></i>
+            <i class="fa-solid fa-pen text-lg"></i>
           </button>
           <button
             class="hover"
@@ -54,7 +65,7 @@
             (click)="openDelListDialog()"
             aria-label="Eliminar lista"
           >
-            <i class="fa-solid fa-trash-can"></i>
+            <i class="fa-solid fa-trash-can text-lg"></i>
           </button>
         </div>
         <div class="flex gap-2" *ngIf="isEditing">
@@ -78,7 +89,14 @@
     rows="1"
   ></textarea>
   <div class="flex gap-4 opacity-80">
-    <a routerLink="/profile/{{ list.author }}">{{ list.author }}</a>
+    <a class="flex gap-2 items-end" routerLink="/profile/{{ list.author }}">
+      <app-avatar
+        [code]="list.author_avatar"
+        size="sm"
+        class="mb-[1.5px]"
+      ></app-avatar>
+      <p>{{ list.author }}</p>
+    </a>
     <p>
       Guardada {{ localSaved }} veces ·
       {{ list.movies ? list.movies.length : 0 }} películas

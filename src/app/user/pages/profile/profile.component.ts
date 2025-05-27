@@ -39,6 +39,7 @@ export class ProfileComponent implements OnInit {
   commonFavGenres: string[] = [];
   tab: 'w' | 'f' | 'l' = 'w';
   scale: number = 0.8;
+  notFound: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -140,7 +141,11 @@ export class ProfileComponent implements OnInit {
         this.user = response;
         this.loadUserData(profileUsername);
       },
-      error: () => {
+      error: (error: any) => {
+        if (error.status === 404) {
+          this.notFound = true;
+        }
+
         console.error('Error al obtener datos de usuario');
       },
     });
@@ -383,7 +388,11 @@ export class ProfileComponent implements OnInit {
       this.userService.deleteAccount(this.user.id).subscribe({
         next: () => {
           this.openDelSuccessDialog();
-          this.authService.logout();
+          this.user$.pipe(take(1)).subscribe((user) => {
+            if (user && this.user && user.id === this.user.id) {
+              this.authService.logout();
+            }
+          });
         },
         error: () => {
           this.openDelErrorDialog();

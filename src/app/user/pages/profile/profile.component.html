@@ -1,41 +1,57 @@
+<main class="w-full h-full" *ngIf="!user">
+  <div *ngIf="notFound">
+    <app-not-found></app-not-found>
+  </div>
+  <div
+    *ngIf="!notFound"
+    class="w-full h-full flex justify-center items-center mt-[25%]"
+  >
+    <mat-spinner [diameter]="75"></mat-spinner>
+  </div>
+</main>
+
+<ng-template #loadingSpinner
+  ><div class="w-full h-full flex justify-center items-center mt-[10%]">
+    <mat-spinner [diameter]="75"></mat-spinner></div
+></ng-template>
+
 <main
   class="w-full flex flex-col justify-center items-center gap-4"
   [style]="isLoggedIn ? null : 'margin-block: 32px'"
-  *ngIf="user; else loadingSpinner"
+  *ngIf="user"
 >
   <section class="w-full flex flex-col items-center gap-4">
     <div class="w-full flex justify-center gap-4">
       <div class="w-full flex flex-col items-center">
-        <div
-          class="w-full max-w-200 flex justify-end"
-          *ngIf="user$ | async as loggedUser"
-        >
-          <button
-            *ngIf="user.id === loggedUser.id"
-            (click)="openDelAccountDialog()"
-            class="bg-red-800 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:bg-red-700"
-          >
-            Eliminar cuenta
-          </button>
-        </div>
-        <div
-          class="w-full max-w-200 flex justify-end mb-4"
-          *ngIf="user$ | async as loggedUser"
-        >
-          <div class="h-full flex items-end" *ngIf="user.id !== loggedUser.id">
-            <button
-              *ngIf="!isFollowedByUser"
-              (click)="follow()"
-              class="primary-btn !w-25"
+        <div class="w-full max-w-200 flex justify-end gap-2 mb-4">
+          <div *ngIf="user$ | async as loggedUser">
+            <div
+              class="h-full flex items-end"
+              *ngIf="user.id !== loggedUser.id"
             >
-              Seguir
-            </button>
+              <button
+                *ngIf="!isFollowedByUser"
+                (click)="follow()"
+                class="primary-btn !w-25"
+              >
+                Seguir
+              </button>
+              <button
+                *ngIf="isFollowedByUser"
+                (click)="unfollow()"
+                class="secondary-btn !w-25"
+              >
+                Siguiendo
+              </button>
+            </div>
+          </div>
+          <div *ngIf="user$ | async as loggedUser">
             <button
-              *ngIf="isFollowedByUser"
-              (click)="unfollow()"
-              class="secondary-btn !w-25"
+              *ngIf="user.id === loggedUser.id || loggedUser.is_admin"
+              (click)="openDelAccountDialog()"
+              class="h-9 bg-red-800 text-white font-medium py-1 px-2 rounded-sm hover:cursor-pointer hover:bg-red-700"
             >
-              Siguiendo
+              Eliminar&nbsp;cuenta
             </button>
           </div>
         </div>
@@ -147,12 +163,6 @@
         LISTAS
       </h2>
     </nav>
-
-    <ng-template #loadingSpinner>
-      <div class="w-full h-full flex justify-center items-center mt-[10%]">
-        <mat-spinner [diameter]="75"></mat-spinner>
-      </div>
-    </ng-template>
     <div *ngIf="tab === 'w'" class="w-full">
       <div
         *ngIf="watched && watched.movies; else loadingSpinner"
@@ -209,11 +219,6 @@
     </div>
   </section>
 </main>
-
-<ng-template #loadingSpinner
-  ><div class="w-full h-full flex justify-center items-center mt-[25%]">
-    <mat-spinner [diameter]="75"></mat-spinner></div
-></ng-template>
 
 <dialog
   #followersDialogRef
@@ -292,7 +297,7 @@
     <i class="fa-solid fa-xmark text-xl"></i>
   </button>
   <p class="my-5">
-    ¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es
+    ¿Estás seguro de que quieres eliminar esta cuenta? Esta acción es
     irreversible.
   </p>
   <div class="flex gap-4">

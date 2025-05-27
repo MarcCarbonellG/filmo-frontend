@@ -1,8 +1,13 @@
-<main
-  class="w-full h-full flex justify-center items-center mt-[25%]"
-  *ngIf="!movie"
->
-  <mat-spinner [diameter]="75"></mat-spinner>
+<main class="w-full h-full" *ngIf="!movie">
+  <div *ngIf="notFound">
+    <app-not-found></app-not-found>
+  </div>
+  <div
+    *ngIf="!notFound"
+    class="w-full h-full flex justify-center items-center mt-[25%]"
+  >
+    <mat-spinner [diameter]="75"></mat-spinner>
+  </div>
 </main>
 
 <main class="mb-8" *ngIf="movie">
@@ -529,7 +534,7 @@
     <i class="fa-solid fa-xmark text-xl"></i>
   </button>
   <p class="my-5">
-    ¿Estás seguro de que quieres eliminar tu reseña? Esta acción es
+    ¿Estás seguro de que quieres eliminar esta reseña? Esta acción es
     irreversible.
   </p>
   <div class="flex gap-4">

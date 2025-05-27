@@ -41,6 +41,7 @@ export class MovieDetailsComponent implements OnInit {
   rating: number = 0;
   friendsRating: number = 0;
   reviews: Review[] = [];
+  reviewUserId: number | null = null;
   friendsReviews: Review[] = [];
   isLoggedIn: boolean = false;
   showNewListForm = false;
@@ -50,6 +51,7 @@ export class MovieDetailsComponent implements OnInit {
     description: '',
   };
   friends: PublicUser[] = [];
+  notFound: boolean = false;
 
   constructor(
     private movieService: MovieService,
@@ -108,6 +110,9 @@ export class MovieDetailsComponent implements OnInit {
           this.movie = data;
         },
         error: (err) => {
+          if (err.status === 404) {
+            this.notFound = true;
+          }
           console.error('Error al cargar película');
         },
       });
@@ -162,6 +167,7 @@ export class MovieDetailsComponent implements OnInit {
                 this.isReviewed = true;
                 const newReview = response.data.movie_review;
                 newReview.username = user.username;
+                newReview.avatar = user.avatar;
                 this.reviews.unshift(newReview);
                 this.calculateAverageRating();
               },
@@ -178,13 +184,14 @@ export class MovieDetailsComponent implements OnInit {
   }
 
   deleteReview() {
-    this.user$.pipe(take(1)).subscribe((user) => {
-      if (user && this.movieId) {
-        this.movieService.deleteReview(user.id, this.movieId).subscribe({
+    if (this.reviewUserId && this.movieId) {
+      this.movieService
+        .deleteReview(this.reviewUserId, this.movieId)
+        .subscribe({
           next: () => {
             this.isReviewed = false;
             const userReviewIndex = this.reviews.findIndex(
-              (review) => review.user_id == user.id
+              (review) => review.user_id == this.reviewUserId
             );
             this.reviews.splice(userReviewIndex, 1);
             this.calculateAverageRating();
@@ -193,8 +200,7 @@ export class MovieDetailsComponent implements OnInit {
             console.error('Error al eliminar la reseña:', err);
           },
         });
-      }
-    });
+    }
   }
 
   loadFavourites() {
@@ -362,7 +368,8 @@ export class MovieDetailsComponent implements OnInit {
     this.recDialogRef.nativeElement.close();
   }
 
-  openDelReviewDialog() {
+  openDelReviewDialog(userId: number) {
+    this.reviewUserId = userId;
     this.delReviewRef.nativeElement.showModal();
   }
 
