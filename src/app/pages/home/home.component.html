@@ -64,12 +64,18 @@
     </div>
   </ng-template>
   <section
-    *ngIf="isLoggedIn"
+    *ngIf="
+      isLoggedIn &&
+      movieFollowingShowcase &&
+      movieFollowingShowcase.movies.length > 0 &&
+      listFollowingShowcase &&
+      listFollowingShowcase.lists.length > 0
+    "
     class="w-full flex flex-col gap-6 my-8"
     aria-label="Sección de Siguiendo"
   >
     <h2 class="w-full text-left font-medium text-xl sm:text-2xl">Siguiendo</h2>
-    <div class="flex flex-col md:flex-row gap-10">
+    <div class="w-full flex flex-col md:flex-row gap-10">
       <div class="w-full flex flex-col gap-4">
         <div
           *ngIf="
@@ -84,7 +90,14 @@
         </div>
       </div>
 
-      <div class="md:w-min flex flex-col gap-4">
+      <div
+        class="w-full flex flex-col gap-4"
+        [ngClass]="
+          movieFollowingShowcase && movieFollowingShowcase.movies.length > 0
+            ? 'md:w-min'
+            : ''
+        "
+      >
         <div
           *ngIf="
             listFollowingShowcase && listFollowingShowcase.lists.length > 0;
