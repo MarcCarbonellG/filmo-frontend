@@ -21,7 +21,7 @@ export class PaginationComponent implements OnChanges {
   ngOnChanges(): void {
     if (this.results) {
       this.current = +this.results.page;
-      this.total = +this.results.total_pages;
+      this.total = +this.results.totalPages;
     }
   }
 

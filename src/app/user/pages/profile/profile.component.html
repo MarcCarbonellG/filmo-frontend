@@ -234,8 +234,10 @@
   </button>
   <div *ngIf="followers.length" class="mt-6">
     <h3 class="text-lg font-semibold mb-4">Seguidores:</h3>
-    <div class="max-h-50 overflow-y-auto">
-      <ul *ngFor="let follower of followers; let last = last">
+    <div
+      class="max-h-50 overflow-y-auto scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-secondary scrollbar-track-primary-light"
+    >
+      <ul class="pr-2" *ngFor="let follower of followers; let last = last">
         <li>
           <a
             class="hover"
@@ -266,8 +268,10 @@
   </button>
   <div *ngIf="followed.length" class="mt-6">
     <h3 class="text-lg font-semibold mb-4">Siguiendo:</h3>
-    <div class="max-h-50 overflow-y-auto">
-      <ul *ngFor="let followed of followed; let last = last">
+    <div
+      class="max-h-50 overflow-y-auto scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-secondary scrollbar-track-primary-light"
+    >
+      <ul class="pr-2" *ngFor="let followed of followed; let last = last">
         <li>
           <a
             class="hover"

@@ -80,7 +80,7 @@ export class RegisterComponent {
         this.openRegSuccessDialog();
       },
       error: (err) => {
-        this.errorMessage = err.error.message || 'Error en el registro';
+        this.errorMessage = err.error.userMessage;
       },
     });
   }

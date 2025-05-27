@@ -10,6 +10,6 @@ export interface List {
   movies: DbMovie[];
   saved: number;
   page: number;
-  total_results: number;
-  total_pages: number;
+  totalResults: number;
+  totalPages: number;
 }

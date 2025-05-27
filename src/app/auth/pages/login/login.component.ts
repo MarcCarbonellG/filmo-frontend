@@ -46,7 +46,7 @@ export class LoginComponent {
         this.router.navigate(['/']);
       },
       error: (err) => {
-        this.errorMessage = err.error.message || 'Error al iniciar sesión';
+        this.errorMessage = err.error.userMessage;
       },
     });
   }

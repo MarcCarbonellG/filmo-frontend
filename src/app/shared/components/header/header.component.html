@@ -70,7 +70,7 @@
 
         <div
           *ngIf="showNotisPanel"
-          class="absolute top-full right-0 w-58 flex flex-col p-4 pb-0 mt-3 bg-primary-light rounded max-h-83 overflow-y-auto sm:w-max scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-secondary scrollbar-track-primary-light"
+          class="absolute top-full right-0 w-58 flex flex-col p-4 pb-0 mt-3 bg-primary-light rounded max-h-83"
         >
           <div class="w-full flex justify-between items-end">
             <h2 class="text-lg font-medium">Notificaciones</h2>
@@ -83,39 +83,54 @@
             </button>
           </div>
           <div
-            *ngFor="let noti of notifications; let first = first"
-            class="relative w-full"
+            class="overflow-y-auto scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar scrollbar-thumb-secondary scrollbar-track-primary-light"
           >
-            <div *ngIf="first" class="w-full border-1 my-4 border-accent"></div>
-            <div class="flex flex-col gap-1">
-              <div class="w-full flex justify-between">
-                <div class="flex gap-2">
-                  <div class="w-5 h-5 bg-accent rounded-2xl"></div>
-                  <a
-                    class="font-medium hover"
-                    routerLink="/user/profile/{{ noti.recommender_username }}"
-                  >
-                    {{ noti.recommender_username }}
-                  </a>
+            <ul
+              *ngFor="let noti of notifications; let first = first"
+              class="w-full pr-2"
+            >
+              <li class="w-full">
+                <div
+                  *ngIf="first"
+                  class="w-full border-1 my-4 border-accent"
+                ></div>
+                <div class="flex flex-col gap-1">
+                  <div class="w-full flex justify-between">
+                    <div class="flex gap-2">
+                      <a
+                        class="flex gap-2 items-center font-medium hover"
+                        routerLink="/user/profile/{{
+                          noti.recommender_username
+                        }}"
+                      >
+                        <app-avatar
+                          [code]="noti.recommender_avatar"
+                          size="xs"
+                          class="mt-[2.5px]"
+                        ></app-avatar>
+                        <p>{{ noti.recommender_username }}</p>
+                      </a>
+                    </div>
+                    <button
+                      class="translate-y-[-2px] hover"
+                      (click)="deleteNotification(noti.id)"
+                    >
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+                  <p>
+                    Te ha recomendado ver
+                    <a
+                      class="font-medium italic hover"
+                      routerLink="/movie/{{ noti.movie_id }}"
+                      (click)="toggleNotisPanel()"
+                      >{{ noti.movie_title }}</a
+                    >
+                  </p>
                 </div>
-                <button
-                  class="translate-y-[-2px] hover"
-                  (click)="deleteNotification(noti.id)"
-                >
-                  <i class="fa-solid fa-xmark"></i>
-                </button>
-              </div>
-              <p>
-                Te ha recomendado ver
-                <a
-                  class="font-medium italic hover"
-                  routerLink="/movie/{{ noti.movie_id }}"
-                  (click)="toggleNotisPanel()"
-                  >{{ noti.movie_title }}</a
-                >
-              </p>
-            </div>
-            <div class="w-full border-1 my-4 border-accent"></div>
+                <div class="w-full border-1 my-4 border-accent"></div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
