@@ -3,18 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { PagedLists } from '../../list/models/paged-lists.interface';
+import { MutationResponse } from '../../models/mutation-response.interface';
 import { MovieGenres } from '../../movie/models/movie-genres.interface';
 import { PagedDbMovies } from '../../movie/models/paged-db-movies.interface';
 import { Recommendation } from '../../movie/models/recommendation.interface';
 import { Review } from '../../movie/models/review.interface';
 import { Following } from '../models/following.interface';
 import { PublicUser } from '../models/public-user.interface';
-
-// Interfaz para peticiones de modificación de la base de datos (creación o eliminación)
-interface MutationResponse {
-  message: string;
-  data: any;
-}
 
 @Injectable({
   providedIn: 'root',

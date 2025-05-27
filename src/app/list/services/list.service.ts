@@ -5,12 +5,7 @@ import { environment } from '../../../environments/environment';
 import { MutationResponse } from '../../models/mutation-response.interface';
 import { ListWithMovieStatus } from '../models/list-with-movie-status.interface';
 import { List } from '../models/list.interface';
-
-// Interfaz para relaciones entre un usuario y una lista
-interface UserListRelation {
-  user_id: number;
-  list_id: number;
-}
+import { UserListRelation } from '../models/user-list-relation.interface';
 
 @Injectable({
   providedIn: 'root',

@@ -10,12 +10,7 @@ import { Movie } from '../models/movie.interface';
 import { PagedMovieResults } from '../models/paged-movie-results.interface';
 import { Review } from '../models/review.interface';
 import { SimplifiedMovie } from '../models/simplified-movie.interface';
-
-// Interfaz para relaciones entre un usuario y una película (favoritos y vista)
-interface UserMovieRelation {
-  user_id: number;
-  movie_id: number;
-}
+import { UserMovieRelation } from '../models/user-movie-relation.interface';
 
 @Injectable({
   providedIn: 'root',
