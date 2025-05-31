@@ -64,7 +64,7 @@ export class SearchResultsComponent implements OnInit {
     this.isLangDropdownOpen = !this.isLangDropdownOpen;
   }
 
-  loadMovies(page: number) {
+  loadMovies(page: number = 1) {
     this.movieService.searchMoviesByTitle(this.searchTerm, page).subscribe({
       next: (data) => {
         this.originalResults = data;
