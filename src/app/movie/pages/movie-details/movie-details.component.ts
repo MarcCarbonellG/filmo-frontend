@@ -79,7 +79,6 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
     this.loadMovie();
     this.loadFavourites();
     this.loadWatched();
-    this.loadFriends();
     this.loadReviews();
     this.reviewForm = this.fb.group({
       rating: [1, [Validators.required]],
@@ -128,7 +127,6 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
     } else {
       this.rating = 0;
     }
-    console.log('average');
   }
 
   calculateFriendsRating() {
@@ -142,8 +140,6 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
     } else {
       this.friendsRating = 0;
     }
-
-    console.log('friends');
   }
 
   loadMovie() {
@@ -167,9 +163,8 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
       this.movieService.getReviews(this.movieId).subscribe({
         next: (data) => {
           this.reviews = data;
-          console.log('loadReview');
-          this.calculateFriendsRating();
           this.calculateAverageRating();
+          this.loadFriends();
 
           this.user$.pipe(take(1)).subscribe((user) => {
             if (user) {
@@ -243,6 +238,7 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
         this.userService.getFriendsById(user.id).subscribe({
           next: (response) => {
             this.friends = response;
+            this.calculateFriendsRating();
           },
           error: (err) => {
             console.error('Error al cargar amigos', err);
@@ -281,8 +277,7 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
             .subscribe({
               next: (response) => {
                 this.isReviewed = true;
-                console.log(response.data.movie_review);
-                const newReview = response.data.movie_review;
+                const newReview = response.data.movieReview;
                 newReview.username = user.username;
                 newReview.avatar = user.avatar;
                 const reviews = [...this.reviews];
