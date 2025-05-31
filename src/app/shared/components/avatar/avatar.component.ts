@@ -24,16 +24,16 @@ export class AvatarComponent implements OnInit, OnChanges {
 
   getColor(code: string): string {
     const colors = [
-      '#ef4444',
       '#f97316',
+      '#ef4444',
+      '#3b82f6',
       '#f59e0b',
+      '#06b6d4',
+      '#ec4899',
       '#eab308',
       '#84cc16',
-      '#22c55e',
-      '#06b6d4',
-      '#3b82f6',
       '#6366f1',
-      '#ec4899',
+      '#22c55e',
     ];
     return colors[+code % colors.length];
   }

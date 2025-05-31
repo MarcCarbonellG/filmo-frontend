@@ -128,6 +128,7 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
     } else {
       this.rating = 0;
     }
+    console.log('average');
   }
 
   calculateFriendsRating() {
@@ -141,6 +142,8 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
     } else {
       this.friendsRating = 0;
     }
+
+    console.log('friends');
   }
 
   loadMovie() {
@@ -164,8 +167,9 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
       this.movieService.getReviews(this.movieId).subscribe({
         next: (data) => {
           this.reviews = data;
-          this.calculateAverageRating();
+          console.log('loadReview');
           this.calculateFriendsRating();
+          this.calculateAverageRating();
 
           this.user$.pipe(take(1)).subscribe((user) => {
             if (user) {
