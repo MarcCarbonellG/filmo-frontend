@@ -30,6 +30,9 @@ export class SearchResultsComponent implements OnInit {
     private router: Router
   ) {
     this.baseImageUrl = this.movieService.getImageBaseUrl();
+    this.route.queryParams.subscribe((params) => {
+      this.loadMovies();
+    });
   }
 
   ngOnInit(): void {
@@ -40,11 +43,7 @@ export class SearchResultsComponent implements OnInit {
       sortBy: ['popularity'],
       sortOrder: ['desc'],
     });
-    this.route.queryParams.subscribe((params) => {
-      this.searchTerm = params['query'];
-      const page = params['page'];
-      this.loadMovies(+page);
-    });
+    this.loadMovies();
   }
 
   goToPage(page: number, query?: string) {
@@ -64,17 +63,21 @@ export class SearchResultsComponent implements OnInit {
     this.isLangDropdownOpen = !this.isLangDropdownOpen;
   }
 
-  loadMovies(page: number = 1) {
-    this.movieService.searchMoviesByTitle(this.searchTerm, page).subscribe({
-      next: (data) => {
-        this.originalResults = data;
-        this.searchResults = JSON.parse(JSON.stringify(data));
-        this.getGenres();
-        this.getLanguages();
-      },
-      error: () => {
-        console.error('Error al cargar películas');
-      },
+  loadMovies() {
+    this.route.queryParams.subscribe((params) => {
+      this.searchTerm = params['query'];
+      const page = params['page'];
+      this.movieService.searchMoviesByTitle(this.searchTerm, page).subscribe({
+        next: (data) => {
+          this.originalResults = data;
+          this.searchResults = JSON.parse(JSON.stringify(data));
+          this.getGenres();
+          this.getLanguages();
+        },
+        error: () => {
+          console.error('Error al cargar películas');
+        },
+      });
     });
   }
 
