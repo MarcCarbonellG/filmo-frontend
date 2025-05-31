@@ -81,7 +81,7 @@ export class UserService {
 
   getFollowing(followerId: number, followedId: number): Observable<Following> {
     return this.http.get<Following>(
-      `${this.API_URL}/user/profile/following?follower_id=${followerId}&followed_id=${followedId}`
+      `${this.API_URL}/user/profile/following?followerId=${followerId}&followedId=${followedId}`
     );
   }
 
