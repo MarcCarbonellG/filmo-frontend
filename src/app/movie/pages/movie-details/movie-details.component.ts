@@ -280,7 +280,7 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
                 const newReview = response.data.movie_review;
                 newReview.username = user.username;
                 newReview.avatar = user.avatar;
-                this.reviews.unshift(newReview);
+                this.reviews = [newReview, ...this.reviews];
                 this.calculateAverageRating();
               },
               error: (err) => {
