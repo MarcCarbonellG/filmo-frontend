@@ -53,7 +53,7 @@ export class HeaderComponent implements OnInit {
 
   onSearch() {
     this.router.navigate(['/search'], {
-      queryParams: { query: this.searchTerm },
+      queryParams: { page: 1, query: this.searchTerm },
     });
   }
 
