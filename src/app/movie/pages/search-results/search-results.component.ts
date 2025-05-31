@@ -63,8 +63,9 @@ export class SearchResultsComponent implements OnInit {
   loadMovies() {
     this.route.queryParams.subscribe((params) => {
       this.searchTerm = params['query'];
-      const page = params['page'];
+      let page = params['page'];
       console.log('aaaaaa', typeof page);
+      console.log(page);
       this.movieService.searchMoviesByTitle(this.searchTerm, page).subscribe({
         next: (data) => {
           console.log(data);
