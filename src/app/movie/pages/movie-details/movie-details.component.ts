@@ -281,6 +281,7 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
             .subscribe({
               next: (response) => {
                 this.isReviewed = true;
+                console.log(response.data.movie_review);
                 const newReview = response.data.movie_review;
                 newReview.username = user.username;
                 newReview.avatar = user.avatar;
