@@ -40,7 +40,11 @@ export class SearchResultsComponent implements OnInit {
       sortBy: ['popularity'],
       sortOrder: ['desc'],
     });
-    this.loadMovies();
+    this.route.queryParams.subscribe((params) => {
+      this.searchTerm = params['query'];
+      const page = params['page'];
+      this.loadMovies(+page);
+    });
   }
 
   goToPage(page: number, query?: string) {
@@ -60,21 +64,17 @@ export class SearchResultsComponent implements OnInit {
     this.isLangDropdownOpen = !this.isLangDropdownOpen;
   }
 
-  loadMovies() {
-    this.route.queryParams.subscribe((params) => {
-      this.searchTerm = params['query'];
-      const page = params['page'];
-      this.movieService.searchMoviesByTitle(this.searchTerm, page).subscribe({
-        next: (data) => {
-          this.originalResults = data;
-          this.searchResults = JSON.parse(JSON.stringify(data));
-          this.getGenres();
-          this.getLanguages();
-        },
-        error: () => {
-          console.error('Error al cargar películas');
-        },
-      });
+  loadMovies(page: number) {
+    this.movieService.searchMoviesByTitle(this.searchTerm, page).subscribe({
+      next: (data) => {
+        this.originalResults = data;
+        this.searchResults = JSON.parse(JSON.stringify(data));
+        this.getGenres();
+        this.getLanguages();
+      },
+      error: () => {
+        console.error('Error al cargar películas');
+      },
     });
   }
 
