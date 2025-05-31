@@ -97,7 +97,7 @@
         *ngIf="user.id !== loggedUser.id"
       >
         <p
-          class="flex items-center rounded p-2 bg-accent/20 border-2 border-accent"
+          class="flex items-center gap-1 rounded p-2 bg-accent/20 border-2 border-accent"
         >
           Coincidencia de gustos:
           <span class="font-medium">{{ matchPercentage }}%</span>
@@ -106,11 +106,9 @@
           class="max-w-120 flex justify-center gap-2"
           *ngIf="commonFavGenres.length > 0"
         >
-          <p
-            class="flex items-center rounded p-2 bg-accent/20 border-2 border-accent"
-          >
+          <p class="rounded p-2 bg-accent/20 border-2 border-accent">
             Géneros favoritos en común:
-            <span class="font-medium">{{ commonFavGenres.join(",") }}</span>
+            <span class="font-medium">{{ commonFavGenres.join(", ") }}</span>
           </p>
         </div>
       </div>
