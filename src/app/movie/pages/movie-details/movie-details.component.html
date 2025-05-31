@@ -389,9 +389,19 @@
       <ul class="pr-2" *ngFor="let review of friendsReviews; let last = last">
         <li>
           <div class="w-full flex justify-between">
-            <a class="hover" routerLink="/user/profile/{{ review.username }}">{{
-              review.username
-            }}</a>
+            <a
+              class="flex items-center gap-2 hover"
+              routerLink="/user/profile/{{ review.username }}"
+              aria-label="Enviar recomendación de película"
+              (click)="closeDialog('followers')"
+            >
+              <app-avatar
+                class="mt-[2.5px]"
+                [code]="review.avatar"
+                size="xs"
+              ></app-avatar>
+              {{ review.username }}
+            </a>
 
             <p class="text-lg font-medium text-accent">
               {{ review.rating }}<span class="text-sm text-white">/5</span>
@@ -514,10 +524,15 @@
       <ul class="pr-2" *ngFor="let friend of friends; let last = last">
         <li>
           <button
-            class="hover:cursor-pointer"
+            class="flex items-center gap-2 hover"
             (click)="recommendMovie(friend.id); closeDialog('rec')"
             aria-label="Enviar recomendación de película"
           >
+            <app-avatar
+              class="mt-[2.5px]"
+              [code]="friend.avatar"
+              size="xs"
+            ></app-avatar>
             {{ friend.username }}
           </button>
           <hr *ngIf="!last" class="w-full border-accent border mb-2 mt-3" />
