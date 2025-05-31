@@ -48,11 +48,10 @@ export class SearchResultsComponent implements OnInit {
   }
 
   goToPage(page: number, query?: string) {
-    this.router.navigate(['/search'], {
-      queryParams: {
-        page,
-        query,
-      },
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/search'], {
+        queryParams: { query, page },
+      });
     });
   }
 
