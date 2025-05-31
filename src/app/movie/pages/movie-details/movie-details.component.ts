@@ -1,6 +1,5 @@
 import {
   AfterViewInit,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   OnInit,
@@ -68,8 +67,7 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private listService: ListService,
-    private userService: UserService,
-    private cdr: ChangeDetectorRef
+    private userService: UserService
   ) {
     this.baseImageUrl = this.movieService.getImageBaseUrl();
     this.isLoggedIn = this.authService.isAuthenticated();
@@ -282,8 +280,9 @@ export class MovieDetailsComponent implements OnInit, AfterViewInit {
                 const newReview = response.data.movie_review;
                 newReview.username = user.username;
                 newReview.avatar = user.avatar;
-                this.reviews = [newReview, ...this.reviews];
-                this.cdr.detectChanges();
+                const reviews = [...this.reviews];
+                reviews.unshift(newReview);
+                this.reviews = reviews;
 
                 this.calculateAverageRating();
               },
