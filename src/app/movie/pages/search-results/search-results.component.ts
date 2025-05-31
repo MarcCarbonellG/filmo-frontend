@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Genre } from '../../models/genre.interface';
 import { Language } from '../../models/language.interface';
 import { PagedMovieResults } from '../../models/paged-movie-results.interface';
@@ -30,8 +30,10 @@ export class SearchResultsComponent implements OnInit {
     private router: Router
   ) {
     this.baseImageUrl = this.movieService.getImageBaseUrl();
-    this.route.queryParams.subscribe((params) => {
-      this.loadMovies();
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.loadMovies();
+      }
     });
   }
 
@@ -67,6 +69,7 @@ export class SearchResultsComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       this.searchTerm = params['query'];
       const page = params['page'];
+      console.log('aaaaaa', typeof page);
       this.movieService.searchMoviesByTitle(this.searchTerm, page).subscribe({
         next: (data) => {
           this.originalResults = data;
