@@ -64,11 +64,8 @@ export class SearchResultsComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       this.searchTerm = params['query'];
       let page = params['page'];
-      console.log('aaaaaa', typeof page);
-      console.log(page);
       this.movieService.searchMoviesByTitle(this.searchTerm, page).subscribe({
         next: (data) => {
-          console.log(data);
           this.originalResults = data;
           this.searchResults = JSON.parse(JSON.stringify(data));
           this.getGenres();
